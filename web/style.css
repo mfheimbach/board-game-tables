@@ -145,3 +145,5 @@ dialog::backdrop { background: rgb(0 0 0 / .45); }
 .gl .pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .gl .pick .chip { min-height: 34px; padding: 4px 11px; font-size: .85rem; }
 #dataInfo p { margin: 4px 0; }
+.bgg img { height: 36px; width: auto; }
+@media (prefers-color-scheme: dark) { .bgg img { background: #fff; padding: 4px 8px; border-radius: 8px; box-sizing: content-box; } }
