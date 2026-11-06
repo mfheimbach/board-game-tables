@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a33">
+<title>Game Tables</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%274%27 width=%2724%27 height=%2724%27 rx=%276%27 fill=%27%231f6b57%27/%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%272.5%27 fill=%27white%27/%3E%3Ccircle cx=%2720%27 cy=%2720%27 r=%272.5%27 fill=%27white%27/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="top">
+  <h1 id="title">Game Tables</h1>
+  <span id="dataState" class="muted small"></span>
+  <button id="openSettings" class="icon-btn" aria-label="Settings & games">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+  </button>
+</header>
+
+<div id="banner" class="banner" hidden></div>
+
+<div class="layout">
+  <aside class="controls">
+    <section class="who">
+      <div class="row-between">
+        <h2>Who's playing? <span id="whoCount" class="muted"></span></h2>
+        <span class="links"><button class="link" id="allBtn">all</button> · <button class="link" id="noneBtn">none</button></span>
+      </div>
+      <div id="players" class="chips"></div>
+    </section>
+
+    <section class="tables-row">
+      <span>Tables</span>
+      <div class="stepper">
+        <button id="tMinus" aria-label="Fewer tables">−</button>
+        <output id="tVal">3</output>
+        <button id="tPlus" aria-label="More tables">+</button>
+      </div>
+      <span class="muted small">at most</span>
+    </section>
+
+    <section id="constraints" class="chips constraints" hidden></section>
+  </aside>
+
+  <main>
+    <div id="results" aria-live="polite"></div>
+    <p id="stats" class="muted small stats"></p>
+  </main>
+</div>
+
+<footer class="foot">
+  <a href="https://boardgamegeek.com" target="_blank" rel="noopener" class="bgg">
+    <img src="img/powered-by-bgg.svg" alt="Powered by BGG" height="32"
+         onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bgg-text',textContent:'Powered by BGG'}))">
+  </a>
+  <span class="muted small">Game data (player counts, play time) from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>.</span>
+</footer>
+
+<dialog id="settings">
+  <form method="dialog" class="sheet">
+    <header class="sheet-head">
+      <h2>Settings &amp; games</h2>
+      <button class="icon-btn" value="close" aria-label="Close">✕</button>
+    </header>
+
+    <section>
+      <h3>Who sits where</h3>
+      <label class="field">Player counts
+        <div class="seg" data-key="source">
+          <button type="button" value="best">Best</button>
+          <button type="button" value="rec">Recommended</button>
+          <button type="button" value="any">Any</button>
+        </div>
+      </label>
+      <label class="field">Seat people at games they rated
+        <div class="seg" data-key="minRating">
+          <button type="button" value="2">2 only</button>
+          <button type="button" value="1">1 or 2</button>
+          <button type="button" value="0">anything</button>
+        </div>
+      </label>
+      <label class="field">Blank ratings count as
+        <div class="seg" data-key="blanks">
+          <button type="button" value="neutral">1 (guess)</button>
+          <button type="button" value="zero">0</button>
+        </div>
+      </label>
+      <label class="field">Smallest table
+        <div class="seg" data-key="minPerTable">
+          <button type="button" value="1">1</button>
+          <button type="button" value="2">2</button>
+          <button type="button" value="3">3</button>
+        </div>
+      </label>
+      <label class="toggle"><input type="checkbox" data-key="explainer"> Someone who can explain sits at the table</label>
+      <label class="toggle"><input type="checkbox" data-key="owner"> Only games whose owner is here</label>
+    </section>
+
+    <section>
+      <div class="row-between">
+        <h3>Games</h3>
+        <input id="gameSearch" type="search" placeholder="Search" autocomplete="off">
+      </div>
+      <p class="muted small">📌 must be played (tap a pinned game to pick who plays it) · ⊘ leave out</p>
+      <ul id="gameList" class="game-list"></ul>
+    </section>
+
+    <section>
+      <h3>Data</h3>
+      <div id="dataInfo" class="small"></div>
+      <div class="btns">
+        <button type="button" id="reload">Reload ratings</button>
+        <button type="button" id="resetAll" class="danger">Reset everything</button>
+      </div>
+    </section>
+  </form>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

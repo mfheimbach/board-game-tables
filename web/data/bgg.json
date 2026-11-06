@@ -1,0 +1,662 @@
+{
+ "source": "SAMPLE - simulated player counts, run the 'Update game data' workflow",
+ "sample": true,
+ "updated": "2026-11-06T00:00:00Z",
+ "games": {
+  "357873": {
+   "name": "Old King's Crown",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "436790": {
+   "name": "Believe in Me!",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "359871": {
+   "name": "ARCS",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "423577": {
+   "name": "Valheim",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "321608": {
+   "name": "Hegemony",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "397598": {
+   "name": "Dune Imperium Uprising",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "306482": {
+   "name": "ICE",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "37111": {
+   "name": "Battlestar Galactica",
+   "min": 2,
+   "max": 5,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "449854": {
+   "name": "Dawn of Pangaea (inkl. Expansion)",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "301880": {
+   "name": "Räuber aus Skythien",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "416079": {
+   "name": "March of the Ants + Exp.",
+   "min": 2,
+   "max": 5,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "380109": {
+   "name": "Gibberers",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "358737": {
+   "name": "Leviathan Wilds",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "381248": {
+   "name": "Nemesis: Retaliation",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "368954": {
+   "name": "Council of Shadows",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "256960": {
+   "name": "Pax Pamir (2nd Edition)",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "421246": {
+   "name": "Neon Hope",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "340466": {
+   "name": "Abgrundtief",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "479457": {
+   "name": "Braided Skies",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "341169": {
+   "name": "Great Western Trail (2nd Edition)",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "151771": {
+   "name": "La Cosa Nostra",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "322289": {
+   "name": "Darwin's Journey",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "279886": {
+   "name": "Iron Forest",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "364356": {
+   "name": "Company of Heroes",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "257305": {
+   "name": "Shasn",
+   "min": 2,
+   "max": 5,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "335212": {
+   "name": "Sentinels of the Multiverse",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "436217": {
+   "name": "Der Herr der Ringe: Das Schicksal der Gemeinschaft",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "414117": {
+   "name": "Groll",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "237182": {
+   "name": "Root",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "342070": {
+   "name": "Thunderroad Vendetta",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "441548": {
+   "name": "Trickerion: Anniversary Edition",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "274566": {
+   "name": "Deranged",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "452817": {
+   "name": "Emberheart",
+   "min": 3,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "430533": {
+   "name": "Formaggio",
+   "min": 2,
+   "max": 4,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "170216": {
+   "name": "Blood Rage",
+   "min": 1,
+   "max": 4,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "437705": {
+   "name": "Horrified: Dungeons & Dragons",
+   "min": 2,
+   "max": 6,
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "best": [
+    4,
+    5
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "469375": {
+   "name": "Deckers: Duplicity",
+   "min": 2,
+   "max": 5,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "148319": {
+   "name": "Tragedy Looper",
+   "min": 2,
+   "max": 5,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "2122": {
+   "name": "Vampire: The Eternal Struggle",
+   "min": 1,
+   "max": 5,
+   "rec": [
+    2,
+    3,
+    4
+   ],
+   "best": [
+    2,
+    3
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  },
+  "242": {
+   "name": "Junta",
+   "min": 2,
+   "max": 4,
+   "rec": [
+    3,
+    4
+   ],
+   "best": [
+    4
+   ],
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": null
+  }
+ }
+}
