@@ -39,7 +39,14 @@
       <span class="muted small">at most</span>
     </section>
 
-    <section id="constraints" class="chips constraints" hidden></section>
+    <section class="games">
+      <div class="row-between">
+        <h2>Games <span id="gameCount" class="muted"></span></h2>
+        <span class="links"><button class="link" id="gamesReset" hidden>reset</button> <button class="link" id="gamesMore">all</button></span>
+      </div>
+      <p class="muted small legend">Tap: 📌 must play → ⊘ leave out → normal. Number = how many here want it.</p>
+      <div id="gameChips" class="chips"></div>
+    </section>
   </aside>
 
   <main>

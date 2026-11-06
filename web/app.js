@@ -13,7 +13,7 @@ const DEFAULTS = {
   set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true },
 };
 
-let cfg, model, bgg, storeKey, state, last = null, shown = 10;
+let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false;
 const openAlts = new Set();
 
 // ---------- state ----------
@@ -98,20 +98,26 @@ function renderControls() {
   $('#tMinus').disabled = state.maxTables <= 1;
   $('#tPlus').disabled = state.maxTables >= 5;
 
-  const chips = [];
-  for (const l of state.locks) {
-    const g = model.games[gameById(l.id)];
-    if (!g) continue;
-    const who = l.players.length ? ` · ${l.players.join(', ')}` : '';
-    chips.push(`<span class="cchip">${l.exact ? '🔒' : '📌'} ${esc(gName(g))}${esc(who)}<button class="x" data-unlock="${l.id}" aria-label="Remove">✕</button></span>`);
-  }
-  for (const id of state.excluded) {
-    const g = model.games[gameById(id)];
-    if (g) chips.push(`<span class="cchip out">${esc(gName(g))}<button class="x" data-unexclude="${id}" aria-label="Bring back">✕</button></span>`);
-  }
-  if (chips.length > 1) chips.push('<button class="link" id="clearAll">clear all</button>');
-  $('#constraints').innerHTML = chips.join('');
-  $('#constraints').hidden = !chips.length;
+  // games: same chips as players; tap cycles normal -> must play -> out -> normal
+  const rows = model.games.map(g => {
+    const want = [...att].filter(p => g.ratings[p] === 2).length;
+    const would = [...att].filter(p => g.ratings[p] === 1).length;
+    const lk = lockOf(g.id), out = state.excluded.includes(g.id), st = status(g, att);
+    const off = st.noExplainer ? 'nobody here can explain it' : st.ownerAway ? 'owner is not here' : '';
+    return { g, want, would, lk, out, off, set: !!lk || out };
+  }).sort((a, b) => b.want - a.want || b.would - a.would || gName(a.g).localeCompare(gName(b.g)));
+  const visible = gamesOpen ? rows : rows.filter((r, i) => i < 12 || r.set);
+  $('#gameChips').innerHTML = visible.map(r => {
+    const cls = r.lk ? (r.lk.exact ? 'g-lock' : 'g-pin') : r.out ? 'g-out' : r.off ? 'g-off' : '';
+    const icon = r.lk ? (r.lk.exact ? '🔒 ' : '📌 ') : r.out ? '⊘ ' : '';
+    const who = r.lk?.players.length ? ` · ${r.lk.players.join(', ')}` : '';
+    const tip = r.off || `${r.want} want, ${r.would} would play`;
+    return `<button class="chip g ${cls}" data-g="${r.g.id}" title="${esc(tip)}">${icon}${esc(gName(r.g))}${esc(who)}<span class="want">${r.want}</span></button>`;
+  }).join('');
+  const nSet = rows.filter(r => r.set).length;
+  $('#gameCount').textContent = nSet ? `${nSet} set` : '';
+  $('#gamesMore').textContent = gamesOpen ? 'fewer' : `all ${rows.length}`;
+  $('#gamesReset').hidden = !nSet;
 }
 
 function seatHtml(g, p) {
@@ -305,6 +311,14 @@ function wire() {
     else if (b.id === 'noneBtn') state.attend = [];
     else if (b.id === 'tMinus') state.maxTables = Math.max(1, state.maxTables - 1);
     else if (b.id === 'tPlus') state.maxTables = Math.min(5, state.maxTables + 1);
+    else if (d.g) {
+      const id = +d.g;
+      if (lockOf(id)) { state.locks = state.locks.filter(l => l.id !== id); state.excluded.push(id); }
+      else if (state.excluded.includes(id)) state.excluded = state.excluded.filter(x => x !== id);
+      else setLock(gameById(id), [], false);
+    }
+    else if (b.id === 'gamesMore') { gamesOpen = !gamesOpen; renderControls(); return; }
+    else if (b.id === 'gamesReset') { state.locks = []; state.excluded = []; }
     else if (b.id === 'more') { shown += 20; renderResults(last.result, 0); return; }
     else if (d.fix) {
       const s = state.set;

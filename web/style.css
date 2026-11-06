@@ -147,3 +147,10 @@ dialog::backdrop { background: rgb(0 0 0 / .45); }
 #dataInfo p { margin: 4px 0; }
 .bgg img { height: 36px; width: auto; }
 @media (prefers-color-scheme: dark) { .bgg img { background: #fff; padding: 4px 8px; border-radius: 8px; box-sizing: content-box; } }
+.games .legend { margin: 6px 0 0; }
+.chip.g { min-height: 36px; padding: 6px 12px; font-size: .88rem; font-weight: 500; color: var(--ink); }
+.chip.g .want { margin-left: 6px; font-size: .74rem; color: var(--muted); font-weight: 600; }
+.chip.g-pin, .chip.g-lock { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip.g-pin .want, .chip.g-lock .want { color: inherit; opacity: .75; }
+.chip.g-out { background: transparent; border-style: dashed; color: var(--muted); text-decoration: line-through; }
+.chip.g-off { opacity: .45; }
