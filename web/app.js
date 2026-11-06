@@ -1,4 +1,4 @@
-import { sheetCsvUrl, parseCSV, parseSheet, allowedCounts } from './sheet.js';
+import { loadTab, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,6 +14,7 @@ const DEFAULTS = {
 };
 
 let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false;
+let sheets = [], custom = null, cur = null;   // cur = { sheetId, tabs, i }
 const openAlts = new Set();
 
 // ---------- state ----------
@@ -229,14 +230,14 @@ function renderGameList() {
     </div>${pick}</li>`;
   }).join('');
 
-  for (const el of document.querySelectorAll('.seg')) {
+  for (const el of document.querySelectorAll('.seg[data-key]')) {
     const v = String(state.set[el.dataset.key]);
     el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === v));
   }
   document.querySelectorAll('.toggle input').forEach(i => { i.checked = !!state.set[i.dataset.key]; });
   const nb = Object.keys(bgg.games).length;
   $('#dataInfo').innerHTML = `
-    <p>Ratings: ${model.source === 'live' ? 'live from the sheet' : 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
+    <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${model.source === 'live' ? 'live from the sheet' : 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
     <p>BoardGameGeek data: ${nb} games${bgg.updated ? `, updated ${new Date(bgg.updated).toLocaleDateString()}` : ''}${bgg.sample ? ' <span class="badge">sample data</span>' : ''}.</p>
     ${model.warnings.map(w => `<p class="muted">⚠ ${esc(w)}</p>`).join('')}`;
 }
@@ -244,6 +245,7 @@ function renderGameList() {
 function renderBanner() {
   const msgs = [];
   if (bgg.sample) msgs.push('Player counts are placeholders until the "Update game data" workflow has run.');
+  if (custom) msgs.push('Using your own sheet (settings → Data to switch back). Player counts only for games in our sheets or with min/max columns.');
   if (model.source !== 'live') msgs.push('Couldn\'t reach the sheet — showing the saved copy.');
   $('#banner').hidden = !msgs.length;
   $('#banner').textContent = msgs.join(' ');
@@ -281,6 +283,9 @@ function wire() {
     const b = e.target.closest('button');
     if (!b) return;
     const d = b.dataset;
+    if (d.tab !== undefined) { if (+d.tab !== cur.i) select(cur.sheetId, cur.tabs, +d.tab).catch(err => alert(err.message)); return; }
+    if (b.id === 'useCustom') { useCustom(); return; }
+    if (b.id === 'dropCustom') { dropCustom().then(() => { $('#customUrl').value = ''; renderGameList(); }).catch(err => alert(err.message)); return; }
     if (d.p) {
       const cur = new Set(state.attend ?? model.players);
       cur.has(d.p) ? cur.delete(d.p) : cur.add(d.p);
@@ -355,21 +360,54 @@ function wire() {
 }
 
 // ---------- data ----------
-async function loadSheet() {
+const tabKey = t => t.gid ?? t.name;
+const curTab = () => cur.tabs[cur.i];
+
+async function fetchText(url) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 8000);
   try {
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), 8000);
-    const r = await fetch(sheetCsvUrl(cfg), { signal: ctl.signal, cache: 'no-store' });
-    clearTimeout(t);
+    const r = await fetch(url, { signal: ctl.signal, cache: 'no-store' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    model = parseSheet(parseCSV(await r.text()), cfg);
+    return await r.text();
+  } finally { clearTimeout(t); }
+}
+
+async function loadSheet() {
+  const tab = curTab();
+  try {
+    const res = await loadTab(fetchText, cur.sheetId, tab, cfg);
+    model = res.model;
+    tab.headerRow = res.headerRow;
     model.source = 'live';
   } catch (err) {
-    console.warn('live sheet failed, using snapshot:', err);
-    model = parseSheet(parseCSV(await (await fetch('data/sheet.csv', { cache: 'no-store' })).text()), cfg);
+    console.warn('live sheet failed:', err);
+    if (!tab.snapshot) throw new Error(`Couldn't read that sheet (${err.message}). It must be shared as "anyone with the link" and use the same columns.`);
+    model = parseSheet(parseCSV(await (await fetch(tab.snapshot, { cache: 'no-store' })).text()), cfg);
     model.source = 'snapshot';
   }
   model.loadedAt = new Date();
+}
+
+// Switch sheet/tab: keep who's here, table count and settings; pins/exclusions are per tab.
+async function select(sheetId, tabs, i) {
+  const carry = state && { attend: state.attend, maxTables: state.maxTables, set: state.set };
+  const prev = cur;
+  cur = { sheetId, tabs, i };
+  storeKey = `bgt:${sheetId}:${tabKey(tabs[i])}`;
+  try { await loadSheet(); }
+  catch (err) { cur = prev; if (prev) storeKey = `bgt:${prev.sheetId}:${tabKey(curTab())}`; throw err; }
+  state = load();
+  if (carry) Object.assign(state, carry);
+  try { localStorage.setItem('bgt:sel', JSON.stringify({ sheetId, key: tabKey(tabs[i]) })); } catch {}
+  shown = 10; openAlts.clear(); last = null;
+  renderTabs(); renderBanner(); update();
+}
+
+function renderTabs() {
+  const el = $('#tabSwitch');
+  el.hidden = cur.tabs.length < 2;
+  el.innerHTML = cur.tabs.map((t, i) => `<button type="button" data-tab="${i}" aria-pressed="${i === cur.i}">${esc(t.name)}</button>`).join('');
 }
 async function reload() {
   $('#reload').disabled = true;
@@ -379,20 +417,49 @@ async function reload() {
   update();
 }
 
+const getJSON = url => fetch(url, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
+
 async function init() {
+  wire();
   try {
     cfg = await (await fetch('config.json')).json();
     document.title = $('#title').textContent = cfg.title || 'Game Tables';
-    storeKey = `bgt:${cfg.sheetId}:${cfg.tab}`;
-    state = load();
-    bgg = await fetch('data/bgg.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null) ?? { games: {} };
-    await loadSheet();
+    bgg = await getJSON('data/bgg.json') ?? { games: {} };
+    sheets = (await getJSON('data/tabs.json'))?.sheets?.filter(s => s.tabs.length) ?? [];
+    if (!sheets.length) sheets = [{ sheetId: cfg.sheetId, tabs: [{ name: cfg.tab, headerRow: cfg.headerRow, snapshot: 'data/sheet-Core_Games.csv' }] }];
+    try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
+    let sel = null;
+    try { sel = JSON.parse(localStorage.getItem('bgt:sel')); } catch {}
+    const pool = custom ? [custom] : sheets;
+    const sh = pool.find(s => s.sheetId === sel?.sheetId) ?? pool[0];
+    const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key));
+    await select(sh.sheetId, sh.tabs, i);
   } catch (err) {
-    $('#results').innerHTML = `<div class="empty"><h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p></div>`;
-    return;
+    $('#results').innerHTML = `<div class="empty"><h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>
+      ${custom ? '<div class="btns"><button id="dropCustom">Back to the retreat sheet</button></div>' : ''}</div>`;
   }
-  renderBanner();
-  wire();
-  update();
+}
+
+async function useCustom() {
+  const v = $('#customUrl').value.trim(), id = sheetIdFromUrl(v);
+  if (!id) { alert('That doesn\'t look like a Google Sheets link.'); return; }
+  const known = sheets.find(s => s.sheetId === id);
+  const gid = gidFromUrl(v);
+  const tabs = known?.tabs ?? [{ gid: gid ?? '0', name: 'Your sheet' }];
+  const btn = $('#useCustom');
+  btn.disabled = true; btn.textContent = 'Loading…';
+  try {
+    await select(id, tabs, Math.max(0, tabs.findIndex(t => gid && t.gid === gid)));
+    custom = known ? null : { sheetId: id, tabs };
+    try { custom ? localStorage.setItem('bgt:custom', JSON.stringify(custom)) : localStorage.removeItem('bgt:custom'); } catch {}
+    renderBanner(); renderGameList();
+  } catch (err) { alert(err.message); }
+  btn.disabled = false; btn.textContent = 'Use it';
+}
+
+async function dropCustom() {
+  custom = null;
+  try { localStorage.removeItem('bgt:custom'); } catch {}
+  await select(sheets[0].sheetId, sheets[0].tabs, 0);
 }
 init();

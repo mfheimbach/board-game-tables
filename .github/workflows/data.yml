@@ -2,6 +2,9 @@ name: Update game data
 # Fetches BGG data for the games in the sheet (token stays here, server-side).
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/**', 'web/config.json', 'web/sheet.js']
   schedule:
     - cron: '23 4 * * *'   # daily, so newly added games get player counts
 permissions:

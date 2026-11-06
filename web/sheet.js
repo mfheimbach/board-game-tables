@@ -7,6 +7,36 @@ export function sheetCsvUrl(cfg) {
   return `https://docs.google.com/spreadsheets/d/${cfg.sheetId}/gviz/tq?${q}`;
 }
 
+// One tab as CSV via the gviz endpoint (works from browsers for link-shared sheets).
+// tab = { gid } or { name }; the range starts at the header row so gviz keeps the
+// header labels (it drops text in numeric columns otherwise).
+export function gvizUrl(sheetId, tab, headerRow) {
+  const q = new URLSearchParams({ tqx: 'out:csv', headers: '1', range: `A${headerRow}:ZZ` });
+  if (tab.gid !== undefined && tab.gid !== null) q.set('gid', tab.gid); else q.set('sheet', tab.name);
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?${q}`;
+}
+
+export const sheetIdFromUrl = u => (String(u).match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]{20,})/) || String(u).match(/^([a-zA-Z0-9_-]{30,})$/) || [])[1] ?? null;
+export const gidFromUrl = u => (String(u).match(/[#&?]gid=(\d+)/) || [])[1] ?? null;
+
+// Fetch + parse one tab. Unknown header row: try likely rows until the BGG column
+// is the header. Returns { model, headerRow, csv } or throws if the tab doesn't fit.
+export async function loadTab(fetchText, sheetId, tab, cfg) {
+  const tries = [...new Set([tab.headerRow, cfg.headerRow, 1, 2, 3, 4, 5, 6, 7, 8].filter(Boolean))];
+  let lastErr = new Error('no fitting header row');
+  for (const h of tries) {
+    try {
+      const csv = await fetchText(gvizUrl(sheetId, tab, h));
+      const rows = parseCSV(csv);
+      if (!rows.length || !rows[0].some(c => norm(c) === norm(cfg.columns.bgg))) continue;
+      const model = parseSheet(rows, cfg);
+      if (model.games.length && model.players.length) return { model, headerRow: h, csv };
+      lastErr = new Error('no games or players found');
+    } catch (e) { lastErr = e; if (/HTTP|abort|fetch/i.test(e.message)) throw e; }
+  }
+  throw lastErr;
+}
+
 export function parseCSV(text) {
   const rows = []; let row = [], cell = '', q = false;
   for (let i = 0; i < text.length; i++) {

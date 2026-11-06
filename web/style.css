@@ -154,3 +154,7 @@ dialog::backdrop { background: rgb(0 0 0 / .45); }
 .chip.g-pin .want, .chip.g-lock .want { color: inherit; opacity: .75; }
 .chip.g-out { background: transparent; border-style: dashed; color: var(--muted); text-decoration: line-through; }
 .chip.g-off { opacity: .45; }
+.seg.tabs button { font-weight: 600; }
+.custom { margin-top: 14px; }
+.custom summary { cursor: pointer; color: var(--muted); }
+.custom input { width: 100%; margin-top: 8px; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 10px; background: var(--card); color: var(--ink); font: inherit; }

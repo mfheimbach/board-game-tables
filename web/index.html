@@ -21,6 +21,7 @@
 
 <div class="layout">
   <aside class="controls">
+    <div id="tabSwitch" class="seg tabs" hidden></div>
     <section class="who">
       <div class="row-between">
         <h2>Who's playing? <span id="whoCount" class="muted"></span></h2>
@@ -115,6 +116,12 @@
     <section>
       <h3>Data</h3>
       <div id="dataInfo" class="small"></div>
+      <details class="custom">
+        <summary class="small">Use another sheet</summary>
+        <p class="muted small">Paste the link to a tab of a Google Sheet shared as "anyone with the link", with the same columns as ours. Only this device switches.</p>
+        <input id="customUrl" type="url" inputmode="url" placeholder="https://docs.google.com/spreadsheets/d/…" autocomplete="off">
+        <div class="btns"><button type="button" id="useCustom">Use it</button><button type="button" id="dropCustom">Back to the retreat sheet</button></div>
+      </details>
       <div class="btns">
         <button type="button" id="reload">Reload ratings</button>
         <button type="button" id="resetAll" class="danger">Reset everything</button>
