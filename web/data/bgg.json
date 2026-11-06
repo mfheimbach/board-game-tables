@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-06T19:14:31.256Z",
+ "updated": "2026-11-06T19:33:03.804Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -35,6 +35,29 @@
     5
    ]
   },
+  "8829": {
+   "name": "Nobody Is Perfect",
+   "year": 1992,
+   "min": 3,
+   "max": 10,
+   "minTime": 45,
+   "maxTime": 45,
+   "weight": 1.5303,
+   "best": [
+    5,
+    6,
+    8
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ]
+  },
   "37111": {
    "name": "Battlestar Galactica: The Board Game",
    "year": 2008,
@@ -50,6 +73,22 @@
     4,
     5,
     6
+   ]
+  },
+  "63888": {
+   "name": "Innovation",
+   "year": 2010,
+   "min": 2,
+   "max": 5,
+   "minTime": 20,
+   "maxTime": 60,
+   "weight": 2.7832,
+   "best": [
+    2
+   ],
+   "rec": [
+    2,
+    3
    ]
   },
   "148319": {
@@ -86,6 +125,30 @@
     5
    ]
   },
+  "156129": {
+   "name": "Deception: Murder in Hong Kong",
+   "year": 2014,
+   "min": 4,
+   "max": 12,
+   "minTime": 20,
+   "maxTime": 20,
+   "weight": 1.5926,
+   "best": [
+    6,
+    7,
+    8
+   ],
+   "rec": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
   "170216": {
    "name": "Blood Rage",
    "year": 2015,
@@ -98,6 +161,24 @@
     4
    ],
    "rec": []
+  },
+  "234260": {
+   "name": "Prey Another Day",
+   "year": 2023,
+   "min": 2,
+   "max": 5,
+   "minTime": 15,
+   "maxTime": 20,
+   "weight": 1.0989,
+   "best": [
+    4,
+    5
+   ],
+   "rec": [
+    3,
+    4,
+    5
+   ]
   },
   "237182": {
    "name": "Root",
@@ -113,6 +194,23 @@
    "rec": [
     3,
     4
+   ]
+  },
+  "245659": {
+   "name": "Vampire: The Masquerade – Vendetta",
+   "year": 2020,
+   "min": 3,
+   "max": 6,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 2.6977,
+   "best": [
+    4
+   ],
+   "rec": [
+    3,
+    4,
+    5
    ]
   },
   "256960": {
@@ -183,6 +281,47 @@
    ],
    "rec": []
   },
+  "295192": {
+   "name": "Tinderblox",
+   "year": 2020,
+   "min": 2,
+   "max": 6,
+   "minTime": 3,
+   "maxTime": 15,
+   "weight": 1,
+   "best": [
+    3,
+    4
+   ],
+   "rec": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "300905": {
+   "name": "Top Ten",
+   "year": 2020,
+   "min": 4,
+   "max": 9,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 1.08,
+   "best": [
+    6,
+    7
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
   "301880": {
    "name": "Raiders of Scythia",
    "year": 2020,
@@ -220,6 +359,25 @@
     5
    ]
   },
+  "319329": {
+   "name": "B Movies",
+   "year": 2021,
+   "min": 3,
+   "max": 6,
+   "minTime": 30,
+   "maxTime": 45,
+   "weight": 1,
+   "best": [
+    5,
+    6
+   ],
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ]
+  },
   "321608": {
    "name": "Hegemony: Lead Your Class to Victory",
    "year": 2023,
@@ -253,6 +411,67 @@
     2,
     3,
     4
+   ]
+  },
+  "327778": {
+   "name": "ito",
+   "year": 2019,
+   "min": 2,
+   "max": 10,
+   "minTime": 10,
+   "maxTime": 10,
+   "weight": 1.011,
+   "best": [
+    5,
+    6
+   ],
+   "rec": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "329714": {
+   "name": "Dreadful Circus",
+   "year": 2021,
+   "min": 4,
+   "max": 8,
+   "minTime": 45,
+   "maxTime": 45,
+   "weight": 2.2381,
+   "best": [
+    6
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  "329839": {
+   "name": "So Clover!",
+   "year": 2021,
+   "min": 3,
+   "max": 6,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 1.1279,
+   "best": [
+    3,
+    4
+   ],
+   "rec": [
+    2,
+    3,
+    4,
+    5,
+    6
    ]
   },
   "335212": {
@@ -411,6 +630,42 @@
     4
    ]
   },
+  "375651": {
+   "name": "That's Not a Hat",
+   "year": 2023,
+   "min": 3,
+   "max": 8,
+   "minTime": 15,
+   "maxTime": 15,
+   "weight": 1.0647,
+   "best": [
+    5
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  "379629": {
+   "name": "Knarr",
+   "year": 2023,
+   "min": 2,
+   "max": 4,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 1.9167,
+   "best": [
+    3
+   ],
+   "rec": [
+    2,
+    3,
+    4
+   ]
+  },
   "380109": {
    "name": "Gibberers: The Word Game of Language Invention and Civilization Development",
    "year": 2024,
@@ -464,6 +719,73 @@
     6
    ]
   },
+  "400495": {
+   "name": "JinxO",
+   "year": 2024,
+   "min": 3,
+   "max": 7,
+   "minTime": 30,
+   "maxTime": 45,
+   "weight": 1.05,
+   "best": [
+    5,
+    6
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  "407233": {
+   "name": "Tenby",
+   "year": 2025,
+   "min": 1,
+   "max": 5,
+   "minTime": 30,
+   "maxTime": 60,
+   "weight": 2.0833,
+   "best": [
+    2,
+    3
+   ],
+   "rec": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "408547": {
+   "name": "Things in Rings",
+   "year": 2024,
+   "min": 2,
+   "max": 6,
+   "minTime": 20,
+   "maxTime": 20,
+   "weight": 1.3284,
+   "best": [
+    4
+   ],
+   "rec": []
+  },
+  "409583": {
+   "name": "Take the Throne",
+   "year": 2026,
+   "min": 2,
+   "max": 5,
+   "minTime": 5,
+   "maxTime": 15,
+   "weight": 2,
+   "best": [
+    4
+   ],
+   "rec": [
+    3,
+    4
+   ]
+  },
   "414117": {
    "name": "Wroth",
    "year": 2025,
@@ -500,6 +822,38 @@
     5
    ]
   },
+  "416851": {
+   "name": "Castle Combo",
+   "year": 2024,
+   "min": 2,
+   "max": 5,
+   "minTime": 10,
+   "maxTime": 25,
+   "weight": 1.7346,
+   "best": [
+    2
+   ],
+   "rec": [
+    2,
+    3,
+    4
+   ]
+  },
+  "419639": {
+   "name": "Mind the Lines",
+   "year": 2024,
+   "min": 2,
+   "max": 6,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 1.0909,
+   "best": [
+    4,
+    5,
+    6
+   ],
+   "rec": []
+  },
   "421246": {
    "name": "Neon Hope",
    "year": 2026,
@@ -508,6 +862,24 @@
    "minTime": 90,
    "maxTime": 120,
    "weight": 3,
+   "best": [
+    2
+   ],
+   "rec": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "421254": {
+   "name": "Fame & Fable",
+   "year": 2026,
+   "min": 1,
+   "max": 4,
+   "minTime": 45,
+   "maxTime": 90,
+   "weight": 2.2,
    "best": [
     2
    ],
@@ -536,6 +908,43 @@
     4
    ]
   },
+  "424751": {
+   "name": "Cat and the Tower",
+   "year": 2024,
+   "min": 1,
+   "max": 5,
+   "minTime": 15,
+   "maxTime": 30,
+   "weight": 1.3182,
+   "best": [
+    3,
+    4
+   ],
+   "rec": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  "428635": {
+   "name": "Ruins",
+   "year": 2025,
+   "min": 2,
+   "max": 5,
+   "minTime": 40,
+   "maxTime": 40,
+   "weight": 2.2286,
+   "best": [
+    4
+   ],
+   "rec": [
+    3,
+    4,
+    5
+   ]
+  },
   "430533": {
    "name": "Formaggio",
    "year": 2025,
@@ -552,6 +961,24 @@
     2,
     3,
     4
+   ]
+  },
+  "432456": {
+   "name": "dnup",
+   "year": 2024,
+   "min": 2,
+   "max": 5,
+   "minTime": 15,
+   "maxTime": 20,
+   "weight": 1.3247,
+   "best": [
+    4
+   ],
+   "rec": [
+    2,
+    3,
+    4,
+    5
    ]
   },
   "436217": {
@@ -587,6 +1014,22 @@
     2,
     3,
     4
+   ]
+  },
+  "436842": {
+   "name": "The Wondrous Museum",
+   "year": 2025,
+   "min": 1,
+   "max": 5,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 2.4,
+   "best": [
+    2
+   ],
+   "rec": [
+    1,
+    2
    ]
   },
   "437705": {
@@ -626,6 +1069,78 @@
     4
    ]
   },
+  "441850": {
+   "name": "Echoes of Time",
+   "year": 2025,
+   "min": 2,
+   "max": 4,
+   "minTime": 30,
+   "maxTime": 60,
+   "weight": 2.4615,
+   "best": [
+    2
+   ],
+   "rec": [
+    2,
+    3,
+    4
+   ]
+  },
+  "444234": {
+   "name": "For the Gods!",
+   "year": 2026,
+   "min": 2,
+   "max": 4,
+   "minTime": 30,
+   "maxTime": 60,
+   "weight": 2.2,
+   "best": [
+    3,
+    4
+   ],
+   "rec": [
+    2,
+    3,
+    4
+   ]
+  },
+  "446930": {
+   "name": "Match Me If You Can",
+   "year": 2025,
+   "min": 3,
+   "max": 8,
+   "minTime": 15,
+   "maxTime": 30,
+   "weight": 1,
+   "best": [
+    5,
+    6
+   ],
+   "rec": [
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  "447379": {
+   "name": "Carnival of Sins",
+   "year": 2025,
+   "min": 2,
+   "max": 5,
+   "minTime": 10,
+   "maxTime": 20,
+   "weight": 1.4667,
+   "best": [
+    4,
+    5
+   ],
+   "rec": [
+    3,
+    4,
+    5
+   ]
+  },
   "449854": {
    "name": "The Dawn of Pangaea",
    "year": 2026,
@@ -644,6 +1159,25 @@
     4
    ]
   },
+  "451924": {
+   "name": "Biddle",
+   "year": 2025,
+   "min": 2,
+   "max": 5,
+   "minTime": 25,
+   "maxTime": 35,
+   "weight": 1.1429,
+   "best": [
+    4,
+    5
+   ],
+   "rec": [
+    2,
+    3,
+    4,
+    5
+   ]
+  },
   "452817": {
    "name": "Emberheart",
    "year": 2025,
@@ -659,6 +1193,97 @@
     3,
     4
    ]
+  },
+  "454103": {
+   "name": "Magical Athlete",
+   "year": 2025,
+   "min": 2,
+   "max": 6,
+   "minTime": 30,
+   "maxTime": 30,
+   "weight": 1.1818,
+   "best": [
+    5,
+    6
+   ],
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  "456860": {
+   "name": "Yotei",
+   "year": 2025,
+   "min": 2,
+   "max": 4,
+   "minTime": 30,
+   "maxTime": 60,
+   "weight": 2.3333,
+   "best": [
+    3
+   ],
+   "rec": [
+    2,
+    3,
+    4
+   ]
+  },
+  "463441": {
+   "name": "Flip 7: With A Vengeance",
+   "year": 2026,
+   "min": 3,
+   "max": 28,
+   "minTime": 20,
+   "maxTime": 20,
+   "weight": 1.0385,
+   "best": [
+    4,
+    5,
+    6
+   ],
+   "rec": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  "465286": {
+   "name": "Trash Poker",
+   "year": 2026,
+   "min": 1,
+   "max": 4,
+   "minTime": 45,
+   "maxTime": 90,
+   "weight": 2.6667,
+   "best": [
+    4
+   ],
+   "rec": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  "465849": {
+   "name": "Codenames: Critical Role Adventures",
+   "year": 2026,
+   "min": 2,
+   "max": 4,
+   "minTime": 25,
+   "maxTime": 25,
+   "weight": 2.7143,
+   "best": [
+    2,
+    3,
+    4
+   ],
+   "rec": []
   },
   "469375": {
    "name": "Deckers: Duplicity",
