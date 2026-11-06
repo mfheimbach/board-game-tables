@@ -135,7 +135,7 @@ function tableHtml(t) {
   const g = model.games[t.g], b = bgg.games[g.id], lk = lockOf(g.id);
   const time = b?.minTime ? `${b.minTime}${b.maxTime && b.maxTime !== b.minTime ? '–' + b.maxTime : ''}′` : '';
   return `<div class="tbl${lk ? ' locked' : ''}">
-    <div><a class="game" href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">${esc(gName(g))}</a><span class="meta">${t.p.length}p${time ? ' · ' + time : ''}</span></div>
+    <div>${g.id > 0 ? `<a class="game" href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">${esc(gName(g))}</a>` : `<span class="game">${esc(gName(g))}</span>`}<span class="meta">${t.p.length}p${time ? ' · ' + time : ''}</span></div>
     <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div>
     <div class="acts">
       <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>
@@ -224,7 +224,7 @@ function renderGameList() {
     const pick = lk ? `<div class="pick">${[...att].map(p => `<button type="button" class="chip" data-pickp="${g.id}:${esc(model.players[p])}" aria-pressed="${lk.players.includes(model.players[p])}">${esc(model.players[p])}</button>`).join('')}</div>` : '';
     return `<li class="gl${out ? ' out' : ''}"><div class="gl-main">
       <div class="gl-name"><span class="n">${esc(gName(g))}</span>${badges}
-        <span class="d">${cnt} · ${want} want · ${would} would${w ? ` · weight ${w.toFixed(1)}` : ''} · <a href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">BGG</a></span></div>
+        <span class="d">${cnt} · ${want} want · ${would} would${w ? ` · weight ${w.toFixed(1)}` : ''}${g.id > 0 ? ` · <a href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">BGG</a>` : ' · not on BGG'}</span></div>
       <button type="button" class="act${lk ? ' on' : ''}" data-pin="${g.id}" title="Must be played">${ICON.pin}</button>
       <button type="button" class="act${out ? ' on out' : ''}" data-exclude="${g.id}" title="Leave out">${ICON.drop}</button>
     </div>${pick}</li>`;

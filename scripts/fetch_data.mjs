@@ -41,7 +41,7 @@ for (const sheetId of sheetIds) {
       if (kept.some(k => k.name === tab.name)) continue;
       await writeFile(new URL(`data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, root), csv);
       kept.push({ gid: tab.gid ?? null, name: tab.name ?? `Tab ${tab.gid}`, headerRow, snapshot: `data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, games: model.games.length, players: model.players.length });
-      model.games.forEach(g => allIds.add(g.id));
+      model.games.forEach(g => { if (g.id > 0) allIds.add(g.id); });
       console.log(`  ✓ ${tab.name ?? tab.gid}: ${model.players.length} players, ${model.games.length} games (header row ${headerRow})`);
       model.warnings.forEach(w => console.log('      warning:', w));
     } catch (e) { console.log(`  ✗ ${tab.name ?? tab.gid}: ${e.message}`); }

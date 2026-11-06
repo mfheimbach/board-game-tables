@@ -74,6 +74,8 @@ export function parseCounts(v, max = 12) {
   return [...out].sort((a, b) => a - b);
 }
 
+// Stable negative id for games without a BGG entry.
+export const localId = name => { let h = 7; for (const c of name.toLowerCase()) h = (h * 31 + c.codePointAt(0)) | 0; return -(Math.abs(h) % 1e9) - 1; };
 const norm = s => String(s ?? '').trim().toLowerCase();
 
 // Which players does a cell like "Christoph, Daniel" name?
@@ -102,7 +104,10 @@ export function parseSheet(rows, cfg) {
     rec: find(col.recPlayers), best: find(col.bestPlayers),
   };
   const known = new Set(Object.values(ci).filter(i => i >= 0));
-  const body = rows.slice(h + 1).filter(r => bggId(r[ci.bgg]) !== null);
+  // Rows with a BGG id, or (small/obscure games) a real name instead. Totals rows
+  // ("40") have neither and are skipped.
+  const nameOf = r => (ci.game >= 0 ? String(r[ci.game] ?? '').trim() : '');
+  const body = rows.slice(h + 1).filter(r => bggId(r[ci.bgg]) !== null || /\p{L}/u.test(nameOf(r)));
 
   const isRating = v => /^\s*$/.test(v) || /^\s*-?\d+(\.\d+)?\s*$/.test(v);
   let playerCols = head.map((c, i) => i).filter(i =>
@@ -126,7 +131,7 @@ export function parseSheet(rows, cfg) {
   const seen = new Set();
   const games = [];
   for (const r of body) {
-    const id = bggId(r[ci.bgg]);
+    const id = bggId(r[ci.bgg]) ?? localId(nameOf(r));
     if (seen.has(id)) { warnings.push(`Duplicate BGG id ${id} skipped`); continue; }
     seen.add(id);
     const g = {
