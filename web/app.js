@@ -1,4 +1,4 @@
-import { loadTab, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
+import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -445,9 +445,14 @@ async function useCustom() {
   if (!id) { alert('That doesn\'t look like a Google Sheets link.'); return; }
   const known = sheets.find(s => s.sheetId === id);
   const gid = gidFromUrl(v);
-  const tabs = known?.tabs ?? [{ gid: gid ?? '0', name: 'Your sheet' }];
   const btn = $('#useCustom');
   btn.disabled = true; btn.textContent = 'Loading…';
+  let tabs = known?.tabs;
+  if (!tabs) {
+    const tab = { gid: gid ?? '0' };
+    tab.name = await fetchTitle(fetchText, id, tab) ?? 'Your sheet';
+    tabs = [tab];
+  }
   try {
     await select(id, tabs, Math.max(0, tabs.findIndex(t => gid && t.gid === gid)));
     custom = known ? null : { sheetId: id, tabs };

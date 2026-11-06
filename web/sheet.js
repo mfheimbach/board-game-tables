@@ -37,6 +37,16 @@ export async function loadTab(fetchText, sheetId, tab, cfg) {
   throw lastErr;
 }
 
+// Cell A1 of a tab holds its title by convention ("CORE GAMES").
+export async function fetchTitle(fetchText, sheetId, tab) {
+  const q = new URLSearchParams({ tqx: 'out:csv', headers: '0', range: 'A1:A1' });
+  if (tab.gid !== undefined && tab.gid !== null) q.set('gid', tab.gid); else q.set('sheet', tab.name);
+  try {
+    const cell = (parseCSV(await fetchText(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?${q}`))[0] ?? [])[0];
+    return String(cell ?? '').trim() || null;
+  } catch { return null; }
+}
+
 export function parseCSV(text) {
   const rows = []; let row = [], cell = '', q = false;
   for (let i = 0; i < text.length; i++) {
