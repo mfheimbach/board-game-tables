@@ -158,3 +158,25 @@ dialog::backdrop { background: rgb(0 0 0 / .45); }
 .custom { margin-top: 14px; }
 .custom summary { cursor: pointer; color: var(--muted); }
 .custom input { width: 100%; margin-top: 8px; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 10px; background: var(--card); color: var(--ink); font: inherit; }
+/* game sheet + tappable seats/names */
+button.seat { border: 0; font: inherit; font-size: .86rem; cursor: pointer; }
+button.game { border: 0; background: none; padding: 0; font: inherit; font-weight: 650; text-align: left; color: inherit; cursor: pointer; }
+button.game:hover { text-decoration: underline; }
+.gl-name button.n { border: 0; background: none; padding: 0; font: inherit; font-weight: 600; text-align: left; color: inherit; }
+.chip.g { -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+#gameSheet .sheet-head h2 a { text-decoration: none; }
+#gameSheet .sheet-head p { margin: 2px 0 0; }
+.pchip { display: inline-flex; align-items: baseline; gap: 6px; min-height: 40px; padding: 8px 12px; border-radius: 999px; border: 1.5px solid transparent; font-weight: 550; }
+.pchip small { font-size: .72rem; opacity: .75; }
+.pchip.r2 { background: var(--r2-bg); color: var(--r2); }
+.pchip.r1 { background: var(--r1-bg); color: var(--r1); }
+.pchip.r0 { background: var(--r0-bg); color: var(--r0); }
+.pchip.rq { background: var(--rq-bg); color: var(--rq); }
+.pchip.force { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.pchip.ban { background: transparent; color: var(--muted); border: 1.5px dashed var(--muted); text-decoration: line-through; }
+.pchip.away { opacity: .45; }
+.pchip.focus { box-shadow: 0 0 0 3px var(--ink); }
+.notes p { margin: 10px 0 0; }
+.notes .link { border: 0; background: none; color: var(--accent); padding: 0; font: inherit; text-decoration: underline; }
+.sheet .done { width: 100%; min-height: 48px; border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 1rem; }
+#clearPeople { border: 0; background: none; color: var(--accent); }

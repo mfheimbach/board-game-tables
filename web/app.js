@@ -9,11 +9,11 @@ const ICON = {
   pin: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6 4 3H6l4-3zM12 13v7"/></svg>',
 };
 const DEFAULTS = {
-  attend: null, maxTables: 3, locks: [], excluded: [],
+  attend: null, maxTables: 3, locks: [], excluded: [], bans: {},
   set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true },
 };
 
-let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false;
+let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, sheetGame = null, sheetFocus = null;
 let sheets = [], custom = null, cur = null;   // cur = { sheetId, tabs, i }
 const openAlts = new Set();
 
@@ -21,7 +21,7 @@ const openAlts = new Set();
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(storeKey));
-    if (s) return { ...structuredClone(DEFAULTS), ...s, set: { ...DEFAULTS.set, ...s.set } };
+    if (s) return { ...structuredClone(DEFAULTS), ...s, set: { ...DEFAULTS.set, ...s.set }, bans: s.bans ?? {} };
   } catch {}
   return structuredClone(DEFAULTS);
 }
@@ -54,13 +54,15 @@ function pack(alt) {
   const s = state.set, G = model.games, att = attendIdx(), attSet = new Set(att), pm = pIdx();
   const locks = state.locks.filter(l => gameById(l.id) >= 0);
   const lockFor = id => locks.find(l => l.id === id);
-  const buf = [model.players.length, G.length, alt ? alt.length : state.maxTables, +s.minRating,
+  // pinned games win over the table limit
+  const buf = [model.players.length, G.length, alt ? alt.length : Math.min(5, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
     alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200];
   buf.push(att.length, ...att);
   for (const g of G) {
     const st = status(g, attSet);
-    buf.push(st.counts.reduce((m, k) => m | (1 << k), 0), g.explainers.length, ...g.explainers, ...g.ratings);
+    const ban = bansOf(g.id).map(n => pm.get(n)).filter(i => i !== undefined);
+    buf.push(st.counts.reduce((m, k) => m | (1 << k), 0), g.explainers.length, ...g.explainers, ban.length, ...ban, ...g.ratings);
   }
   const lockedIds = new Set(locks.map(l => l.id));
   const excl = G.map((_, i) => i).filter(i => alt ? !alt.includes(i)
@@ -105,13 +107,13 @@ function renderControls() {
     const would = [...att].filter(p => g.ratings[p] === 1).length;
     const lk = lockOf(g.id), out = state.excluded.includes(g.id), st = status(g, att);
     const off = st.noExplainer ? 'nobody here can explain it' : st.ownerAway ? 'owner is not here' : '';
-    return { g, want, would, lk, out, off, set: !!lk || out };
+    return { g, want, would, lk, out, off, bans: bansOf(g.id), set: !!lk || out || bansOf(g.id).length > 0 };
   }).sort((a, b) => b.want - a.want || b.would - a.would || gName(a.g).localeCompare(gName(b.g)));
   const visible = gamesOpen ? rows : rows.filter((r, i) => i < 12 || r.set);
   $('#gameChips').innerHTML = visible.map(r => {
     const cls = r.lk ? (r.lk.exact ? 'g-lock' : 'g-pin') : r.out ? 'g-out' : r.off ? 'g-off' : '';
     const icon = r.lk ? (r.lk.exact ? '🔒 ' : '📌 ') : r.out ? '⊘ ' : '';
-    const who = r.lk?.players.length ? ` · ${r.lk.players.join(', ')}` : '';
+    const who = (r.lk?.players.length ? ` · ✓ ${r.lk.players.join(', ')}` : '') + (r.bans.length ? ` · ✕ ${r.bans.join(', ')}` : '');
     const tip = r.off || `${r.want} want, ${r.would} would play`;
     return `<button class="chip g ${cls}" data-g="${r.g.id}" title="${esc(tip)}">${icon}${esc(gName(r.g))}${esc(who)}<span class="want">${r.want}</span></button>`;
   }).join('');
@@ -126,7 +128,8 @@ function seatHtml(g, p) {
   const cls = r < 0 && eff === 1 ? 'rq' : `r${eff}`;
   const ex = g.explainers.includes(p) ? ' 📖' : '';
   const tip = r < 0 ? 'no rating (guessed)' : ['won\'t play', 'would play', 'wants to play'][r];
-  return `<span class="seat ${cls}" title="${tip}${ex ? ', can explain' : ''}">${esc(model.players[p])}${r < 0 ? '?' : ''}${ex}</span>`;
+  const forced = lockOf(g.id)?.players.includes(model.players[p]) ? '✓ ' : '';
+  return `<button class="seat ${cls}" data-open="${g.id}" data-focus="${esc(model.players[p])}" title="${tip}${ex ? ', can explain' : ''} · tap to change who plays">${forced}${esc(model.players[p])}${r < 0 ? '?' : ''}${ex}</button>`;
 }
 
 function lockOf(id) { return state.locks.find(l => l.id === id); }
@@ -135,7 +138,7 @@ function tableHtml(t) {
   const g = model.games[t.g], b = bgg.games[g.id], lk = lockOf(g.id);
   const time = b?.minTime ? `${b.minTime}${b.maxTime && b.maxTime !== b.minTime ? '–' + b.maxTime : ''}′` : '';
   return `<div class="tbl${lk ? ' locked' : ''}">
-    <div>${g.id > 0 ? `<a class="game" href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">${esc(gName(g))}</a>` : `<span class="game">${esc(gName(g))}</span>`}<span class="meta">${t.p.length}p${time ? ' · ' + time : ''}</span></div>
+    <div><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${time ? ' · ' + time : ''}</span></div>
     <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div>
     <div class="acts">
       <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>
@@ -181,7 +184,8 @@ function renderResults(r, ms) {
     if (s.explainer && hasExplainers()) fixes.push(['Ignore explainers', 'explainer']);
     if (state.locks.length) fixes.push(['Clear locks', 'locks']);
     if (state.excluded.length) fixes.push(['Bring back left-out games', 'excluded']);
-    out.innerHTML = `<div class="empty"><h2>No way to seat exactly these ${nAtt}</h2><p class="muted">Try one of these:</p><div class="btns">${fixes.slice(0, 4).map(([t, k]) => `<button data-fix="${k}">${t}</button>`).join('')}</div></div>`;
+    const clash = conflicts();
+    out.innerHTML = `<div class="empty"><h2>No way to seat exactly these ${nAtt}</h2>${clash.map(c => `<p>⚠ ${esc(c)}</p>`).join('')}<p class="muted">Try one of these:</p><div class="btns">${fixes.slice(0, 4).map(([t, k]) => `<button data-fix="${k}">${t}</button>`).join('')}</div></div>`;
     return;
   }
   const list = r.combos.slice(0, shown);
@@ -221,13 +225,12 @@ function renderGameList() {
     const badges = [st.noCounts && 'no player counts', st.noExplainer && 'no explainer here', st.ownerAway && 'owner away']
       .filter(Boolean).map(b => `<span class="badge">${b}</span>`).join('');
     const w = bgg.games[g.id]?.weight;
-    const pick = lk ? `<div class="pick">${[...att].map(p => `<button type="button" class="chip" data-pickp="${g.id}:${esc(model.players[p])}" aria-pressed="${lk.players.includes(model.players[p])}">${esc(model.players[p])}</button>`).join('')}</div>` : '';
     return `<li class="gl${out ? ' out' : ''}"><div class="gl-main">
-      <div class="gl-name"><span class="n">${esc(gName(g))}</span>${badges}
+      <div class="gl-name"><button type="button" class="n" data-open="${g.id}">${esc(gName(g))}</button>${badges}
         <span class="d">${cnt} · ${want} want · ${would} would${w ? ` · weight ${w.toFixed(1)}` : ''}${g.id > 0 ? ` · <a href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">BGG</a>` : ' · not on BGG'}</span></div>
       <button type="button" class="act${lk ? ' on' : ''}" data-pin="${g.id}" title="Must be played">${ICON.pin}</button>
       <button type="button" class="act${out ? ' on out' : ''}" data-exclude="${g.id}" title="Leave out">${ICON.drop}</button>
-    </div>${pick}</li>`;
+    </div></li>`;
   }).join('');
 
   for (const el of document.querySelectorAll('.seg[data-key]')) {
@@ -258,6 +261,7 @@ function update() {
   save();
   renderControls();
   renderGameList();
+  renderSheet();
   clearTimeout(timer);
   timer = setTimeout(run, 20);
 }
@@ -278,7 +282,111 @@ function setLock(gameIdx, players, exact = true) {
   state.excluded = state.excluded.filter(x => x !== id);
 }
 
+// ---------- per-game "who plays it" ----------
+function bansOf(id) { return state.bans?.[id] ?? []; }
+
+// tap cycle per person: open -> ✓ plays -> ✕ never -> open. Forcing pins the game.
+function cyclePerson(id, name) {
+  const bans = new Set(bansOf(id));
+  const l = lockOf(id);
+  if (l?.players.includes(name)) {
+    l.players = l.players.filter(n => n !== name); l.exact = false;
+    bans.add(name);
+  } else if (bans.has(name)) bans.delete(name);
+  else {
+    if (!l) setLock(gameById(id), [], false);
+    const L = lockOf(id);
+    L.players = [...L.players, name]; L.exact = false;
+  }
+  if (bans.size) state.bans[id] = [...bans]; else delete state.bans[id];
+}
+
+function setGameState(id, v) {
+  const l = lockOf(id);
+  if (v === 'pin') { if (!l) setLock(gameById(id), [], false); return; }
+  state.locks = state.locks.filter(x => x.id !== id);
+  state.excluded = state.excluded.filter(x => x !== id);
+  if (v === 'out') state.excluded.push(id);
+}
+
+// people forced into two pinned games at once
+function conflicts() {
+  const seen = new Map(), out = [];
+  for (const l of state.locks) for (const n of l.players) {
+    if (seen.has(n)) out.push(`${n} is set for ${gName(model.games[gameById(seen.get(n))])} and ${gName(model.games[gameById(l.id)])}.`);
+    else seen.set(n, l.id);
+  }
+  return out;
+}
+
+function openGame(id, focus) {
+  sheetGame = id; sheetFocus = focus ?? null;
+  renderSheet();
+  const dlg = $('#gameSheet');
+  if (!dlg.open) dlg.showModal();
+  if (focus) dlg.querySelector(`[data-person="${CSS.escape(focus)}"]`)?.focus();
+}
+
+function renderSheet() {
+  const dlg = $('#gameSheet');
+  if (sheetGame === null) return;
+  const g = model.games[gameById(sheetGame)];
+  if (!g) { if (dlg.open) dlg.close(); return; }
+  const att = new Set(attendIdx()), st = status(g, att), lk = lockOf(g.id), out = state.excluded.includes(g.id);
+  const bans = new Set(bansOf(g.id)), forced = new Set(lk?.players ?? []);
+  const mode = lk ? 'pin' : out ? 'out' : 'normal';
+  const b = bgg.games[g.id], c = st.counts;
+  const cnt = c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? `${c[0]}–${c[c.length - 1]} players` : `${c.join(', ')} players`;
+  const time = b?.minTime ? ` · ${b.minTime}${b.maxTime && b.maxTime !== b.minTime ? '–' + b.maxTime : ''}′` : '';
+  const people = model.players.map((name, p) => ({ name, p, here: att.has(p), r: g.ratings[p] }))
+    .sort((a, z) => z.here - a.here || forced.has(z.name) - forced.has(a.name) || z.r - a.r);
+  const chip = ({ name, p, here, r }) => {
+    const st = forced.has(name) ? 'force' : bans.has(name) ? 'ban' : '';
+    const rc = r < 0 ? 'rq' : `r${r}`;
+    const icon = st === 'force' ? '✓ ' : st === 'ban' ? '✕ ' : '';
+    const label = r < 0 ? 'no rating' : ['won\'t play', 'would play', 'wants it'][r];
+    return `<button type="button" class="pchip ${rc} ${st}${here ? '' : ' away'}${name === sheetFocus ? ' focus' : ''}" data-person="${esc(name)}" title="${label}">${icon}${esc(name)}${g.explainers.includes(p) ? ' 📖' : ''}<small>${here ? (r < 0 ? '?' : r) : 'not here'}</small></button>`;
+  };
+  const notes = [];
+  if (lk?.exact) notes.push(`🔒 Locked as exactly these players. <button type="button" id="unexact" class="link">Let others join</button>`);
+  const zero = [...forced].filter(n => g.ratings[model.players.indexOf(n)] === 0);
+  if (zero.length) notes.push(`${esc(zero.join(', '))} rated it 0, seated anyway.`);
+  if (forced.size > Math.max(...c)) notes.push(`More players than the box says. Allowed anyway.`);
+  if (st.noExplainer) notes.push(mode === 'pin' ? 'Nobody here can explain it. Played anyway, since it\'s pinned.' : 'Nobody here can explain it, so it won\'t come up unless pinned.');
+  if (st.ownerAway) notes.push(mode === 'pin' ? 'Owner isn\'t here. Played anyway, since it\'s pinned.' : 'Owner isn\'t here, so it won\'t come up unless pinned.');
+  const clash = conflicts().filter(x => x.includes(gName(g)));
+  clash.forEach(x => notes.push(`⚠ ${esc(x)}`));
+
+  $('#gsTitle').innerHTML = g.id > 0
+    ? `<a href="https://boardgamegeek.com/boardgame/${g.id}" target="_blank" rel="noopener">${esc(gName(g))} ↗</a>` : esc(gName(g));
+  $('#gsMeta').textContent = `${cnt}${time}${b?.weight ? ` · weight ${b.weight.toFixed(1)}` : ''}`;
+  $('#gsState').innerHTML = [['normal', 'Normal'], ['pin', '📌 Must play'], ['out', '⊘ Leave out']]
+    .map(([v, t]) => `<button type="button" data-gstate="${v}" aria-pressed="${mode === v}">${t}</button>`).join('');
+  $('#gsPeople').innerHTML = people.map(chip).join('');
+  $('#gsNotes').innerHTML = notes.map(n => `<p>${n}</p>`).join('');
+  $('#clearPeople').hidden = !forced.size && !bans.size;
+}
+
+// hold (or right-click) a game chip to open its sheet
+let pressTimer = null, longPressed = false;
+
 function wire() {
+  document.addEventListener('pointerdown', e => {
+    const c = e.target.closest('.chip.g');
+    if (!c) return;
+    longPressed = false;
+    clearTimeout(pressTimer);
+    pressTimer = setTimeout(() => { longPressed = true; navigator.vibrate?.(12); openGame(+c.dataset.g); }, 450);
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) document.addEventListener(ev, () => clearTimeout(pressTimer));
+  document.addEventListener('contextmenu', e => {
+    const c = e.target.closest('.chip.g');
+    if (!c) return;
+    e.preventDefault();
+    if (!longPressed) openGame(+c.dataset.g);
+  });
+  $('#gameSheet').addEventListener('click', e => { if (e.target === $('#gameSheet')) $('#gameSheet').close(); });
+  $('#gameSheet').addEventListener('close', () => { sheetGame = null; });
   document.addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b) return;
@@ -286,7 +394,12 @@ function wire() {
     if (d.tab !== undefined) { if (+d.tab !== cur.i) select(cur.sheetId, cur.tabs, +d.tab).catch(err => alert(err.message)); return; }
     if (b.id === 'useCustom') { useCustom(); return; }
     if (b.id === 'dropCustom') { dropCustom().then(() => { $('#customUrl').value = ''; renderGameList(); }).catch(err => alert(err.message)); return; }
-    if (d.p) {
+    if (d.open) { openGame(+d.open, d.focus); return; }
+    if (d.person) cyclePerson(sheetGame, d.person);
+    else if (d.gstate) setGameState(sheetGame, d.gstate);
+    else if (b.id === 'unexact') { lockOf(sheetGame).exact = false; }
+    else if (b.id === 'clearPeople') { const l = lockOf(sheetGame); if (l) { l.players = []; l.exact = false; } delete state.bans[sheetGame]; }
+    else if (d.p) {
       const cur = new Set(state.attend ?? model.players);
       cur.has(d.p) ? cur.delete(d.p) : cur.add(d.p);
       state.attend = model.players.filter(p => cur.has(p));
@@ -317,18 +430,19 @@ function wire() {
     else if (b.id === 'tMinus') state.maxTables = Math.max(1, state.maxTables - 1);
     else if (b.id === 'tPlus') state.maxTables = Math.min(5, state.maxTables + 1);
     else if (d.g) {
+      if (longPressed) { longPressed = false; return; }
       const id = +d.g;
       if (lockOf(id)) { state.locks = state.locks.filter(l => l.id !== id); state.excluded.push(id); }
       else if (state.excluded.includes(id)) state.excluded = state.excluded.filter(x => x !== id);
       else setLock(gameById(id), [], false);
     }
     else if (b.id === 'gamesMore') { gamesOpen = !gamesOpen; renderControls(); return; }
-    else if (b.id === 'gamesReset') { state.locks = []; state.excluded = []; }
+    else if (b.id === 'gamesReset') { state.locks = []; state.excluded = []; state.bans = {}; }
     else if (b.id === 'more') { shown += 20; renderResults(last.result, 0); return; }
     else if (d.fix) {
       const s = state.set;
       ({ tables: () => state.maxTables++, rating: () => { s.minRating = 1; }, source: () => { s.source = 'any'; },
-        explainer: () => { s.explainer = false; }, locks: () => { state.locks = []; }, excluded: () => { state.excluded = []; } })[d.fix]();
+        explainer: () => { s.explainer = false; }, locks: () => { state.locks = []; state.bans = {}; }, excluded: () => { state.excluded = []; } })[d.fix]();
     } else if (d.pin) {
       const id = +d.pin;
       if (lockOf(id)) state.locks = state.locks.filter(l => l.id !== id);

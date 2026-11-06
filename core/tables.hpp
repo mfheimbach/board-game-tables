@@ -21,6 +21,7 @@ using Mask = uint64_t;  // one bit per player, up to 64 players
 struct Game {
   uint32_t counts = 0;         // bit k set => a table of k players is allowed
   Mask explainers = 0;         // players who can explain the game
+  Mask banned = 0;             // players who must never sit at it (beats everything)
   std::vector<int8_t> rating;  // per player: 0, 1, 2, or -1 = blank
 };
 
@@ -75,6 +76,11 @@ class Solver {
     fcands.resize(fz.size());
     for (size_t i = 0; i < fz.size(); ++i) {
       addCandidates(fz[i].game, fz[i].req & att, fz[i].exact, fcands[i]);
+      // Forced players win over the rules: if they make the game impossible
+      // (no explainer among them and no room for one, too many for the box),
+      // relax explainer + player count for this table.
+      if (fcands[i].empty() && (fz[i].req & att) && !fz[i].exact)
+        addCandidates(fz[i].game, fz[i].req & att, false, fcands[i], true);
       sortByKey(fcands[i]);
       if (fcands[i].empty()) res.blockedFrozen.push_back((int)i);
     }
@@ -118,8 +124,9 @@ class Solver {
   }
 
   // All tables for game g among attendees. Players in `req` are always eligible
-  // (someone deliberately put them there); `exact` = only the table `req` itself.
-  void addCandidates(int g, Mask req, bool exact, std::vector<int>& out) {
+  // (someone deliberately put them there); `exact` = only the table `req` itself;
+  // `relaxed` = forced team that broke the rules: any size >= team, no explainer needed.
+  void addCandidates(int g, Mask req, bool exact, std::vector<int>& out, bool relaxed = false) {
     const Game& gm = G[g];
     auto rate = [&](int p, int& eff, bool& guess) {
       int r = p < (int)gm.rating.size() ? gm.rating[p] : -1;
@@ -141,19 +148,22 @@ class Solver {
     for (int p = 0; p < nP; ++p) {
       if (!(att >> p & 1)) continue;
       int eff; bool guess; rate(p, eff, guess);
+      if (!(req >> p & 1) && (gm.banned >> p & 1)) continue;
       if ((req >> p & 1) || eff >= o.minRating) {
         el.push_back(p); effs.push_back(eff); gs.push_back(guess);
       }
     }
-    int n = (int)el.size();
-    for (int k = std::max(o.minPerTable, 1); k <= std::min(n, 31); ++k) {
-      if (!(gm.counts >> k & 1)) continue;
+    int n = (int)el.size(), team = __builtin_popcountll(req);
+    uint32_t counts = gm.counts;
+    if (relaxed) counts |= ~0u << std::min(team, 31);
+    for (int k = std::max(relaxed ? team : o.minPerTable, 1); k <= std::min(n, 31); ++k) {
+      if (!(counts >> k & 1)) continue;
       std::vector<int> c(k);
       for (int i = 0; i < k; ++i) c[i] = i;
       while (true) {
         Mask m = 0; int sc = 0, gu = 0;
         for (int i = 0; i < k; ++i) { m |= Mask(1) << el[c[i]]; sc += effs[c[i]]; gu += gs[c[i]]; }
-        if ((m & req) == req && (!o.needExplainer || (m & gm.explainers))) {
+        if ((m & req) == req && (relaxed || !o.needExplainer || (m & gm.explainers))) {
           out.push_back((int)res.cands.size());
           res.cands.push_back({g, m, sc, gu});
         }

@@ -4,7 +4,8 @@
 //   nPlayers, nGames, maxTables, minRating, blankAsZero, needExplainer,
 //   minPerTable, keepCombos, keepSeatings, alternates, nodeCapMillions,
 //   nAttendees, attendee...,
-//   per game: countMask, nExplainers, explainer..., rating[nPlayers] (-1 = blank),
+//   per game: countMask, nExplainers, explainer..., nBanned, banned...,
+//             rating[nPlayers] (-1 = blank),
 //   nExcluded, excludedGame...,
 //   nFrozen, per frozen: game, exact, nReq, reqPlayer...
 // Output: JSON string, see bottom.
@@ -46,6 +47,7 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
   for (auto& g : games) {
     g.counts = (uint32_t)next();
     for (int n = next(); n > 0; --n) g.explainers |= Mask(1) << next();
+    for (int n = next(); n > 0; --n) g.banned |= Mask(1) << next();
     g.rating.resize(nP);
     for (int p = 0; p < nP; ++p) g.rating[p] = (int8_t)next();
   }

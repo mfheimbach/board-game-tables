@@ -45,7 +45,7 @@
         <h2>Games <span id="gameCount" class="muted"></span></h2>
         <span class="links"><button class="link" id="gamesReset" hidden>reset</button> <button class="link" id="gamesMore">all</button></span>
       </div>
-      <p class="muted small legend">Tap: 📌 must play → ⊘ leave out → normal. Number = how many here want it.</p>
+      <p class="muted small legend">Tap: 📌 must play → ⊘ leave out → normal. Hold a game, or tap it in a result, to choose who plays it. Number = how many here want it.</p>
       <div id="gameChips" class="chips"></div>
     </section>
   </aside>
@@ -127,6 +127,23 @@
         <button type="button" id="resetAll" class="danger">Reset everything</button>
       </div>
     </section>
+  </form>
+</dialog>
+
+<dialog id="gameSheet">
+  <form method="dialog" class="sheet">
+    <header class="sheet-head">
+      <div><h2 id="gsTitle"></h2><p id="gsMeta" class="muted small"></p></div>
+      <button class="icon-btn" value="close" aria-label="Close">✕</button>
+    </header>
+    <div id="gsState" class="seg"></div>
+    <section>
+      <div class="row-between"><h3>Who plays it?</h3><button type="button" id="clearPeople" class="link">clear</button></div>
+      <p class="muted small">Tap: ✓ plays → ✕ never → open. Your picks beat ratings, explainer and player-count rules.</p>
+      <div id="gsPeople" class="chips"></div>
+      <div id="gsNotes" class="small notes"></div>
+    </section>
+    <button class="done">Done</button>
   </form>
 </dialog>
 

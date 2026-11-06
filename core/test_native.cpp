@@ -21,6 +21,7 @@ int main() {
       g.counts = 0;
       for (int k = 1; k <= 6; ++k) if (rng() % 2) g.counts |= 1u << k;
       g.explainers = rng() & ((1u << nP) - 1);
+      if (rng() % 2) g.banned = rng() & rng() & ((1u << nP) - 1);
       g.rating.resize(nP);
       for (auto& r : g.rating) r = (int8_t)((int)(rng() % 4) - 1);
     }
@@ -39,28 +40,38 @@ int main() {
 
     // brute-force candidates
     std::vector<BT> cand;
-    for (int g = 0; g < nG; ++g) {
-      bool isEx = std::find(excl.begin(), excl.end(), g) != excl.end();
-      const Frozen* f = nullptr;
-      for (auto& x : fz) if (x.game == g) f = &x;
-      if (isEx && !f) continue;
+    auto gen = [&](int g, const Frozen* f, bool relaxed) {
+      size_t before = cand.size();
+      int team = f ? __builtin_popcountll(f->req) : 0;
       for (Mask m = att; m; m = (m - 1) & att) {
         int k = __builtin_popcountll(m);
         long long sc = 0, gu = 0; bool ok = true;
         for (int p = 0; p < nP; ++p) if (m >> p & 1) {
           int r = G[g].rating[p], eff = r < 0 ? (o.blankAsZero ? 0 : 1) : r;
           bool forced = f && (f->req >> p & 1);
-          if (!forced && eff < o.minRating) ok = false;
+          if (!forced && (eff < o.minRating || (G[g].banned >> p & 1))) ok = false;
           sc += eff; gu += r < 0;
         }
         if (f && f->exact) { if (m != f->req) continue; }
         else {
-          if (!ok || k < o.minPerTable || !(G[g].counts >> k & 1)) continue;
-          if (o.needExplainer && !(m & G[g].explainers)) continue;
+          if (!ok) continue;
+          if (relaxed) { if (k < team) continue; }
+          else {
+            if (k < o.minPerTable || !(G[g].counts >> k & 1)) continue;
+            if (o.needExplainer && !(m & G[g].explainers)) continue;
+          }
           if (f && (m & f->req) != f->req) continue;
         }
         cand.push_back({g, m, sc * 128 - gu});
       }
+      return cand.size() > before;
+    };
+    for (int g = 0; g < nG; ++g) {
+      bool isEx = std::find(excl.begin(), excl.end(), g) != excl.end();
+      const Frozen* f = nullptr;
+      for (auto& x : fz) if (x.game == g) f = &x;
+      if (isEx && !f) continue;
+      if (!gen(g, f, false) && f && !f->exact && (f->req & att)) gen(g, f, true);
     }
     // brute-force seatings
     std::map<std::vector<int>, long long> bestBySet;
