@@ -136,7 +136,7 @@ export function computeStats(model, bgg, playerIdx) {
     coords.heavyAxis = Math.abs(cw) > 0.5;
   }
 
-  return { P, pl, byP, gs, pairs, agreeM, mech, cats, coords, groupMean, name, G, b };
+  return { P, pl, byP, gs, pairs, agreeM, mech, cats, coords, groupMean, name, G, b, allGames: model.allGames ?? G.length };
 }
 
 // ---------- rendering ----------
@@ -280,7 +280,7 @@ export function renderStats(S, open = new Set(['numbers'])) {
   const avgWantedW = wantW.reduce((s, o) => s + o.w * o.k, 0) / (wantW.reduce((s, o) => s + o.k, 0) || 1);
 
   const tiles = `<div class="tiles">
-    ${tile('🎲', S.G.length, 'games')}${tile('🧑‍🤝‍🧑', S.P.length, 'players')}
+    ${tile('🎲', S.G.length, S.G.length < S.allGames ? `of ${S.allGames} games on the table` : 'games')}${tile('🧑‍🤝‍🧑', S.P.length, 'players')}
     ${tile('✅', pct(allR.filter(x => x === 2).length / (allR.length || 1)), 'of ratings are “yes”')}
     ${tile('🚫', pct(allR.filter(x => x === 0).length / (allR.length || 1)), 'are “no”')}
     ${tile('❓', pct(1 - allR.length / ((S.G.length * S.P.length) || 1)), 'left blank')}
@@ -316,8 +316,8 @@ export function renderStats(S, open = new Set(['numbers'])) {
     award('🪦', 'Orphan', pick(gs, o => o.mean, -1), o => `${gn(o)} — avg ${f2(o.mean)}${bring(o.g)}`),
     award('🐎', 'Dark horse', pick(S.gs.filter(o => o.blanks >= S.P.length * 0.3 && o.n >= 2), o => o.mean), o => `${gn(o)} — ${o.blanks} blanks, but avg ${f2(o.mean)} from those who rated`),
     award('🧊', 'Most ignored', pick(S.gs, o => o.blanks).filter(o => o.blanks > 0), o => `${gn(o)} — ${o.blanks} of ${S.P.length} left it blank`),
-    award('🏋️', 'Heaviest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && S.b(o.g).weight > 0), o => S.b(o.g).weight), o => `${gn(o)} — weight ${S.b(o.g).weight.toFixed(1)}, ${o.n2} say yes`),
-    award('⏳', 'Longest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && (S.b(o.g).maxTime || S.b(o.g).minTime) > 0), o => S.b(o.g).maxTime || S.b(o.g).minTime), o => `${gn(o)} — up to ${S.b(o.g).maxTime || S.b(o.g).minTime} min on the box`),
+    award('🏋️', 'Heaviest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && S.b(o.g).weight > 0), o => S.b(o.g).weight), o => `${gn(o)} — weight ${S.b(o.g).weight.toFixed(1)}, ${o.n2} of ${o.n} say yes`),
+    award('⏳', 'Longest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && (S.b(o.g).maxTime || S.b(o.g).minTime) > 0), o => S.b(o.g).maxTime || S.b(o.g).minTime), o => `${gn(o)} — up to ${S.b(o.g).maxTime || S.b(o.g).minTime} min on the box, ${o.n2} of ${o.n} say yes`),
   ].join('');
 
   const tastes = S.pl.filter(x => x.favMech || x.favDesigner).map(x => `<li><b>${nm(x.p)}</b>

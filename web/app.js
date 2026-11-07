@@ -331,7 +331,16 @@ async function renderStatsView() {
   $('#statsWho').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === statsWho));
   let open = new Set(['numbers']);
   try { const o = JSON.parse(localStorage.getItem('bgt:statsOpen')); if (Array.isArray(o)) open = new Set(o); } catch {}
-  $('#statsBody').innerHTML = idx.length < 2 ? '<div class="empty muted">Need at least two players.</div>' : renderStats(computeStats(model, bgg, idx), open);
+  // "Only who's here" = tonight: present players and the games actually on the table
+  // (not left out; owner present if that rule is on). Pinned games always count.
+  let view = model;
+  if (statsWho === 'here') {
+    const att = new Set(idx), pinned = new Set(state.locks.map(l => l.id));
+    view = { ...model, allGames: model.games.length, games: model.games.filter(g => pinned.has(g.id) || (!state.excluded.includes(g.id) && !status(g, att).ownerAway)) };
+  }
+  $('#statsBody').innerHTML = idx.length < 2 ? '<div class="empty muted">Need at least two players.</div>'
+    : view.games.length < 3 ? '<div class="empty muted">Too few games left to say anything.</div>'
+    : renderStats(computeStats(view, bgg, idx), open);
 }
 function showStats(on) {
   $('#statsView').hidden = !on;
