@@ -1,5 +1,6 @@
 import { estimate, bin, boxTime, hm } from './time.js';
-import { computeStats, renderStats } from './stats.js';
+let statsMod = null;
+const loadStats = () => (statsMod ??= import('./stats.js'));
 import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
@@ -285,7 +286,7 @@ function renderGameList() {
   $('#gapLabel').textContent = gapLabel(state.set.gap ?? 3);
   const nb = Object.keys(bgg.games).length;
   $('#dataInfo').innerHTML = `
-    <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${model.source === 'live' ? 'live from the sheet' : 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
+    <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${{ live: 'live from the sheet', pending: 'saved copy, checking the sheet…' }[model.source] ?? 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
     <p>BoardGameGeek data: ${nb} games${bgg.updated ? `, updated ${new Date(bgg.updated).toLocaleDateString()}` : ''}${bgg.sample ? ' <span class="badge">sample data</span>' : ''}.</p>
     ${model.warnings.map(w => `<p class="muted">⚠ ${esc(w)}</p>`).join('')}`;
 }
@@ -294,10 +295,10 @@ function renderBanner() {
   const msgs = [];
   if (bgg.sample) msgs.push('Player counts are placeholders until the "Update game data" workflow has run.');
   if (custom) msgs.push('Using your own sheet (settings → Data to switch back). Player counts only for games in our sheets or with min/max columns.');
-  if (model.source !== 'live') msgs.push('Couldn\'t reach the sheet — showing the saved copy.');
+  if (model.source === 'snapshot') msgs.push('Couldn\'t reach the sheet — showing the saved copy.');
   $('#banner').hidden = !msgs.length;
   $('#banner').textContent = msgs.join(' ');
-  $('#dataState').textContent = model.source === 'live' ? '' : 'saved copy';
+  $('#dataState').textContent = { snapshot: 'saved copy', pending: 'updating…' }[model.source] ?? '';
 }
 
 // ---------- update loop ----------
@@ -322,7 +323,9 @@ function toast(msg) {
 
 // ---------- stats view ----------
 let statsWho = 'all';
-function renderStatsView() {
+async function renderStatsView() {
+  if ($('#statsView').hidden) return;
+  const { computeStats, renderStats } = await loadStats();
   if ($('#statsView').hidden) return;
   const idx = statsWho === 'here' ? attendIdx() : model.players.map((_, i) => i);
   $('#statsWho').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === statsWho));
@@ -499,6 +502,7 @@ function wire() {
     const b = e.target.closest('button');
     if (!b) return;
     const d = b.dataset;
+    if (b.closest('#statsWho')) { statsWho = b.value; renderStatsView(); return; }
     if (d.tab !== undefined) { if (+d.tab !== cur.i) select(cur.sheetId, cur.tabs, +d.tab).catch(err => alert(err.message)); return; }
     if (b.id === 'useCustom') { useCustom(); return; }
     if (b.id === 'dropCustom') { dropCustom().then(() => { $('#customUrl').value = ''; renderGameList(); }).catch(err => alert(err.message)); return; }
@@ -574,7 +578,6 @@ function wire() {
       state.set[k] = ['minRating', 'minPerTable'].includes(k) ? +b.value : b.value;
     } else if (b.id === 'openStats') { showStats($('#statsView').hidden); return; }
     else if (b.id === 'closeStats') { showStats(false); return; }
-    else if (b.closest('#statsWho')) { statsWho = b.value; renderStatsView(); return; }
     else if (d.share !== undefined) {
       $('#shareText').textContent = shareText(+d.share);
       $('#shareDlg').showModal(); return;
@@ -629,7 +632,7 @@ async function fetchModel(sheetId, tab) {
   } catch (err) {
     console.warn('live sheet failed:', err);
     if (!tab.snapshot) throw new Error(`Couldn't read that sheet (${err.message}). It must be shared as "anyone with the link" and use the same columns.`);
-    m = parseSheet(parseCSV(await (await fetch(tab.snapshot, { cache: 'no-store' })).text()), cfg);
+    m = parseSheet(parseCSV(await (await fetch(tab.snapshot, { cache: 'no-cache' })).text()), cfg);
     m.source = 'snapshot';
   }
   m.loadedAt = new Date();
@@ -645,8 +648,12 @@ async function select(sheetId, tabs, i) {
   const prev = cur, cached = tabCache.get(cacheKey(sheetId, tabs[i]));
   cur = { sheetId, tabs, i };
   storeKey = `bgt:${sheetId}:${tabKey(tabs[i])}`;
+  const firstLoad = !prev && !cached && tabs[i].snapshot;
   if (cached) model = cached;
-  else {
+  else if (firstLoad) {
+    model = parseSheet(parseCSV(await (await fetch(tabs[i].snapshot, { cache: 'no-cache' })).text()), cfg);
+    model.source = 'pending'; model.loadedAt = new Date();
+  } else {
     try { await loadSheet(); }
     catch (err) { cur = prev; if (prev) storeKey = `bgt:${prev.sheetId}:${tabKey(curTab())}`; throw err; }
   }
@@ -655,17 +662,17 @@ async function select(sheetId, tabs, i) {
   try { localStorage.setItem('bgt:sel', JSON.stringify({ sheetId, key: tabKey(tabs[i]) })); } catch {}
   shown = 10; openAlts.clear(); last = null;
   renderTabs(); renderBanner(); update();
-  if (cached) refreshInBackground(sheetId, tabs[i]);
+  if (cached || firstLoad) refreshInBackground(sheetId, tabs[i], model).then(prefetchTabs);
   else prefetchTabs();
+  (window.requestIdleCallback ?? (f => setTimeout(f, 1500)))(() => loadStats());
 }
 
-async function refreshInBackground(sheetId, tab) {
-  const before = tabCache.get(cacheKey(sheetId, tab));
+async function refreshInBackground(sheetId, tab, before = tabCache.get(cacheKey(sheetId, tab))) {
   try {
     const fresh = await fetchModel(sheetId, tab);
-    if (cur.sheetId === sheetId && curTab() === tab && fingerprint(fresh) !== fingerprint(before)) {
-      model = fresh; renderBanner(); update();
-    }
+    if (cur.sheetId !== sheetId || curTab() !== tab) return;
+    if (fingerprint(fresh) !== fingerprint(before)) { model = fresh; renderBanner(); update(); }
+    else if (fresh.source !== model.source) { model.source = fresh.source; renderBanner(); }
   } catch {}
 }
 
@@ -691,15 +698,21 @@ async function reload() {
   update();
 }
 
-const getJSON = url => fetch(url, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
+const getJSON = url => fetch(url, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
+
+function warmSolver() {
+  if (!slots.main) slots.main = { w: new Worker('worker.js'), busy: false, id: 0 };
+}
 
 async function init() {
+  warmSolver();
   wire();
   try {
-    cfg = await (await fetch('config.json')).json();
+    const [c, bj, tj] = await Promise.all([fetch('config.json', { cache: 'no-cache' }).then(r => r.json()), getJSON('data/bgg.json'), getJSON('data/tabs.json')]);
+    cfg = c;
     document.title = $('#title').textContent = cfg.title || 'Game Tables';
-    bgg = await getJSON('data/bgg.json') ?? { games: {} };
-    sheets = (await getJSON('data/tabs.json'))?.sheets?.filter(s => s.tabs.length) ?? [];
+    bgg = bj ?? { games: {} };
+    sheets = tj?.sheets?.filter(s => s.tabs.length) ?? [];
     if (!sheets.length) sheets = [{ sheetId: cfg.sheetId, tabs: [{ name: cfg.tab, headerRow: cfg.headerRow, snapshot: 'data/sheet-Core_Games.csv' }] }];
     try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
     let sel = null;
