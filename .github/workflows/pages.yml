@@ -26,7 +26,7 @@ jobs:
       - name: Version assets so phones never mix old and new files
         run: |
           V="${GITHUB_SHA::8}"
-          sed -i -E "s#(href|src)=\"(style\.css|app\.js)\"#\1=\"\2?v=$V\"#g" web/index.html
+          sed -i -E "s#(href|src)=\"(style\.css|app\.js)\"#\1=\"\2?v=$V\"#g" web/index.html web/help.html
           sed -i -E "s#from '\./([a-z]+\.js)'#from './\1?v=$V'#g" web/app.js
           sed -i -E "s#import\('\./([a-z]+\.js)'\)#import('./\1?v=$V')#g" web/app.js
           sed -i -E "s#new Worker\('worker\.js'\)#new Worker('worker.js?v=$V')#g" web/app.js

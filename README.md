@@ -4,6 +4,8 @@ Seats exactly the people who are here at up to N tables, so everyone plays a gam
 It runs entirely in the browser (C++ core compiled to WebAssembly), so it works on a phone and needs no server.
 
 ## How it works
+For players: the in-app page **How it works** (`web/help.html`, linked in the footer and settings) explains every rule in plain words.
+
 - **Ratings** load live from the Google Sheet when the page opens. If Google can't be reached, it uses the copy in `web/data/sheet.csv`.
 - **Player counts, play time and weight** come from BoardGameGeek. A GitHub Action fetches them with your BGG token, so the token never reaches a browser, and saves them to `web/data/bgg.json`.
 - **Search** (`core/tables.hpp`): exact cover by depth-first search over bitmasks. It branches on the lowest unseated player, keeps the 30 best game combinations, and prunes when a branch can't beat the 30th. Typical run: a few milliseconds.

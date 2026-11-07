@@ -261,7 +261,7 @@ const HORST = `<picture><source srcset="img/horst-chan-still.png" media="(prefer
 function renderResults(r, ms) {
   const nAtt = attendIdx().length, s = state.set, out = $('#results');
   $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · stopped after 1.5 s, best found' : ''}` : '';
-  if (nAtt < 2) { out.innerHTML = `<div class="empty">${HORST}<h2>Who's playing?</h2><p class="muted">Tap at least two names.</p></div>`; return; }
+  if (nAtt < 2) { out.innerHTML = `<div class="empty">${HORST}<h2>Who's playing?</h2><p class="muted">Tap at least two names.</p><p class="small"><a href="help.html">How does this work?</a></p></div>`; return; }
   if (r.blocked.length) {
     const names = r.blocked.map(k => state.locks[k]).filter(Boolean)
       .map(l => `<button data-unlock="${l.id}">Unpin ${esc(gName(model.games[gameById(l.id)]))}</button>`);

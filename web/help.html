@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a33">
+<title>How it works · Game Tables</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .help { max-width: 720px; margin: 0 auto; padding: 14px 16px 40px; }
+  .help h2 { font-size: 1.15rem; margin: 30px 0 8px; }
+  .help h3 { font-size: 1rem; margin: 18px 0 6px; }
+  .help p, .help li { line-height: 1.5; }
+  .help ul { padding-left: 1.2em; }
+  .help li { margin: 4px 0; }
+  .hero { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .hero img { width: 120px; height: auto; flex: none; }
+  .hero p { margin: 0; }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
+  .toc a { padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); text-decoration: none; font-size: .88rem; }
+  .rules { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: .9rem; }
+  .rules th, .rules td { text-align: left; vertical-align: top; padding: 9px 10px; border-top: 1px solid var(--line); }
+  .rules thead th { border-top: 0; background: var(--accent-soft); font-size: .82rem; }
+  .rules td:first-child { font-weight: 600; }
+  .rules .always td:first-child::after { content: ' · always'; font-weight: 400; color: var(--muted); font-size: .8rem; }
+  .card-note { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  .help a.back { display: inline-block; margin-bottom: 4px; }
+  @media (max-width: 560px) { .rules thead { display: none; } .rules tr { display: block; border-top: 1px solid var(--line); padding: 8px 10px; }
+    .rules tr:first-child { border-top: 0; } .rules td { display: block; border: 0; padding: 2px 0; }
+    .rules td[data-l]::before { content: attr(data-l) ': '; color: var(--muted); } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a href="./" class="ghost-btn" style="text-decoration:none;color:inherit;display:inline-flex;align-items:center">← Tables</a>
+  <h1>How it works</h1>
+</header>
+
+<main class="help">
+  <div class="hero">
+    <picture><source srcset="img/horst-chan-still.png" media="(prefers-reduced-motion: reduce)"><img src="img/horst-chan.webp" alt="Horst Chan, our mascot" width="280" height="184"></picture>
+    <p>You tap who's here. The app finds ways to split exactly those people into tables, so that as many people as possible play something they want to play. Then it shows you the best options, best first.</p>
+  </div>
+  <nav class="toc">
+    <a href="#ratings">Ratings</a><a href="#screen">Main screen</a><a href="#rules">The rules</a>
+    <a href="#overrides">Overruling them</a><a href="#order">Order</a><a href="#result">Reading a result</a>
+    <a href="#time">Play times</a><a href="#privacy">Your phone only</a>
+  </nav>
+
+  <h2 id="ratings">⭐ Where the data comes from</h2>
+  <ul>
+    <li><b>Your ratings</b> come from our Google Sheet: <b>2</b> = want to play, <b>1</b> = would play, <b>0</b> = rather not, empty = didn't say. The app reloads the sheet every time you open it.</li>
+    <li><b>Who can explain</b> a game (📖) and <b>who brought it</b> are also from the sheet.</li>
+    <li><b>Player counts, play time and how heavy a game is</b> come from BoardGameGeek. If the sheet has its own player counts for a game, the sheet wins.</li>
+  </ul>
+
+  <h2 id="screen">📱 The main screen</h2>
+  <ul>
+    <li><b>Who's playing?</b> Tap names on or off. Everyone who's on gets exactly one seat. Nobody is left over.</li>
+    <li><b>Up to N tables.</b> The most tables you have room for. Fewer is fine if that works better.</li>
+    <li><b>⏱ any length.</b> Only show tables that take at least or at most a certain time, e.g. "at most 1½ h" before dinner.</li>
+    <li><b>Games.</b> The number on a game is how many people here want it (rated 2). Tap once: 📌 <b>must be played</b>. Tap again: ⊘ <b>leave it out</b>. Tap again: normal. Hold a game to choose who plays it.</li>
+    <li><b>📊</b> opens the stats page, <b><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></b> the settings and the full game list.</li>
+  </ul>
+
+  <h2 id="rules">📏 The rules every table has to follow</h2>
+  <p>A table only shows up if it passes all of these. Most can be changed in the settings (<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>, top right).</p>
+  <table class="rules">
+    <thead><tr><th>Rule</th><th>Normally</th><th>Change it</th></tr></thead>
+    <tbody>
+      <tr class="always"><td>Everyone here gets one seat</td><td data-l="Normally">No one left out, no one twice.</td><td data-l="Change it">Tap names on the main screen.</td></tr>
+      <tr class="always"><td>Each game once</td><td data-l="Normally">A game is never on two tables at once.</td><td data-l="Change it">–</td></tr>
+      <tr><td>Number of tables</td><td data-l="Normally">At most 3.</td><td data-l="Change it">− / + on the main screen (up to 8).</td></tr>
+      <tr><td>Only games you rated</td><td data-l="Normally">You only sit at games you rated 1 or 2.</td><td data-l="Change it">Settings → "Seat people at games they rated": 2 only / 1 or 2 / anything.</td></tr>
+      <tr><td>Empty ratings</td><td data-l="Normally">Count as a 1, but marked as a guess.</td><td data-l="Change it">Settings → Advanced → count as 0.</td></tr>
+      <tr><td>Player count</td><td data-l="Normally">The table size must be one BGG users <b>recommend</b> for that game.</td><td data-l="Change it">Settings → Player counts: Best (stricter) / Recommended / Any (whatever the box allows).</td></tr>
+      <tr><td>Smallest table</td><td data-l="Normally">2 people. No solo games.</td><td data-l="Change it">Settings → Advanced.</td></tr>
+      <tr><td>Someone can explain it</td><td data-l="Normally">At least one 📖 person sits at the table.</td><td data-l="Change it">Settings switch. Only applies if the sheet lists explainers.</td></tr>
+      <tr><td>The owner is here</td><td data-l="Normally">Games whose owner isn't here are skipped (they're greyed out in the game list).</td><td data-l="Change it">Settings switch. Games without an owner in the sheet are always allowed.</td></tr>
+      <tr><td>Left-out games ⊘</td><td data-l="Normally">Never played.</td><td data-l="Change it">Tap the game chip.</td></tr>
+      <tr><td>Time slot ⏱</td><td data-l="Normally">Off.</td><td data-l="Change it">Main screen: at least / at most.</td></tr>
+      <tr><td>Tables finish together</td><td data-l="Normally">Off: tables may end at different times.</td><td data-l="Change it">Settings slider: all tables end within ½ h / 1 h / 2 h of each other.</td></tr>
+    </tbody>
+  </table>
+  <p class="muted small">If BGG has no player-count votes for a game, the app falls back to the next wider range (best → recommended → what the box says). If there's nothing at all, it assumes 2–4.</p>
+
+  <h2 id="overrides">✋ Overruling the rules</h2>
+  <ul>
+    <li><b>📌 Must be played:</b> the game is in every result. It ignores "owner is here" and the time slot. If you pin more games than you have tables, extra tables are added.</li>
+    <li><b>✓ This person plays it</b> (hold the game, or tap its name in a result): they sit there even if they rated it 0. If the normal rules leave no way to play it with them, player count and explainer rules are dropped for that game.</li>
+    <li><b>✕ Never</b> this person: they're never seated at that game.</li>
+    <li><b>🔒 Lock a table</b> (lock button in a result): that exact table, same game, same people, stays put while you change other things.</li>
+  </ul>
+  <p class="card-note small">Your own choices always beat the automatic rules. If they contradict each other (say you pinned a game nobody here may play), the app tells you and offers a fix.</p>
+
+  <h2 id="order">🏆 How results are ordered</h2>
+  <ol>
+    <li><b>Most happiness:</b> every seat earns points: 2 for a game you want, 1 for "would play". The percentage is how close a result gets to "everyone plays a 2".</li>
+    <li><b>Fewer guesses:</b> on a tie, results that rely less on empty ratings come first.</li>
+    <li><b>Tables ending together:</b> on a tie after that, results whose tables finish closer together come first.</li>
+  </ol>
+  <p>You see the best 30 different game combinations. Each game combination appears once, with its best seating.</p>
+  <p><b>Cater to picky players</b> (settings, off by default): a "2" from someone who rarely gives 2s counts a bit more when ordering. The percentages shown stay plain ratings.</p>
+
+  <h2 id="result">🔍 Reading a result</h2>
+  <ul>
+    <li><b>#1 87 %</b>: rank and score.</li>
+    <li><b>Clock</b>: green = tables end at about the same time, amber = one runs clearly longer, red = one runs much longer.</li>
+    <li><b>~2 h</b> next to a game: the estimated time for that table. <b>Bold</b> is the longest table, amber or red means much longer than the shortest.</li>
+    <li><b>📖</b> next to a name: can explain it. <b>🎓</b> next to the time: everyone at the table has played it before, so no rules explanation.</li>
+    <li><b>Seatings</b>: same games, other ways to split the people. Tap "Use" to take one.</li>
+    <li><b>Share</b>: sends the result to the group chat. It asks first whether it's really decided.</li>
+  </ul>
+
+  <h2 id="time">⏳ Play times</h2>
+  <ul>
+    <li>Start from BGG's box time, adjusted for how many sit at the table.</li>
+    <li>If anyone at the table is new to the game, add time to explain it (more for heavier games) and a little extra because newcomers play slower.</li>
+    <li>If everyone has played it (🎓), no explaining and only a small buffer.</li>
+    <li>"Played it before" comes from the explainers, the sheet's <i>Kennen</i> column, and what you tick under <b>Already played it</b> in a game.</li>
+    <li>Times are rounded to ¾ h, 1 h, 1½ h, 2 h, 3 h, 4 h, 5 h+. They're estimates, not promises. Exact minutes: settings → "Show minutes".</li>
+  </ul>
+
+  <h2 id="privacy">🔒 Your phone only</h2>
+  <ul>
+    <li>Everything you tap (who's here, pins, picks, settings) is saved <b>only on your phone</b>. Nobody else sees it, and your choices don't change anyone else's app.</li>
+    <li>To show the group, use the share button.</li>
+    <li>Ratings only change in the Google Sheet.</li>
+    <li>Settings → <b>Reset everything</b> starts fresh.</li>
+  </ul>
+
+  <h2>🤷 No result?</h2>
+  <p>Some groups just don't split under the current rules, e.g. 7 people with only 4-player games. The app then suggests what to loosen: one more table, "would play" games too, any player count, and so on. Tap one to try it.</p>
+</main>
+
+<footer class="foot">
+  <a href="https://boardgamegeek.com" target="_blank" rel="noopener" class="bgg"><img src="img/powered-by-bgg.svg" alt="Powered by BGG" height="36"></a>
+  <span class="muted small">Player counts, play times, weight, mechanics, themes and designers from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>.</span>
+</footer>
+</body>
+</html>
