@@ -257,14 +257,15 @@ function cardHtml(c, i, nAtt) {
 }
 const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
 
+const HORST = `<picture><source srcset="img/horst-chan-still.png" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp" alt="" width="280" height="184"></picture>`;
 function renderResults(r, ms) {
   const nAtt = attendIdx().length, s = state.set, out = $('#results');
   $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · stopped after 1.5 s, best found' : ''}` : '';
-  if (nAtt < 2) { out.innerHTML = `<div class="empty"><h2>Who's playing?</h2><p class="muted">Tap at least two names.</p></div>`; return; }
+  if (nAtt < 2) { out.innerHTML = `<div class="empty">${HORST}<h2>Who's playing?</h2><p class="muted">Tap at least two names.</p></div>`; return; }
   if (r.blocked.length) {
     const names = r.blocked.map(k => state.locks[k]).filter(Boolean)
       .map(l => `<button data-unlock="${l.id}">Unpin ${esc(gName(model.games[gameById(l.id)]))}</button>`);
-    out.innerHTML = `<div class="empty"><h2>A pinned game can't be set up</h2><p class="muted">Not enough of its players are here, the player count doesn't fit, or nobody can explain it.</p><div class="btns">${names.join('')}</div></div>`;
+    out.innerHTML = `<div class="empty">${HORST}<h2>A pinned game can't be set up</h2><p class="muted">Not enough of its players are here, the player count doesn't fit, or nobody can explain it.</p><div class="btns">${names.join('')}</div></div>`;
     return;
   }
   if (!r.combos.length) {
@@ -278,7 +279,7 @@ function renderResults(r, ms) {
     if (state.locks.length) fixes.push(['Clear locks', 'locks']);
     if (state.excluded.length) fixes.push(['Bring back left-out games', 'excluded']);
     const clash = conflicts();
-    out.innerHTML = `<div class="empty"><h2>No way to seat exactly these ${nAtt}</h2>${clash.map(c => `<p>⚠ ${esc(c)}</p>`).join('')}<p class="muted">Try one of these:</p><div class="btns">${fixes.slice(0, 4).map(([t, k]) => `<button data-fix="${k}">${t}</button>`).join('')}</div></div>`;
+    out.innerHTML = `<div class="empty">${HORST}<h2>No way to seat exactly these ${nAtt}</h2>${clash.map(c => `<p>⚠ ${esc(c)}</p>`).join('')}<p class="muted">Try one of these:</p><div class="btns">${fixes.slice(0, 4).map(([t, k]) => `<button data-fix="${k}">${t}</button>`).join('')}</div></div>`;
     return;
   }
   const list = r.combos.slice(0, shown);
@@ -430,7 +431,7 @@ function update() {
 }
 async function run() {
   if (attendIdx().length < 2) { last = null; renderResults(null, 0); return; }
-  const slow = setTimeout(() => { $('#results').innerHTML = '<div class="empty muted">Thinking…</div>'; }, 250);
+  const slow = setTimeout(() => { $('#results').innerHTML = `<div class="empty muted">${HORST}Thinking…</div>`; }, 250);
   budgetUsed = budgetOnce || 1500;
   const { result, ms } = await solve('main', pack());
   budgetOnce = 0;
@@ -573,6 +574,12 @@ function wire() {
     if (!c) return;
     e.preventDefault();
     if (!longPressed) openGame(+c.dataset.g);
+  });
+  let horstT;
+  $('#horstBtn').addEventListener('click', () => {
+    const p = $('#horstPop'); clearTimeout(horstT);
+    p.innerHTML = HORST.replace('class="horst-art" ', ''); p.hidden = false;
+    horstT = setTimeout(() => { p.hidden = true; p.innerHTML = ''; }, 3300);
   });
   $('#gameSheet').addEventListener('click', e => { if (e.target === $('#gameSheet')) $('#gameSheet').close(); });
   $('#gameSheet').addEventListener('close', () => { sheetGame = null; });
@@ -810,7 +817,7 @@ async function init() {
     const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key));
     await select(sh.sheetId, sh.tabs, i);
   } catch (err) {
-    $('#results').innerHTML = `<div class="empty"><h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>
+    $('#results').innerHTML = `<div class="empty">${HORST}<h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>
       ${custom ? '<div class="btns"><button id="dropCustom">Back to the retreat sheet</button></div>' : ''}</div>`;
   }
 }

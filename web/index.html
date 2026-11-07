@@ -10,6 +10,7 @@
 </head>
 <body>
 <header class="top">
+  <button id="horstBtn" class="horst-face" aria-label="Horst Chan"><img src="img/horst-face.webp" alt="" width="56" height="56"></button>
   <h1 id="title">Game Tables</h1>
   <span id="dataState" class="muted small"></span>
   <button id="openStats" class="icon-btn" aria-label="Stats" title="Stats">📊</button>
@@ -56,6 +57,10 @@
       <p class="muted small legend" id="gamesLegend" hidden>Tap a game: 📌 must play → ⊘ leave out → normal. Hold it, or tap its name in a result, to choose who plays it. The number is how many people here want it.</p>
       <div id="gameChips" class="chips"></div>
     </section>
+    <picture class="horst-side" aria-hidden="true">
+      <source srcset="img/horst-chan-still.png" media="(prefers-reduced-motion: reduce)">
+      <img src="img/horst-chan.webp" alt="" width="280" height="184" decoding="async" fetchpriority="low">
+    </picture>
   </aside>
 
   <main>
@@ -74,6 +79,7 @@
   </div>
   <div id="statsBody"></div>
 </section>
+<div id="horstPop" class="horst-pop" hidden></div>
 <div id="tip" class="tip" hidden></div>
 <div id="toast" class="toast" hidden></div>
 
@@ -92,10 +98,6 @@
          onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bgg-text',textContent:'Powered by BGG'}))">
   </a>
   <span class="muted small">Player counts, play times, weight, mechanics, themes and designers from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>. Ratings from your Google Sheet; everything is calculated on this device.</span>
-<picture class="mascot" aria-hidden="true">
-  <source srcset="img/horst-chan-still.png" media="(prefers-reduced-motion: reduce)">
-  <img src="img/horst-chan.webp" alt="" width="280" height="184" decoding="async" fetchpriority="low">
-</picture>
 </footer>
 
 <dialog id="settings">

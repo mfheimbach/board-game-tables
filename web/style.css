@@ -115,13 +115,18 @@ h3 { font-size: .95rem; margin-bottom: 10px; }
 
 .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 18px 16px calc(24px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); text-align: center; }
 .bgg img { display: block; height: 32px; }
-/* Horst Chan, mascot: decorative, never catches taps. Sits in the footer's corner so she covers no buttons;
-   floats in the bottom-right corner only when the screen has a free margin beside the content. */
-.foot { position: relative; padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
-.mascot { position: absolute; right: max(4px, env(safe-area-inset-right)); bottom: max(4px, env(safe-area-inset-bottom)); width: 140px; pointer-events: none; }
-.mascot img { display: block; width: 100%; height: auto; }
-@media (min-width: 900px) { .foot { padding-bottom: calc(24px + env(safe-area-inset-bottom)); padding-right: 170px; padding-left: 170px; } }
-@media (min-width: 1560px) { .mascot { position: fixed; width: 170px; z-index: 5; } .foot { padding-right: 16px; padding-left: 16px; } }
+/* Horst Chan, mascot */
+.horst-face { flex: none; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; overflow: hidden; background: var(--chip, var(--card)); box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; }
+.horst-face img { display: block; width: 100%; height: 100%; }
+.horst-face:active { transform: scale(.92); }
+.horst-art { display: block; width: min(240px, 70%); height: auto; margin: -6px auto 4px; }
+.horst-side { display: none; }
+@media (min-width: 900px) { .horst-side { display: block; margin-top: 18px; } .horst-side img { display: block; width: 100%; max-width: 300px; height: auto; margin: 0 auto; } }
+.horst-pop { position: fixed; left: 10px; top: calc(58px + env(safe-area-inset-top)); width: 240px; padding: 6px; z-index: 40; pointer-events: none; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 10px 30px rgb(0 0 0 / .18); transform-origin: 20px 0; animation: horstIn .25s ease-out; }
+.horst-pop::before { content: ''; position: absolute; left: 16px; top: -7px; width: 12px; height: 12px; background: var(--card); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }
+.horst-pop img { display: block; width: 100%; height: auto; }
+@keyframes horstIn { from { opacity: 0; transform: translateY(-8px) scale(.9); } }
+@media (prefers-reduced-motion: reduce) { .horst-pop { animation: none; } }
 .bgg-text { display: inline-block; padding: 6px 10px; border: 1.5px solid currentColor; border-radius: 8px; font-weight: 800; letter-spacing: .02em; }
 .bgg, .bgg-text { text-decoration: none; color: #ff5100; }
 
