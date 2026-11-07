@@ -13,10 +13,10 @@ struct BT { int g; Mask m; long long key; int dur; };
 int main() {
   std::mt19937 rng(42);
   int fails = 0, runs = 0;
-  for (int it = 0; it < 3000; ++it) {
+  for (int it = 0; it < 4000; ++it) {
     int nP = 3 + rng() % 7, nG = 1 + rng() % 7;
     Options o;
-    o.maxTables = 1 + rng() % 4; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
+    o.maxTables = 1 + rng() % 8; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
     o.needExplainer = rng() % 2; o.minPerTable = 1 + rng() % 2;
     if (rng() % 3 == 0) o.maxGap = 15 + rng() % 200;
     std::vector<Game> G(nG);

@@ -3,7 +3,7 @@
 // Input layout (int32):
 //   nPlayers, nGames, maxTables, minRating, blankAsZero, needExplainer,
 //   minPerTable, keepCombos, keepSeatings, alternates, nodeCapMillions,
-//   maxGapMinutes (0 = off),
+//   maxGapMinutes (0 = off), timeBudgetMs (0 = none),
 //   nAttendees, attendee...,
 //   per game: countMask, nExplainers, explainer..., nBanned, banned...,
 //             nKnown, known..., nDur, durNew[nDur], durKnown[nDur] (index = table size),
@@ -42,6 +42,7 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
   o.needExplainer = next(); o.minPerTable = next(); o.keepCombos = next();
   o.keepSeatings = next(); o.alternates = next(); o.nodeCap = (long long)next() * 1000000LL;
   o.maxGap = next();
+  o.timeBudgetMs = next();
   if (nP > 64) nP = 64;
 
   Mask att = 0;

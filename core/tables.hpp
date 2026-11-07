@@ -8,6 +8,7 @@
 // Memory: candidate tables + one search path + the kept results.
 #pragma once
 #include <algorithm>
+#include <chrono>
 #include <climits>
 #include <cmath>
 #include <cstdint>
@@ -18,6 +19,17 @@
 namespace tables {
 
 using Mask = uint64_t;  // one bit per player, up to 64 players
+constexpr int MAX_TABLES = 8;
+
+// A game set as one number: 12 bits per game (up to 4095 games), up to 10 games.
+using SetKey = unsigned __int128;
+struct SetKeyHash {
+  size_t operator()(SetKey k) const {
+    uint64_t x = (uint64_t)k ^ ((uint64_t)(k >> 64) * 0x9E3779B97F4A7C15ULL);
+    x ^= x >> 31; x *= 0xBF58476D1CE4E5B9ULL; x ^= x >> 29;
+    return (size_t)x;
+  }
+};
 
 struct Game {
   uint32_t counts = 0;         // bit k set => a table of k players is allowed
@@ -35,7 +47,7 @@ struct Frozen {   // "this game must be played" (+ optionally by these players)
 };
 
 struct Options {
-  int maxTables = 4;          // 1..5
+  int maxTables = 4;          // 1..MAX_TABLES
   int minRating = 1;          // lowest rating that still gets you seated
   int minPerTable = 2;
   bool blankAsZero = false;   // blank rating counts as 0 (else as 1, flagged as a guess)
@@ -45,6 +57,7 @@ struct Options {
   bool alternates = false;    // all leaves share one game set: rank seatings
   int maxGap = 0;             // >0: all tables end within this many minutes of each other
   long long nodeCap = 200000000;
+  int timeBudgetMs = 0;        // >0: stop after this long and return the best found
 };
 
 struct Table {
@@ -73,7 +86,7 @@ class Solver {
          const std::vector<int>& excluded, const std::vector<Frozen>& frozen,
          const Options& opt)
       : G(games), nP(nPlayers), att(attendees), fz(frozen), o(opt) {
-    o.maxTables = std::max(1, std::min(o.maxTables, 5));
+    o.maxTables = std::max(1, std::min(o.maxTables, MAX_TABLES));
     std::vector<char> skip(G.size(), 0);
     for (int e : excluded) if (e >= 0 && e < (int)G.size()) skip[e] = 1;
     for (auto& f : fz) if (f.game >= 0 && f.game < (int)G.size()) skip[f.game] = 1;
@@ -98,9 +111,10 @@ class Solver {
   }
 
   Result run() {
+    deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(o.timeBudgetMs);
     if (res.blockedFrozen.empty() && att != 0 && (int)fz.size() <= o.maxTables)
       recFrozen(0, att, 0, 0, INT_MAX, 0);
-    std::vector<std::pair<long long, uint64_t>> ord(order.rbegin(), order.rend());
+    std::vector<std::pair<long long, SetKey>> ord(order.rbegin(), order.rend());
     for (auto& kv : ord) {
       Combo c = combos[kv.second];
       std::sort(c.seatings.begin(), c.seatings.end(),
@@ -119,8 +133,9 @@ class Solver {
   Result res;
   std::vector<std::vector<int>> fcands, byLow;
   std::vector<int> chosen;
-  std::unordered_map<uint64_t, Combo> combos;
-  std::set<std::pair<long long, uint64_t>> order;  // (best key, game-set key)
+  std::chrono::steady_clock::time_point deadline;
+  std::unordered_map<SetKey, Combo, SetKeyHash> combos;
+  std::set<std::pair<long long, SetKey>> order;  // (best key, game-set key)
 
   void sortByKey(std::vector<int>& v) {
     std::stable_sort(v.begin(), v.end(), [&](int a, int b) {
@@ -189,11 +204,15 @@ class Solver {
 
   // Ranking key: score first, then fewer guesses, then tables ending close together
   // (log of longest/shortest). Scaled by 1024 so the spread never outweighs a guess.
-  static long long leafKey(long long base, int dmin, int dmax) {
-    long long pen = 0;
+  static long long spreadPen(int dmin, int dmax) {
     if (dmax > 0 && dmin < INT_MAX && dmin < dmax)
-      pen = std::min(1023LL, (long long)std::lround(std::log((double)dmax / dmin) * 400.0));
-    return base * 1024 - pen;
+      return std::min(1023LL, (long long)std::lround(std::log((double)dmax / dmin) * 400.0));
+    return 0;
+  }
+  static long long leafKey(long long base, int dmin, int dmax) { return base * 1024 - spreadPen(dmin, dmax); }
+  bool outOfTime() {
+    if (!o.timeBudgetMs || (res.nodes & 4095)) return false;
+    return std::chrono::steady_clock::now() > deadline;
   }
   bool tooSpread(int dmin, int dmax) const {
     return o.maxGap > 0 && dmax > 0 && dmin < INT_MAX && dmax - dmin > o.maxGap;
@@ -213,12 +232,12 @@ class Solver {
     return w;
   }
 
-  uint64_t gameKey(int depth) const {
-    int g[5];
+  SetKey gameKey(int depth) const {
+    int g[MAX_TABLES];
     for (int d = 0; d < depth; ++d) g[d] = res.cands[chosen[d]].game;
     std::sort(g, g + depth);
-    uint64_t k = 0;
-    for (int d = 0; d < depth; ++d) k = (k << 12) | (uint64_t)(g[d] + 1);
+    SetKey k = 0;
+    for (int d = 0; d < depth; ++d) k = (k << 12) | (SetKey)(g[d] + 1);
     return k;
   }
 
@@ -234,7 +253,7 @@ class Solver {
 
   void leaf(int depth, long long key) {
     ++res.seatings;
-    uint64_t gk = gameKey(depth);
+    SetKey gk = gameKey(depth);
     auto it = combos.find(gk);
     if (it != combos.end()) {
       Combo& c = it->second;
@@ -270,10 +289,11 @@ class Solver {
   }
 
   void rec(Mask rem, int depth, long long key, int dmin, int dmax) {
-    if (++res.nodes > o.nodeCap) { res.truncated = true; return; }
+    if (++res.nodes > o.nodeCap || outOfTime()) { res.truncated = true; return; }
     if (!rem) { leaf(depth, leafKey(key, dmin, dmax)); return; }
     if (depth == o.maxTables) return;
-    if ((key + 256LL * __builtin_popcountll(rem)) * 1024 <= threshold()) return;
+    // upper bound: every remaining seat scores 2, spread can only grow
+    if ((key + 256LL * __builtin_popcountll(rem)) * 1024 - spreadPen(dmin, dmax) <= threshold()) return;
     for (int t : byLow[__builtin_ctzll(rem)]) {
       const Table& T = res.cands[t];
       if (T.mask & ~rem) continue;

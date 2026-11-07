@@ -9,6 +9,7 @@ const ICON = {
   drop: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.5l11-11"/></svg>',
   pin: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6 4 3H6l4-3zM12 13v7"/></svg>',
 };
+const MAX_TABLES = 8;  // matches core/tables.hpp
 const DEFAULTS = {
   attend: null, maxTables: 3, locks: [], excluded: [], bans: {}, known: {},
   set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false },
@@ -56,9 +57,9 @@ function pack(alt) {
   const locks = state.locks.filter(l => gameById(l.id) >= 0);
   const lockFor = id => locks.find(l => l.id === id);
   // pinned games win over the table limit
-  const buf = [model.players.length, G.length, alt ? alt.length : Math.min(5, Math.max(state.maxTables, locks.length)), +s.minRating,
+  const buf = [model.players.length, G.length, alt ? alt.length : Math.min(MAX_TABLES, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
-    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0];
+    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, 1500];
   buf.push(att.length, ...att);
   for (const g of G) {
     const st = status(g, attSet);
@@ -104,7 +105,7 @@ function renderControls() {
   $('#whoCount').textContent = `${att.size} of ${model.players.length}`;
   $('#tVal').textContent = state.maxTables;
   $('#tMinus').disabled = state.maxTables <= 1;
-  $('#tPlus').disabled = state.maxTables >= 5;
+  $('#tPlus').disabled = state.maxTables >= MAX_TABLES;
 
   // games: same chips as players; tap cycles normal -> must play -> out -> normal
   const rows = model.games.map(g => {
@@ -205,7 +206,7 @@ const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
 
 function renderResults(r, ms) {
   const nAtt = attendIdx().length, s = state.set, out = $('#results');
-  $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · search capped' : ''}` : '';
+  $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · stopped after 1.5 s, best found' : ''}` : '';
   if (nAtt < 2) { out.innerHTML = `<div class="empty"><h2>Who's playing?</h2><p class="muted">Tap at least two names.</p></div>`; return; }
   if (r.blocked.length) {
     const names = r.blocked.map(k => state.locks[k]).filter(Boolean)
@@ -215,7 +216,7 @@ function renderResults(r, ms) {
   }
   if (!r.combos.length) {
     const fixes = [];
-    if (state.maxTables < 5) fixes.push(['+1 table', 'tables']);
+    if (state.maxTables < MAX_TABLES) fixes.push(['+1 table', 'tables']);
     if (+s.minRating === 2) fixes.push(['Also seat "would play"', 'rating']);
     if (s.source !== 'any') fixes.push(['Any player count', 'source']);
     if (GAPS[s.gap]?.[0]) fixes.unshift(['Allow different lengths', 'sync']);
@@ -478,7 +479,7 @@ function wire() {
     else if (b.id === 'allBtn') state.attend = null;
     else if (b.id === 'noneBtn') state.attend = [];
     else if (b.id === 'tMinus') state.maxTables = Math.max(1, state.maxTables - 1);
-    else if (b.id === 'tPlus') state.maxTables = Math.min(5, state.maxTables + 1);
+    else if (b.id === 'tPlus') state.maxTables = Math.min(MAX_TABLES, state.maxTables + 1);
     else if (d.g) {
       if (longPressed) { longPressed = false; return; }
       const id = +d.g;
