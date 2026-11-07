@@ -180,9 +180,10 @@ const gapLabel = i => GAPS[i]?.[0] ? `Tables finish within ${GAPS[i][1]} of each
 function syncChip(tables) {
   const ds = tables.filter(t => t.d > 0);
   if (ds.length < 2) return '';
-  const lo = Math.min(...ds.map(t => t.d)), long = ds.reduce((a, b) => (b.d > a.d ? b : a));
-  if (long.d / lo <= 1.25) return '<span class="sync ok" title="all tables end within ~25% of each other">⏱ end together</span>';
-  return `<span class="sync" title="longest vs shortest table">⏱ ${esc(gName(model.games[long.g]))} +${fmtDiff(long.d - lo)}</span>`;
+  const lo = Math.min(...ds.map(t => t.d)), long = ds.reduce((a, b) => (b.d > a.d ? b : a)), r = long.d / lo;
+  const tone = r <= 1.25 ? 'ok' : r <= 1.6 ? 'mid' : 'far';
+  const tip = tone === 'ok' ? 'Tables end at about the same time' : `${gName(model.games[long.g])} runs ~${fmtDiff(long.d - lo)} longer than the shortest table`;
+  return `<span class="sync ${tone}" title="${esc(tip)}" aria-label="${esc(tip)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 3h6"/></svg></span>`;
 }
 
 function cardHtml(c, i, nAtt) {
@@ -197,7 +198,7 @@ function cardHtml(c, i, nAtt) {
       ${s.guesses ? `<span class="muted small">${s.guesses} guessed</span>` : ''}
       ${syncChip(tables)}
       <span class="spacer"></span>
-      <button class="ghost" data-alts="${i}">${openAlts.has(key(s)) ? 'Hide' : 'Other seatings'}</button>
+      <button class="ghost" data-alts="${i}" title="Other seatings with the same games">${openAlts.has(key(s)) ? 'Hide' : 'Seatings'}</button>
       <button class="ghost" data-share="${i}" title="Send to the group" aria-label="Send to the group">📤</button>
       ${allLocked ? '' : `<button class="ghost" data-lockall="${i}" title="Lock all tables">${ICON.lock}</button>`}
     </div>
@@ -541,7 +542,7 @@ function wire() {
       last.result.combos[+d.lockall].seatings[0].tables.forEach(t => setLock(t.g, t.p));
     } else if (d.alts !== undefined) {
       const k = key(last.result.combos[+d.alts].seatings[0]);
-      if (openAlts.has(k)) { openAlts.delete(k); b.closest('.card').querySelector('.alts').hidden = true; b.textContent = 'Other seatings'; }
+      if (openAlts.has(k)) { openAlts.delete(k); b.closest('.card').querySelector('.alts').hidden = true; b.textContent = 'Seatings'; }
       else { openAlts.add(k); b.textContent = 'Hide'; showAlts(+d.alts); }
       return;
     } else if (d.use) {

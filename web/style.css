@@ -263,3 +263,11 @@ details.st-sec > summary::after { content: '▾'; color: var(--muted); margin-le
 details.st-sec[open] > summary::after { transform: rotate(180deg); }
 details.st-sec[open] { padding-bottom: 12px; }
 details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.st-sec .tastes li { background: var(--bg); }
+
+.sync { display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; border-radius: 50%; max-width: none; flex: none; }
+.sync.ok { background: var(--r2-bg); color: var(--r2); }
+.sync.mid { background: var(--r1-bg); color: var(--r1); }
+.sync.far { background: var(--r0-bg); color: var(--r0); }
+.card-head { gap: 8px; }
+.card-head .ghost { padding: 6px 9px; }
+@media (max-width: 440px) { .card-head .score-bar { display: none; } }
