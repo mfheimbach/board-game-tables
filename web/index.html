@@ -12,6 +12,7 @@
 <header class="top">
   <h1 id="title">Game Tables</h1>
   <span id="dataState" class="muted small"></span>
+  <button id="openStats" class="icon-btn" aria-label="Stats" title="Stats">📊</button>
   <button id="openSettings" class="icon-btn" aria-label="Settings & games">
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
   </button>
@@ -55,6 +56,28 @@
     <p id="stats" class="muted small stats"></p>
   </main>
 </div>
+
+<section id="statsView" class="stats-view" hidden>
+  <div class="st-head">
+    <button id="closeStats" class="ghost-btn">← Tables</button>
+    <div class="seg" id="statsWho">
+      <button type="button" value="all" aria-pressed="true">Everyone</button>
+      <button type="button" value="here" aria-pressed="false">Only who's here</button>
+    </div>
+  </div>
+  <div id="statsBody"></div>
+</section>
+<div id="tip" class="tip" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<dialog id="shareDlg">
+  <form method="dialog" class="sheet">
+    <header class="sheet-head"><h2>📤 Send to the group?</h2><button class="icon-btn" value="close" aria-label="Close">✕</button></header>
+    <p><b>Is this really decided?</b> Once it's in the chat, it tends to stick. Only send it if you're actually about to play it.</p>
+    <pre id="shareText" class="share-text"></pre>
+    <div class="btns"><button value="close">Still just looking</button><button type="button" id="shareGo" class="primary">Yes, send it</button></div>
+  </form>
+</dialog>
 
 <footer class="foot">
   <a href="https://boardgamegeek.com" target="_blank" rel="noopener" class="bgg">

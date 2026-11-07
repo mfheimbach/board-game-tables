@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['scripts/**', 'web/config.json', 'web/sheet.js']
+    paths: ['scripts/**', 'web/config.json', 'web/sheet.js', 'web/bgg.js']
   schedule:
     - cron: '23 4 * * *'   # daily, so newly added games get player counts
 permissions:

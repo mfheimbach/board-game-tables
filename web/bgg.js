@@ -6,6 +6,8 @@ const decode = s => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#
   .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n));
 const attr = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}[^>]*\\svalue="([^"]*)"`)); return m ? decode(m[1]) : null; };
 
+const links = (x, type) => [...x.matchAll(new RegExp(`<link[^>]*type="${type}"[^>]*value="([^"]*)"`, 'g'))].map(m => decode(m[1])).filter(v => v && v !== '(Uncredited)');
+
 export function parseItem(x) {
   const num = t => { const v = attr(x, t); return v === null || v === '' ? null : +v; };
   const g = {
@@ -14,6 +16,7 @@ export function parseItem(x) {
     minTime: num('minplaytime'), maxTime: num('maxplaytime'),
     weight: (x.match(/<averageweight[^>]*value="([^"]*)"/) || [])[1] ? +(x.match(/<averageweight[^>]*value="([^"]*)"/)[1]) : null,
     best: [], rec: [],
+    categories: links(x, 'boardgamecategory'), mechanics: links(x, 'boardgamemechanic'), designers: links(x, 'boardgamedesigner'),
   };
   const sum = x.match(/<poll-summary[^>]*name="suggested_numplayers"[\s\S]*?<\/poll-summary>/);
   if (sum) {

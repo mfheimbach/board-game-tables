@@ -1,4 +1,5 @@
 import { estimate, bin, boxTime, hm } from './time.js';
+import { computeStats, renderStats } from './stats.js';
 import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
@@ -59,7 +60,7 @@ function pack(alt) {
   // pinned games win over the table limit
   const buf = [model.players.length, G.length, alt ? alt.length : Math.min(MAX_TABLES, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
-    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, 1500];
+    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, alt ? 1500 : budgetOnce || 1500];
   buf.push(att.length, ...att);
   for (const g of G) {
     const st = status(g, attSet);
@@ -196,6 +197,7 @@ function cardHtml(c, i, nAtt) {
       ${syncChip(tables)}
       <span class="spacer"></span>
       <button class="ghost" data-alts="${i}">${openAlts.has(key(s)) ? 'Hide' : 'Other seatings'}</button>
+      <button class="ghost" data-share="${i}" title="Send to the group" aria-label="Send to the group">📤</button>
       ${allLocked ? '' : `<button class="ghost" data-lockall="${i}" title="Lock all tables">${ICON.lock}</button>`}
     </div>
     ${tables.map(tableHtml).join('')}
@@ -228,7 +230,9 @@ function renderResults(r, ms) {
     return;
   }
   const list = r.combos.slice(0, shown);
-  out.innerHTML = list.map((c, i) => cardHtml(c, i, nAtt)).join('') +
+  const capped = r.truncated ? `<div class="capped">⏳ Big group: these are the best seatings found in ${budgetUsed / 1000} s, not guaranteed to be the very best.
+    ${budgetUsed < 10000 ? '<button id="deepSearch">Search for 10 s</button>' : ''}</div>` : '';
+  out.innerHTML = capped + list.map((c, i) => cardHtml(c, i, nAtt)).join('') +
     (r.combos.length > shown ? `<div class="btns" style="justify-content:center"><button id="more">Show more</button></div>` : '');
   list.forEach((c, i) => { if (openAlts.has(key(c.seatings[0]))) showAlts(i); });
 }
@@ -297,19 +301,56 @@ function renderBanner() {
 }
 
 // ---------- update loop ----------
+let budgetOnce = 0, budgetUsed = 1500;
+
+// ---------- share ----------
+function shareText(i) {
+  const s = last.result.combos[i].seatings[0];
+  const lines = ['🎲 Tables', ''];
+  for (const t of [...s.tables].sort((a, b) => b.p.length - a.p.length)) {
+    const g = model.games[t.g], bn = bin(t.d);
+    lines.push(`🃏 ${gName(g)}${bn ? ` (${bn.label})` : ''}`);
+    lines.push('   ' + t.p.map(p => model.players[p] + (g.explainers.includes(p) ? ' 📖' : '')).join(', '));
+  }
+  return lines.join('\n');
+}
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg; el.hidden = false;
+  clearTimeout(el._t); el._t = setTimeout(() => { el.hidden = true; }, 2500);
+}
+
+// ---------- stats view ----------
+let statsWho = 'all';
+function renderStatsView() {
+  if ($('#statsView').hidden) return;
+  const idx = statsWho === 'here' ? attendIdx() : model.players.map((_, i) => i);
+  $('#statsWho').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === statsWho));
+  $('#statsBody').innerHTML = idx.length < 2 ? '<div class="empty muted">Need at least two players.</div>' : renderStats(computeStats(model, bgg, idx));
+}
+function showStats(on) {
+  $('#statsView').hidden = !on;
+  document.querySelector('.layout').hidden = on;
+  $('#openStats').setAttribute('aria-pressed', on);
+  if (on) { renderStatsView(); window.scrollTo(0, 0); }
+}
+
 let timer;
 function update() {
   save();
   renderControls();
   renderGameList();
   renderSheet();
+  renderStatsView();
   clearTimeout(timer);
   timer = setTimeout(run, 20);
 }
 async function run() {
   if (attendIdx().length < 2) { last = null; renderResults(null, 0); return; }
   const slow = setTimeout(() => { $('#results').innerHTML = '<div class="empty muted">Thinking…</div>'; }, 250);
+  budgetUsed = budgetOnce || 1500;
   const { result, ms } = await solve('main', pack());
+  budgetOnce = 0;
   clearTimeout(slow);
   last = { result };
   renderResults(result, ms);
@@ -416,7 +457,22 @@ function renderSheet() {
 // hold (or right-click) a game chip to open its sheet
 let pressTimer = null, longPressed = false;
 
+function wireTips() {
+  const tip = $('#tip');
+  const show = e => {
+    const el = e.target.closest?.('[data-tip]');
+    if (!el || !el.closest('#statsView')) { if (e.type !== 'pointermove') tip.hidden = true; return; }
+    tip.textContent = el.dataset.tip; tip.hidden = false;
+    const x = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8), y = e.clientY - tip.offsetHeight - 12;
+    tip.style.left = `${Math.max(8, x)}px`; tip.style.top = `${y < 8 ? e.clientY + 16 : y}px`;
+  };
+  document.addEventListener('pointermove', show);
+  document.addEventListener('pointerdown', show);
+  document.addEventListener('scroll', () => { tip.hidden = true; }, true);
+}
+
 function wire() {
+  wireTips();
   document.addEventListener('pointerdown', e => {
     const c = e.target.closest('.chip.g');
     if (!c) return;
@@ -510,7 +566,20 @@ function wire() {
     } else if (b.closest('.seg')) {
       const k = b.closest('.seg').dataset.key;
       state.set[k] = ['minRating', 'minPerTable'].includes(k) ? +b.value : b.value;
-    } else if (b.id === 'openSettings') { $('#settings').showModal(); renderGameList(); return; }
+    } else if (b.id === 'openStats') { showStats($('#statsView').hidden); return; }
+    else if (b.id === 'closeStats') { showStats(false); return; }
+    else if (b.closest('#statsWho')) { statsWho = b.value; renderStatsView(); return; }
+    else if (d.share !== undefined) {
+      $('#shareText').textContent = shareText(+d.share);
+      $('#shareDlg').showModal(); return;
+    } else if (b.id === 'shareGo') {
+      const text = $('#shareText').textContent;
+      $('#shareDlg').close();
+      if (navigator.share) navigator.share({ text }).catch(() => {});
+      else navigator.clipboard?.writeText(text).then(() => toast('Copied — paste it in the chat'), () => toast('Couldn\'t copy'));
+      return;
+    } else if (b.id === 'deepSearch') { budgetOnce = 10000; b.disabled = true; b.textContent = 'Searching…'; run(); return; }
+    else if (b.id === 'openSettings') { $('#settings').showModal(); renderGameList(); return; }
     else if (b.id === 'reload') { reload(); return; }
     else if (b.id === 'resetAll') { if (confirm('Reset players, locks and settings?')) state = structuredClone(DEFAULTS); }
     else return;
