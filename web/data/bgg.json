@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-07T06:44:41.374Z",
+ "updated": "2026-11-07T07:46:30.193Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -42,7 +42,8 @@
     "Steven Marsh (II)",
     "Vincent Tsao",
     "Nikola Vrtis"
-   ]
+   ],
+   "pollVotes": 133
   },
   "2122": {
    "name": "Vampire: The Eternal Struggle",
@@ -80,7 +81,8 @@
     "Richard Garfield",
     "Robert Goudie",
     "L. Scott Johnson"
-   ]
+   ],
+   "pollVotes": 71
   },
   "8829": {
    "name": "Nobody Is Perfect",
@@ -117,7 +119,8 @@
    ],
    "designers": [
     "Bertram Kaes"
-   ]
+   ],
+   "pollVotes": 29
   },
   "37111": {
    "name": "Battlestar Galactica: The Board Game",
@@ -160,7 +163,8 @@
    ],
    "designers": [
     "Corey Konieczka"
-   ]
+   ],
+   "pollVotes": 1099
   },
   "63888": {
    "name": "Innovation",
@@ -193,7 +197,8 @@
    ],
    "designers": [
     "Carl Chudyk"
-   ]
+   ],
+   "pollVotes": 613
   },
   "148319": {
    "name": "Tragedy Looper",
@@ -227,7 +232,8 @@
    ],
    "designers": [
     "BakaFire"
-   ]
+   ],
+   "pollVotes": 110
   },
   "151771": {
    "name": "La Cosa Nostra",
@@ -259,7 +265,8 @@
    ],
    "designers": [
     "Johannes Sich"
-   ]
+   ],
+   "pollVotes": 63
   },
   "156129": {
    "name": "Deception: Murder in Hong Kong",
@@ -304,7 +311,8 @@
    ],
    "designers": [
     "Tobey Ho"
-   ]
+   ],
+   "pollVotes": 324
   },
   "170216": {
    "name": "Blood Rage",
@@ -317,7 +325,10 @@
    "best": [
     4
    ],
-   "rec": [],
+   "rec": [
+    3,
+    4
+   ],
    "categories": [
     "Fantasy",
     "Fighting",
@@ -341,7 +352,8 @@
    ],
    "designers": [
     "Eric M. Lang"
-   ]
+   ],
+   "pollVotes": 1084
   },
   "234260": {
    "name": "Prey Another Day",
@@ -374,7 +386,8 @@
    "designers": [
     "Matthew Dunstan",
     "Brett J. Gilbert"
-   ]
+   ],
+   "pollVotes": 96
   },
   "237182": {
    "name": "Root",
@@ -417,7 +430,8 @@
    ],
    "designers": [
     "Cole Wehrle"
-   ]
+   ],
+   "pollVotes": 1456
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -451,7 +465,8 @@
    "designers": [
     "Charlie Cleveland",
     "Bruno Faidutti"
-   ]
+   ],
+   "pollVotes": 37
   },
   "256960": {
    "name": "Pax Pamir: Second Edition",
@@ -496,7 +511,8 @@
    ],
    "designers": [
     "Cole Wehrle"
-   ]
+   ],
+   "pollVotes": 636
   },
   "257305": {
    "name": "SHASN",
@@ -531,7 +547,8 @@
    ],
    "designers": [
     "Zain Memon"
-   ]
+   ],
+   "pollVotes": 18
   },
   "274566": {
    "name": "Deranged",
@@ -563,7 +580,8 @@
    ],
    "designers": [
     "German Tikhomirov"
-   ]
+   ],
+   "pollVotes": 9
   },
   "279886": {
    "name": "Iron Forest",
@@ -577,7 +595,12 @@
     2,
     4
    ],
-   "rec": [],
+   "rec": [
+    1,
+    2,
+    3,
+    4
+   ],
    "categories": [
     "Action / Dexterity",
     "Adventure",
@@ -591,7 +614,8 @@
    ],
    "designers": [
     "Brian Gomez"
-   ]
+   ],
+   "pollVotes": 7
   },
   "295192": {
    "name": "Tinderblox",
@@ -623,7 +647,8 @@
    ],
    "designers": [
     "Rob Sparks"
-   ]
+   ],
+   "pollVotes": 36
   },
   "300905": {
    "name": "Top Ten",
@@ -657,7 +682,8 @@
    ],
    "designers": [
     "Aurélien Picolet"
-   ]
+   ],
+   "pollVotes": 95
   },
   "301880": {
    "name": "Raiders of Scythia",
@@ -692,7 +718,8 @@
    ],
    "designers": [
     "Shem Phillips"
-   ]
+   ],
+   "pollVotes": 238
   },
   "306482": {
    "name": "I C E",
@@ -726,7 +753,8 @@
    "designers": [
     "Bragou",
     "Sams"
-   ]
+   ],
+   "pollVotes": 24
   },
   "319329": {
    "name": "B Movies",
@@ -760,7 +788,8 @@
     "Clem Seurat",
     "Yann Uhart",
     "Yann and Clem"
-   ]
+   ],
+   "pollVotes": 2
   },
   "321608": {
    "name": "Hegemony: Lead Your Class to Victory",
@@ -795,7 +824,8 @@
    "designers": [
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
-   ]
+   ],
+   "pollVotes": 498
   },
   "322289": {
    "name": "Darwin's Journey",
@@ -833,7 +863,8 @@
    "designers": [
     "Simone Luciani",
     "Nestore Mangone"
-   ]
+   ],
+   "pollVotes": 360
   },
   "327778": {
    "name": "ito",
@@ -868,7 +899,8 @@
    ],
    "designers": [
     "326"
-   ]
+   ],
+   "pollVotes": 76
   },
   "329714": {
    "name": "Dreadful Circus",
@@ -899,7 +931,8 @@
    "designers": [
     "Joanna Kijanka",
     "Bruno Faidutti"
-   ]
+   ],
+   "pollVotes": 13
   },
   "329839": {
    "name": "So Clover!",
@@ -930,7 +963,8 @@
    ],
    "designers": [
     "François Romain"
-   ]
+   ],
+   "pollVotes": 222
   },
   "335212": {
    "name": "Sentinels of the Multiverse: Definitive Edition",
@@ -964,7 +998,8 @@
    "designers": [
     "Christopher Badell",
     "Adam Rebottaro"
-   ]
+   ],
+   "pollVotes": 62
   },
   "340466": {
    "name": "Unfathomable",
@@ -1000,7 +1035,8 @@
    "designers": [
     "Tony Fanchi",
     "Corey Konieczka"
-   ]
+   ],
+   "pollVotes": 171
   },
   "341169": {
    "name": "Great Western Trail: Second Edition",
@@ -1037,7 +1073,8 @@
    ],
    "designers": [
     "Alexander Pfister"
-   ]
+   ],
+   "pollVotes": 349
   },
   "342070": {
    "name": "Thunder Road: Vendetta",
@@ -1078,7 +1115,8 @@
     "Justin D. Jacobson",
     "Jim Keifer",
     "Brian Neff"
-   ]
+   ],
+   "pollVotes": 172
   },
   "357873": {
    "name": "The Old King's Crown",
@@ -1113,7 +1151,8 @@
    ],
    "designers": [
     "Pablo Clark"
-   ]
+   ],
+   "pollVotes": 192
   },
   "358737": {
    "name": "Leviathan Wilds",
@@ -1155,7 +1194,8 @@
    ],
    "designers": [
     "Justin Kemppainen"
-   ]
+   ],
+   "pollVotes": 93
   },
   "359871": {
    "name": "Arcs",
@@ -1194,7 +1234,8 @@
    ],
    "designers": [
     "Cole Wehrle"
-   ]
+   ],
+   "pollVotes": 610
   },
   "364356": {
    "name": "Company of Heroes: 2nd Edition",
@@ -1207,7 +1248,10 @@
    "best": [
     2
    ],
-   "rec": [],
+   "rec": [
+    1,
+    2
+   ],
    "categories": [
     "Economic",
     "Miniatures",
@@ -1230,7 +1274,8 @@
    "designers": [
     "Chris Gabrielson",
     "Bryan Kromrey"
-   ]
+   ],
+   "pollVotes": 22
   },
   "368954": {
    "name": "Council of Shadows",
@@ -1261,7 +1306,8 @@
    "designers": [
     "Martin Kallenborn",
     "Jochen Scherer"
-   ]
+   ],
+   "pollVotes": 46
   },
   "375651": {
    "name": "That's Not a Hat",
@@ -1292,7 +1338,8 @@
    ],
    "designers": [
     "Kasper Lapp"
-   ]
+   ],
+   "pollVotes": 116
   },
   "379629": {
    "name": "Knarr",
@@ -1321,7 +1368,8 @@
    ],
    "designers": [
     "Thomas Dupont"
-   ]
+   ],
+   "pollVotes": 172
   },
   "380109": {
    "name": "Gibberers: The Word Game of Language Invention and Civilization Development",
@@ -1335,7 +1383,11 @@
     4,
     5
    ],
-   "rec": [],
+   "rec": [
+    3,
+    4,
+    5
+   ],
    "categories": [
     "Word Game"
    ],
@@ -1348,7 +1400,8 @@
    ],
    "designers": [
     "Keisei"
-   ]
+   ],
+   "pollVotes": 17
   },
   "381248": {
    "name": "Nemesis: Retaliation",
@@ -1389,7 +1442,8 @@
    ],
    "designers": [
     "Adam Kwapiński"
-   ]
+   ],
+   "pollVotes": 118
   },
   "397598": {
    "name": "Dune: Imperium – Uprising",
@@ -1433,7 +1487,8 @@
    ],
    "designers": [
     "Paul Dennen"
-   ]
+   ],
+   "pollVotes": 548
   },
   "400495": {
    "name": "JinxO",
@@ -1464,7 +1519,8 @@
    ],
    "designers": [
     "Martin Ang"
-   ]
+   ],
+   "pollVotes": 20
   },
   "407233": {
    "name": "Tenby",
@@ -1496,7 +1552,8 @@
    ],
    "designers": [
     "Benjie Talbott"
-   ]
+   ],
+   "pollVotes": 51
   },
   "408547": {
    "name": "Things in Rings",
@@ -1509,7 +1566,12 @@
    "best": [
     4
    ],
-   "rec": [],
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
    "categories": [
     "Deduction",
     "Party Game",
@@ -1520,7 +1582,8 @@
    ],
    "designers": [
     "Peter C. Hayward"
-   ]
+   ],
+   "pollVotes": 55
   },
   "409583": {
    "name": "Take the Throne",
@@ -1550,7 +1613,8 @@
     "Take That",
     "Turn Order: Progressive"
    ],
-   "designers": []
+   "designers": [],
+   "pollVotes": 2
   },
   "414117": {
    "name": "Wroth",
@@ -1586,7 +1650,8 @@
    ],
    "designers": [
     "Manny Trembley"
-   ]
+   ],
+   "pollVotes": 75
   },
   "416079": {
    "name": "March of the Ants: Evolved Edition",
@@ -1622,7 +1687,8 @@
    "designers": [
     "Tim Eisner",
     "Ryan Swisher"
-   ]
+   ],
+   "pollVotes": 49
   },
   "416851": {
    "name": "Castle Combo",
@@ -1654,7 +1720,8 @@
    "designers": [
     "Grégory Grard",
     "Mathieu Roussel"
-   ]
+   ],
+   "pollVotes": 367
   },
   "419639": {
    "name": "Mind the Lines",
@@ -1669,7 +1736,12 @@
     5,
     6
    ],
-   "rec": [],
+   "rec": [
+    3,
+    4,
+    5,
+    6
+   ],
    "categories": [
     "Party Game"
    ],
@@ -1679,7 +1751,8 @@
    ],
    "designers": [
     "Die 7 Bazis"
-   ]
+   ],
+   "pollVotes": 34
   },
   "421246": {
    "name": "Neon Hope",
@@ -1718,7 +1791,8 @@
    "designers": [
     "Francesco Grothe",
     "Dominik Schönleben"
-   ]
+   ],
+   "pollVotes": 7
   },
   "421254": {
    "name": "Fame & Fable",
@@ -1753,7 +1827,8 @@
    ],
    "designers": [
     "Owen Davey"
-   ]
+   ],
+   "pollVotes": 18
   },
   "423577": {
    "name": "Valheim: The Board Game",
@@ -1790,7 +1865,8 @@
    ],
    "designers": [
     "Ole Steiness"
-   ]
+   ],
+   "pollVotes": 19
   },
   "424751": {
    "name": "Cat and the Tower",
@@ -1824,7 +1900,8 @@
    ],
    "designers": [
     "Masakazu Takizawa (たきざわ まさかず)"
-   ]
+   ],
+   "pollVotes": 13
   },
   "428635": {
    "name": "Ruins",
@@ -1856,7 +1933,8 @@
    ],
    "designers": [
     "John D. Clair"
-   ]
+   ],
+   "pollVotes": 38
   },
   "430533": {
    "name": "Formaggio",
@@ -1893,7 +1971,8 @@
    ],
    "designers": [
     "Ben Rosset"
-   ]
+   ],
+   "pollVotes": 29
   },
   "432456": {
    "name": "dnup",
@@ -1921,7 +2000,8 @@
    ],
    "designers": [
     "Kei Kajino (梶野 桂)"
-   ]
+   ],
+   "pollVotes": 90
   },
   "436217": {
    "name": "The Lord of the Rings: Fate of the Fellowship",
@@ -1956,7 +2036,8 @@
    ],
    "designers": [
     "Matt Leacock"
-   ]
+   ],
+   "pollVotes": 418
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -1987,7 +2068,8 @@
     "Erik Haffner",
     "Henneke Holst",
     "Cornel Krizsan"
-   ]
+   ],
+   "pollVotes": 3
   },
   "436842": {
    "name": "The Wondrous Museum",
@@ -2017,7 +2099,8 @@
    ],
    "designers": [
     "Zong-Ger(蔥哥)"
-   ]
+   ],
+   "pollVotes": 5
   },
   "437705": {
    "name": "Horrified: Dungeons & Dragons",
@@ -2053,7 +2136,8 @@
    ],
    "designers": [
     "Peter Lee"
-   ]
+   ],
+   "pollVotes": 18
   },
   "441548": {
    "name": "Trickerion: Anniversary Edition",
@@ -2086,7 +2170,8 @@
    "designers": [
     "Richard Ámann",
     "Viktor Péter"
-   ]
+   ],
+   "pollVotes": 16
   },
   "441850": {
    "name": "Echoes of Time",
@@ -2118,7 +2203,8 @@
    "designers": [
     "Simone Luciani",
     "Roberto Pellei"
-   ]
+   ],
+   "pollVotes": 49
   },
   "444234": {
    "name": "For the Gods!",
@@ -2148,7 +2234,8 @@
     "Trevor Benjamin",
     "Brett J. Gilbert",
     "David Thompson (I)"
-   ]
+   ],
+   "pollVotes": 4
   },
   "446930": {
    "name": "Match Me If You Can",
@@ -2175,7 +2262,8 @@
    "designers": [
     "Johannes Berger",
     "Julien Gupta"
-   ]
+   ],
+   "pollVotes": 3
   },
   "447379": {
    "name": "Carnival of Sins",
@@ -2204,7 +2292,8 @@
    ],
    "designers": [
     "Alex Nogués"
-   ]
+   ],
+   "pollVotes": 17
   },
   "449854": {
    "name": "The Dawn of Pangaea",
@@ -2235,7 +2324,8 @@
    ],
    "designers": [
     "Thomas Franken"
-   ]
+   ],
+   "pollVotes": 4
   },
   "451924": {
    "name": "Biddle",
@@ -2266,7 +2356,8 @@
    "designers": [
     "Carsten Rohlfs",
     "Ralf zur Linde"
-   ]
+   ],
+   "pollVotes": 12
   },
   "452817": {
    "name": "Emberheart",
@@ -2295,7 +2386,8 @@
    "designers": [
     "Rob Fisher",
     "Adam Porter"
-   ]
+   ],
+   "pollVotes": 54
   },
   "454103": {
    "name": "Magical Athlete",
@@ -2333,7 +2425,8 @@
    "designers": [
     "Richard Garfield",
     "Takashi Ishida"
-   ]
+   ],
+   "pollVotes": 236
   },
   "456860": {
    "name": "Yotei",
@@ -2360,7 +2453,8 @@
    ],
    "designers": [
     "Huy Pham"
-   ]
+   ],
+   "pollVotes": 4
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
@@ -2397,7 +2491,8 @@
    "designers": [
     "Eric Olsen",
     "Alyssa Swatek"
-   ]
+   ],
+   "pollVotes": 28
   },
   "465286": {
    "name": "Trash Poker",
@@ -2434,7 +2529,8 @@
    "designers": [
     "Rico Besteher",
     "Frank Noack"
-   ]
+   ],
+   "pollVotes": 9
   },
   "465849": {
    "name": "Codenames: Critical Role Adventures",
@@ -2449,7 +2545,11 @@
     3,
     4
    ],
-   "rec": [],
+   "rec": [
+    2,
+    3,
+    4
+   ],
    "categories": [
     "Adventure",
     "Card Game",
@@ -2467,7 +2567,8 @@
    "designers": [
     "Vlaada Chvátil",
     "Felix Podlesny"
-   ]
+   ],
+   "pollVotes": 11
   },
   "469375": {
    "name": "Deckers: Duplicity",
@@ -2495,7 +2596,8 @@
    ],
    "designers": [
     "Richard Wilkins"
-   ]
+   ],
+   "pollVotes": 0
   },
   "479457": {
    "name": "Braided Skies",
@@ -2526,7 +2628,8 @@
    ],
    "designers": [
     "Dan Germain"
-   ]
+   ],
+   "pollVotes": 9
   }
  }
 }
