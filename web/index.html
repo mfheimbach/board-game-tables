@@ -32,21 +32,22 @@
     </section>
 
     <section class="tables-row">
-      <span>Tables</span>
+      <span>Up to</span>
       <div class="stepper">
         <button id="tMinus" aria-label="Fewer tables">−</button>
         <output id="tVal">3</output>
         <button id="tPlus" aria-label="More tables">+</button>
       </div>
-      <span class="muted small">at most</span>
+      <span id="tWord">tables</span>
     </section>
 
     <section class="games">
       <div class="row-between">
-        <h2>Games <span id="gameCount" class="muted"></span></h2>
-        <span class="links"><button class="link" id="gamesReset" hidden>reset</button> <button class="link" id="gamesMore">all</button></span>
+        <h2><button class="fold" id="gamesFold" aria-expanded="false">Games <span id="gameCount" class="muted"></span> <span class="chev">▾</span></button>
+          <button class="info" id="gamesInfo" aria-label="How game chips work" aria-expanded="false">ⓘ</button></h2>
+        <span class="links"><button class="link" id="gamesReset" hidden>reset</button> <button class="link" id="gamesMore" hidden>all</button></span>
       </div>
-      <p class="muted small legend">Tap: 📌 must play → ⊘ leave out → normal. Hold a game, or tap it in a result, to choose who plays it. Number = how many here want it.</p>
+      <p class="muted small legend" id="gamesLegend" hidden>Tap a game: 📌 must play → ⊘ leave out → normal. Hold it, or tap its name in a result, to choose who plays it. The number is how many people here want it.</p>
       <div id="gameChips" class="chips"></div>
     </section>
   </aside>
@@ -84,7 +85,7 @@
     <img src="img/powered-by-bgg.svg" alt="Powered by BGG" height="36"
          onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bgg-text',textContent:'Powered by BGG'}))">
   </a>
-  <span class="muted small">Game data (player counts, play time) from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>.</span>
+  <span class="muted small">Player counts, play times, weight, mechanics, themes and designers from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>. Ratings from your Google Sheet; everything is calculated on this device.</span>
 </footer>
 
 <dialog id="settings">
@@ -110,6 +111,8 @@
           <button type="button" value="0">anything</button>
         </div>
       </label>
+      <details class="adv">
+      <summary>Advanced</summary>
       <label class="field">Blank ratings count as
         <div class="seg" data-key="blanks">
           <button type="button" value="neutral">1 (guess)</button>
@@ -123,6 +126,7 @@
           <button type="button" value="3">3</button>
         </div>
       </label>
+      </details>
       <label class="toggle"><input type="checkbox" data-key="explainer"> Someone who can explain sits at the table</label>
       <label class="toggle"><input type="checkbox" data-key="owner"> Only games whose owner is here</label>
       <label class="field"><span id="gapLabel">Tables may finish at different times</span>
@@ -138,7 +142,7 @@
         <h3>Games</h3>
         <input id="gameSearch" type="search" placeholder="Search" autocomplete="off">
       </div>
-      <p class="muted small">📌 must be played (tap a pinned game to pick who plays it) · ⊘ leave out</p>
+      <p class="muted small">📌 must be played · ⊘ leave out · tap a name to choose who plays it</p>
       <ul id="gameList" class="game-list"></ul>
     </section>
 

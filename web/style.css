@@ -271,3 +271,22 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 .card-head { gap: 8px; }
 .card-head .ghost { padding: 6px 9px; }
 @media (max-width: 440px) { .card-head .score-bar { display: none; } }
+
+/* audit round */
+.dur.max { font-weight: 750; color: var(--ink); }
+.dur.long.max { color: var(--r1); }
+.dur.epic.max { color: var(--r0); }
+.dur.long:not(.max), .dur.epic:not(.max) { font-weight: 650; }
+.dur:not(.long):not(.epic):not(.max) { font-weight: 400; color: inherit; }
+.games h2 { display: flex; align-items: center; gap: 4px; }
+.fold { border: 0; background: none; padding: 6px 0; font: inherit; font-weight: 700; color: var(--ink); display: inline-flex; align-items: baseline; gap: 6px; min-height: 40px; }
+.fold .chev { color: var(--muted); transition: transform .15s; display: inline-block; }
+.fold[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.info { border: 0; background: none; color: var(--muted); font-size: 1rem; width: 36px; height: 36px; border-radius: 50%; }
+.info[aria-expanded="true"] { color: var(--accent); }
+.games .legend { margin: 4px 0 0; }
+.card-head .ghost.icon { display: grid; place-items: center; width: 40px; padding: 0; }
+.adv { margin: 4px 0 14px; }
+.adv > summary { cursor: pointer; color: var(--muted); font-size: .9rem; padding: 6px 0; }
+.adv[open] > summary { margin-bottom: 8px; }
+.tables-row #tWord { font-weight: 500; }

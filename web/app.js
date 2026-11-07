@@ -7,6 +7,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = n => Number(n).toLocaleString('en');
 const ICON = {
+  share: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M8 8l4-4 4 4M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>',
   lock: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   drop: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.5l11-11"/></svg>',
   pin: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 6 4 3H6l4-3zM12 13v7"/></svg>',
@@ -17,7 +18,7 @@ const DEFAULTS = {
   set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false },
 };
 
-let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, sheetGame = null, sheetFocus = null;
+let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, gamesFolded = true, sheetGame = null, sheetFocus = null;
 let sheets = [], custom = null, cur = null;   // cur = { sheetId, tabs, i }
 const openAlts = new Set();
 
@@ -106,6 +107,7 @@ function renderControls() {
     `<button class="chip" data-p="${esc(p)}" aria-pressed="${att.has(i)}">${esc(p)}</button>`).join('');
   $('#whoCount').textContent = `${att.size} of ${model.players.length}`;
   $('#tVal').textContent = state.maxTables;
+  $('#tWord').textContent = state.maxTables === 1 ? 'table' : 'tables';
   $('#tMinus').disabled = state.maxTables <= 1;
   $('#tPlus').disabled = state.maxTables >= MAX_TABLES;
 
@@ -117,7 +119,8 @@ function renderControls() {
     const off = st.noExplainer ? 'nobody here can explain it' : st.ownerAway ? 'owner is not here' : '';
     return { g, want, would, lk, out, off, bans: bansOf(g.id), set: !!lk || out || bansOf(g.id).length > 0 };
   }).sort((a, b) => b.want - a.want || b.would - a.would || gName(a.g).localeCompare(gName(b.g)));
-  const visible = gamesOpen ? rows : rows.filter((r, i) => i < 12 || r.set);
+  // folded: only games with a pin/exclusion/picks; open: top 12 (or all) plus those
+  const visible = gamesFolded ? rows.filter(r => r.set) : gamesOpen ? rows : rows.filter((r, i) => i < 12 || r.set);
   $('#gameChips').innerHTML = visible.map(r => {
     const cls = r.lk ? (r.lk.exact ? 'g-lock' : 'g-pin') : r.out ? 'g-out' : r.off ? 'g-off' : '';
     const icon = r.lk ? (r.lk.exact ? '🔒 ' : '📌 ') : r.out ? '⊘ ' : '';
@@ -126,9 +129,12 @@ function renderControls() {
     return `<button class="chip g ${cls}" data-g="${r.g.id}" title="${esc(tip)}">${icon}${esc(gName(r.g))}${esc(who)}<span class="want">${r.want}</span></button>`;
   }).join('');
   const nSet = rows.filter(r => r.set).length;
-  $('#gameCount').textContent = nSet ? `${nSet} set` : '';
+  $('#gameCount').textContent = nSet ? `· ${nSet} set` : `· ${rows.length}`;
   $('#gamesMore').textContent = gamesOpen ? 'fewer' : `all ${rows.length}`;
+  $('#gamesMore').hidden = gamesFolded;
   $('#gamesReset').hidden = !nSet;
+  $('#gamesFold').setAttribute('aria-expanded', !gamesFolded);
+  $('#gameChips').hidden = gamesFolded && !nSet;
 }
 
 function seatHtml(g, p) {
@@ -158,18 +164,20 @@ function fmtDiff(m) {
   return `${h}${f} h`;
 }
 
-function tableHtml(t) {
+function tableHtml(t, ctx = {}) {
   const g = model.games[t.g], lk = lockOf(g.id), d = timeData(g);
   const kn = knownSet(g), allKnow = t.p.every(p => kn.has(model.players[p]));
   const est = t.d ? estimate(d, t.p.length, allKnow) : null, bn = bin(t.d);
-  const dur = bn ? ` · <span class="dur ${bn.tone}" title="${allKnow ? 'everyone knows it: no teach' : 'with teach for newcomers'}">${bn.label}${allKnow ? ' 🎓' : ''}</span>` : '';
+  // colour relative to the other tables: longest bold, clear outliers amber/red
+  const r = ctx.lo && t.d ? t.d / ctx.lo : 1;
+  const tone = [r >= 1.6 ? 'epic' : r >= 1.25 ? 'long' : '', ctx.spread && t.d >= ctx.hi * 0.97 ? 'max' : ''].join(' ');
+  const dur = bn ? ` · <span class="dur ${tone}" title="${allKnow ? 'everyone knows it: no teach' : 'with teach for newcomers'}">${bn.label}${allKnow ? ' 🎓' : ''}</span>` : '';
   const nerd = state.set.minutes && est ? `<div class="nerd">box ${boxText(d)} → ${Math.round(est.box)}′ at ${t.p.length}p · ${est.teach ? `teach ${Math.round(est.teach)} + ` : ''}play ${Math.round(est.play)} = <b>${hm(est.total)}</b> (${hm(est.total * 0.8)}–${hm(est.total * 1.5)})</div>` : '';
   return `<div class="tbl${lk ? ' locked' : ''}">
     <div><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${dur}</span>${nerd}</div>
     <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div>
     <div class="acts">
       <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>
-      <button class="act" data-drop="${g.id}" aria-label="Leave this game out" title="Leave this game out">${ICON.drop}</button>
     </div></div>`;
 }
 
@@ -190,7 +198,8 @@ function cardHtml(c, i, nAtt) {
   const s = c.seatings[0];
   const pct = Math.round(100 * s.score / (2 * nAtt));
   const tables = [...s.tables].sort((a, b) => b.p.length - a.p.length);
-  const allLocked = tables.every(t => lockOf(model.games[t.g].id)?.exact);
+  const ds = tables.map(t => t.d).filter(d => d > 0);
+  const ctx = ds.length > 1 ? { lo: Math.min(...ds), hi: Math.max(...ds), spread: Math.max(...ds) / Math.min(...ds) > 1.05 } : {};
   return `<article class="card" data-i="${i}">
     <div class="card-head">
       <span class="rank">#${i + 1}</span><span class="score">${pct}%</span>
@@ -199,10 +208,9 @@ function cardHtml(c, i, nAtt) {
       ${syncChip(tables)}
       <span class="spacer"></span>
       <button class="ghost" data-alts="${i}" title="Other seatings with the same games">${openAlts.has(key(s)) ? 'Hide' : 'Seatings'}</button>
-      <button class="ghost" data-share="${i}" title="Send to the group" aria-label="Send to the group">📤</button>
-      ${allLocked ? '' : `<button class="ghost" data-lockall="${i}" title="Lock all tables">${ICON.lock}</button>`}
+      <button class="ghost icon" data-share="${i}" title="Send to the group" aria-label="Send to the group">${ICON.share}</button>
     </div>
-    ${tables.map(tableHtml).join('')}
+    ${tables.map(t => tableHtml(t, ctx)).join('')}
     <div class="alts" hidden></div>
   </article>`;
 }
@@ -239,6 +247,25 @@ function renderResults(r, ms) {
   list.forEach((c, i) => { if (openAlts.has(key(c.seatings[0]))) showAlts(i); });
 }
 
+// Describe an alternative seating by who moves compared to the shown one:
+// pairs that trade places become "A ↔ B", everyone else "A → Game".
+function altsHtml(base, seats, i, nAtt) {
+  const where = s => { const m = new Map(); s.tables.forEach(t => t.p.forEach(p => m.set(p, t.g))); return m; };
+  const b = where(base);
+  return seats.map((s, k) => {
+    const a = where(s), moved = [...a.keys()].filter(p => a.get(p) !== b.get(p));
+    if (!moved.length) return '';
+    const done = new Set(), parts = [];
+    for (const p of moved) {
+      if (done.has(p)) continue;
+      const q = moved.find(q => !done.has(q) && q !== p && a.get(p) === b.get(q) && a.get(q) === b.get(p));
+      if (q !== undefined) { done.add(p); done.add(q); parts.push(`<b>${esc(model.players[p])}</b> ↔ <b>${esc(model.players[q])}</b>`); }
+    }
+    for (const p of moved) if (!done.has(p)) parts.push(`<b>${esc(model.players[p])}</b> → ${esc(gName(model.games[a.get(p)]))}`);
+    return `<div class="alt"><div class="who">${parts.join('<br>')}</div><span class="muted">${Math.round(100 * s.score / (2 * nAtt))}%</span><button data-use="${i}:${k}">Use</button></div>`;
+  }).join('');
+}
+
 async function showAlts(i) {
   const c = last.result.combos[i], card = $(`.card[data-i="${i}"]`), box = card?.querySelector('.alts');
   if (!box) return;
@@ -248,9 +275,7 @@ async function showAlts(i) {
   const { result } = await solve('alt', pack(games));
   const seats = result.combos[0]?.seatings ?? [];
   const nAtt = attendIdx().length;
-  box.innerHTML = seats.map((s, k) => `<div class="alt"><div class="who">${
-    [...s.tables].sort((a, b) => b.p.length - a.p.length).map(t => `<b>${esc(gName(model.games[t.g]))}</b>: ${t.p.map(p => esc(model.players[p])).join(', ')}`).join('<br>')
-  }</div><span class="muted">${Math.round(100 * s.score / (2 * nAtt))}%</span><button data-use="${i}:${k}">Use</button></div>`).join('') || '<span class="muted small">No other seatings.</span>';
+  box.innerHTML = altsHtml(c.seatings[0], seats, i, nAtt) || '<span class="muted small">No other seatings with these games.</span>';
   box._seats = seats;
 }
 
@@ -564,6 +589,13 @@ function wire() {
       else setLock(gameById(id), [], false);
     }
     else if (b.id === 'gamesMore') { gamesOpen = !gamesOpen; renderControls(); return; }
+    else if (b.id === 'gamesFold') {
+      gamesFolded = !gamesFolded;
+      try { localStorage.setItem('bgt:gamesFold', gamesFolded ? '1' : '0'); } catch {}
+      renderControls(); return;
+    } else if (b.id === 'gamesInfo') {
+      const l = $('#gamesLegend'); l.hidden = !l.hidden; b.setAttribute('aria-expanded', !l.hidden); return;
+    }
     else if (b.id === 'gamesReset') { state.locks = []; state.excluded = []; state.bans = {}; }
     else if (b.id === 'more') { shown += 20; renderResults(last.result, 0); return; }
     else if (d.fix) {
@@ -716,6 +748,7 @@ function warmSolver() {
 
 async function init() {
   warmSolver();
+  try { gamesFolded = localStorage.getItem('bgt:gamesFold') !== '0'; } catch {}
   wire();
   try {
     const [c, bj, tj] = await Promise.all([fetch('config.json', { cache: 'no-cache' }).then(r => r.json()), getJSON('data/bgg.json'), getJSON('data/tabs.json')]);
