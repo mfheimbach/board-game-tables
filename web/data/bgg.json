@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-06T19:55:19.701Z",
+ "updated": "2026-11-07T05:42:38.224Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -1305,7 +1305,7 @@
    "maxTime": 90,
    "weight": 2.913,
    "best": [
-    2,
+    1,
     4
    ],
    "rec": [
