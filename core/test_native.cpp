@@ -19,6 +19,8 @@ int main() {
     o.maxTables = 1 + rng() % 8; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
     o.needExplainer = rng() % 2; o.minPerTable = 1 + rng() % 2;
     if (rng() % 3 == 0) o.maxGap = 15 + rng() % 200;
+    if (rng() % 3 == 0) o.minDur = 20 + rng() % 150;
+    if (rng() % 3 == 0) o.maxDur = 60 + rng() % 250;
     if (rng() % 2) { o.fairW.resize(nP); for (auto& w : o.fairW) w = rng() % 101; }
     std::vector<Game> G(nG);
     for (auto& g : G) {
@@ -77,7 +79,10 @@ int main() {
         }
         size_t kk = (size_t)k;
         const auto& dv = (m & ~G[g].known) == 0 ? G[g].durKnown : G[g].durNew;
-        cand.push_back({g, m, va * 128 - gu, kk < dv.size() ? (int)dv[kk] : 0, fa});
+        int dd = kk < dv.size() ? (int)dv[kk] : 0;
+        bool timeOk = f || dd <= 0 || ((!o.minDur || dd >= o.minDur) && (!o.maxDur || dd <= o.maxDur));
+        if (!timeOk) continue;
+        cand.push_back({g, m, va * 128 - gu, dd, fa});
       }
       return cand.size() > before;
     };

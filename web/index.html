@@ -39,6 +39,12 @@
         <button id="tPlus" aria-label="More tables">+</button>
       </div>
       <span id="tWord">tables</span>
+      <button id="timeBtn" class="time-btn" aria-expanded="false">⏱ <span id="timeLabel">any length</span></button>
+    </section>
+    <section id="timePanel" class="time-panel" hidden>
+      <div class="trow"><span>at least</span><div class="chips" id="tminChips"></div></div>
+      <div class="trow"><span>at most</span><div class="chips" id="tmaxChips"></div></div>
+      <p class="muted small">Uses each table's estimate including teach. Pinned games always count.</p>
     </section>
 
     <section class="games">

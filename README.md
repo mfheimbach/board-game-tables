@@ -27,6 +27,7 @@ It runs entirely in the browser (C++ core compiled to WebAssembly), so it works 
 - everyone knows it: `1.1·box(n)`
 - Shown as log-ish bins (¾ h, 1 h, 1½ h, 2 h, 3 h, 4 h, 5 h+); exact minutes via settings.
 - Who knows a game: explainers, the optional `*Kennen` column, and per device in the game sheet.
+- Time slot (main screen ⏱): only tables whose estimate is at least / at most a given length; a limit includes its whole bin. Pinned games are exempt.
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
 ## Cater to picky players (optional)

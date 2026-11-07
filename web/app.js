@@ -15,7 +15,7 @@ const ICON = {
 const MAX_TABLES = 8;  // matches core/tables.hpp
 const DEFAULTS = {
   attend: null, maxTables: 3, locks: [], excluded: [], bans: {}, known: {},
-  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false, picky: false },
+  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false, picky: false, tmin: 0, tmax: 0 },
 };
 
 let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, gamesFolded = true, sheetGame = null, sheetFocus = null;
@@ -84,7 +84,8 @@ function pack(alt) {
   // pinned games win over the table limit
   const buf = [model.players.length, G.length, alt ? alt.length : Math.min(MAX_TABLES, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
-    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, alt ? 1500 : budgetOnce || 1500];
+    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, alt ? 1500 : budgetOnce || 1500,
+    alt ? 0 : lowEdge(s.tmin), alt ? 0 : highEdge(s.tmax)];
   buf.push(att.length, ...att, ...model.players.map(() => 0));   // fairness weights: unused
   for (const g of G) {
     const st = status(g, attSet);
@@ -130,6 +131,7 @@ function renderControls() {
   $('#whoCount').textContent = `${att.size} of ${model.players.length}`;
   $('#tVal').textContent = state.maxTables;
   $('#tWord').textContent = state.maxTables === 1 ? 'table' : 'tables';
+  renderTime();
   $('#tMinus').disabled = state.maxTables <= 1;
   $('#tPlus').disabled = state.maxTables >= MAX_TABLES;
 
@@ -203,6 +205,23 @@ function tableHtml(t, ctx = {}) {
     </div></div>`;
 }
 
+// ---------- time slot (min/max length per table) ----------
+// Steps match the displayed bins; a filter includes the whole bin, so "at most 3 h"
+// keeps every table that shows "~3 h" (edges = geometric midpoints between steps).
+const TSTEPS = [45, 60, 90, 120, 180, 240, 360];
+const tLabel = m => ({ 45: '¾ h', 60: '1 h', 90: '1½ h', 120: '2 h', 180: '3 h', 240: '4 h', 360: '6 h' })[m];
+// floor/ceil so a table exactly on a bin boundary is filtered the way its label reads
+const lowEdge = m => { const i = TSTEPS.indexOf(m); return i > 0 ? Math.ceil(Math.sqrt(TSTEPS[i - 1] * m)) : 0; };
+const highEdge = m => { const i = TSTEPS.indexOf(m); return i >= 0 && i < TSTEPS.length - 1 ? Math.floor(Math.sqrt(TSTEPS[i + 1] * m)) : 0; };
+function renderTime() {
+  const s = state.set, lo = s.tmin || 0, hi = s.tmax || 0;
+  $('#timeLabel').textContent = !lo && !hi ? 'any length' : lo && hi ? `${tLabel(lo)}–${tLabel(hi)}` : lo ? `at least ${tLabel(lo)}` : `up to ${tLabel(hi)}`;
+  $('#timeBtn').classList.toggle('on', !!(lo || hi));
+  const chip = (key, v, label, on, dis) => `<button class="chip t" data-tset="${key}:${v}" aria-pressed="${on}"${dis ? ' disabled' : ''}>${label}</button>`;
+  $('#tminChips').innerHTML = [0, 60, 90, 120, 180].map(v => chip('tmin', v, v ? tLabel(v) : 'any', lo === v, hi && v > hi)).join('');
+  $('#tmaxChips').innerHTML = [60, 90, 120, 180, 0].map(v => chip('tmax', v, v ? tLabel(v) : 'any', hi === v, v && lo > v)).join('');
+}
+
 // "tables finish within": slider ticks (minutes, 0 = any), roughly doubling
 const GAPS = [[30, '½ h'], [60, '1 h'], [120, '2 h'], [0, 'any']];
 const gapLabel = i => GAPS[i]?.[0] ? `Tables finish within ${GAPS[i][1]} of each other` : 'Tables may finish at different times';
@@ -254,6 +273,7 @@ function renderResults(r, ms) {
     if (+s.minRating === 2) fixes.push(['Also seat "would play"', 'rating']);
     if (s.source !== 'any') fixes.push(['Any player count', 'source']);
     if (GAPS[s.gap]?.[0]) fixes.unshift(['Allow different lengths', 'sync']);
+    if (s.tmin || s.tmax) fixes.unshift(['Any length', 'time']);
     if (s.explainer && hasExplainers()) fixes.push(['Ignore explainers', 'explainer']);
     if (state.locks.length) fixes.push(['Clear locks', 'locks']);
     if (state.excluded.length) fixes.push(['Bring back left-out games', 'excluded']);
@@ -612,6 +632,8 @@ function wire() {
       else setLock(gameById(id), [], false);
     }
     else if (b.id === 'gamesMore') { gamesOpen = !gamesOpen; renderControls(); return; }
+    else if (b.id === 'timeBtn') { const p = $('#timePanel'); p.hidden = !p.hidden; b.setAttribute('aria-expanded', !p.hidden); return; }
+    else if (d.tset) { const [k, v] = d.tset.split(':'); state.set[k] = +v; }
     else if (b.id === 'gamesFold') {
       gamesFolded = !gamesFolded;
       try { localStorage.setItem('bgt:gamesFold', gamesFolded ? '1' : '0'); } catch {}
@@ -624,7 +646,7 @@ function wire() {
     else if (d.fix) {
       const s = state.set;
       ({ tables: () => state.maxTables++, rating: () => { s.minRating = 1; }, source: () => { s.source = 'any'; },
-        explainer: () => { s.explainer = false; }, sync: () => { s.gap = 3; }, locks: () => { state.locks = []; state.bans = {}; }, excluded: () => { state.excluded = []; } })[d.fix]();
+        explainer: () => { s.explainer = false; }, sync: () => { s.gap = 3; }, time: () => { s.tmin = 0; s.tmax = 0; }, locks: () => { state.locks = []; state.bans = {}; }, excluded: () => { state.excluded = []; } })[d.fix]();
     } else if (d.pin) {
       const id = +d.pin;
       if (lockOf(id)) state.locks = state.locks.filter(l => l.id !== id);

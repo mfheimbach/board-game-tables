@@ -292,3 +292,23 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 .tables-row #tWord { font-weight: 500; }
 
 .hint { margin: -6px 0 10px 32px; }
+
+.tables-row { flex-wrap: wrap; row-gap: 8px; }
+.time-btn { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: 7px 12px; min-height: 40px; font-weight: 600; margin-left: auto; white-space: nowrap; }
+.time-btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.time-panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.time-panel .trow { display: grid; grid-template-columns: 62px 1fr; align-items: center; gap: 8px; }
+.time-panel .trow + .trow { margin-top: 6px; }
+.time-panel .trow > span { color: var(--muted); font-size: .85rem; }
+.time-panel .chips { margin: 0; gap: 6px; }
+.chip.t { min-height: 34px; padding: 4px 11px; font-size: .88rem; font-weight: 500; }
+.chip.t:disabled { opacity: .35; }
+.time-panel p { margin: 8px 0 0; }
+.time-panel .chips { flex-wrap: nowrap; overflow-x: auto; }
+.chip.t { white-space: nowrap; flex: none; padding: 4px 10px; }
+.time-panel .trow { grid-template-columns: 56px 1fr; }
+.time-btn { margin-left: 0; }
+.time-panel { padding: 10px; }
+.time-panel .trow { grid-template-columns: 52px 1fr; gap: 6px; }
+.time-panel .chips { gap: 4px; }
+.chip.t { padding: 4px 9px; font-size: .85rem; }

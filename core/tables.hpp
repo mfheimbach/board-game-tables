@@ -57,6 +57,7 @@ struct Options {
   int keepSeatings = 1;       // seatings kept per game set
   bool alternates = false;    // all leaves share one game set: rank seatings
   int maxGap = 0;             // >0: all tables end within this many minutes of each other
+  int minDur = 0, maxDur = 0; // >0: only tables estimated to last at least / at most this long (unknown passes)
   long long nodeCap = 200000000;
   int timeBudgetMs = 0;        // >0: stop after this long and return the best found
   std::vector<int> fairW;      // per player 0..100: weight of their "yes" in the fairness tie-break
@@ -107,7 +108,7 @@ class Solver {
       if (fcands[i].empty()) res.blockedFrozen.push_back((int)i);
     }
     std::vector<int> free;
-    for (int g = 0; g < (int)G.size(); ++g) if (!skip[g]) addCandidates(g, 0, false, free);
+    for (int g = 0; g < (int)G.size(); ++g) if (!skip[g]) addCandidates(g, 0, false, free, false, true);   // pinned games ignore the time filter
     byLow.assign(64, {});
     for (int t : free) byLow[__builtin_ctzll(res.cands[t].mask)].push_back(t);
     for (auto& v : byLow) sortByKey(v);
@@ -154,7 +155,7 @@ class Solver {
   // All tables for game g among attendees. Players in `req` are always eligible
   // (someone deliberately put them there); `exact` = only the table `req` itself;
   // `relaxed` = forced team that broke the rules: any size >= team, no explainer needed.
-  void addCandidates(int g, Mask req, bool exact, std::vector<int>& out, bool relaxed = false) {
+  void addCandidates(int g, Mask req, bool exact, std::vector<int>& out, bool relaxed = false, bool timed = false) {
     const Game& gm = G[g];
     auto rate = [&](int p, int& eff, bool& guess) {
       int r = p < (int)gm.rating.size() ? gm.rating[p] : -1;
@@ -192,8 +193,9 @@ class Solver {
         Mask m = 0; int sc = 0, gu = 0, va = 0, fa = 0;
         for (int i = 0; i < k; ++i) { int e = c[i]; m |= Mask(1) << el[e]; sc += effs[e]; gu += gs[e]; va += vs[e]; fa += fs[e]; }
         if ((m & req) == req && (relaxed || !o.needExplainer || (m & gm.explainers))) {
-          out.push_back((int)res.cands.size());
-          res.cands.push_back({g, m, sc, gu, durOf(gm, m), va, fa});
+          int d = durOf(gm, m);
+          bool fits = !timed || d <= 0 || ((!o.minDur || d >= o.minDur) && (!o.maxDur || d <= o.maxDur));
+          if (fits) { out.push_back((int)res.cands.size()); res.cands.push_back({g, m, sc, gu, d, va, fa}); }
         }
         int i = k - 1;
         while (i >= 0 && c[i] == n - k + i) --i;
