@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-07T07:59:09.909Z",
+ "updated": "2026-11-07T11:12:22.874Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -431,7 +431,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 1456
+   "pollVotes": 1457
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -825,7 +825,7 @@
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
    ],
-   "pollVotes": 498
+   "pollVotes": 499
   },
   "322289": {
    "name": "Darwin's Journey",
@@ -1116,7 +1116,7 @@
     "Jim Keifer",
     "Brian Neff"
    ],
-   "pollVotes": 172
+   "pollVotes": 173
   },
   "357873": {
    "name": "The Old King's Crown",
@@ -2426,7 +2426,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 236
+   "pollVotes": 237
   },
   "456860": {
    "name": "Yotei",
@@ -2492,7 +2492,7 @@
     "Eric Olsen",
     "Alyssa Swatek"
    ],
-   "pollVotes": 28
+   "pollVotes": 29
   },
   "465286": {
    "name": "Trash Poker",
