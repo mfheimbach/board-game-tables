@@ -1,7 +1,7 @@
 import { estimate, bin, boxTime, hm } from './time.js';
 let statsMod = null;
 const loadStats = () => (statsMod ??= import('./stats.js'));
-import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
+import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, resolveCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -314,7 +314,8 @@ function renderGameList() {
   $('#dataInfo').innerHTML = `
     <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${{ live: 'live from the sheet', pending: 'saved copy, checking the sheet…' }[model.source] ?? 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
     <p>BoardGameGeek data: ${nb} games${bgg.updated ? `, updated ${new Date(bgg.updated).toLocaleDateString()}` : ''}${bgg.sample ? ' <span class="badge">sample data</span>' : ''}.</p>
-    ${model.warnings.map(w => `<p class="muted">⚠ ${esc(w)}</p>`).join('')}`;
+    ${[...model.warnings, ...model.games.flatMap(g => (resolveCounts(g, bgg.games[g.id])?.notes ?? []).map(n => `${gName(g)}: ${n}`))]
+      .map(w => `<p class="muted">⚠ ${esc(w)}</p>`).join('')}`;
 }
 
 function renderBanner() {

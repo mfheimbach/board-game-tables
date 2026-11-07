@@ -71,18 +71,35 @@ export function bggId(v) {
   return m ? +m[1] : null;
 }
 
-// "2-5", "3, 4", "4+" -> [2,3,4,5] ...
-export function parseCounts(v, max = 12) {
+// Player counts from free text: "2-5", "2 – 5", "2 bis 4", "3, 4", "3;4", "3/4",
+// "3 oder 4", "4+", "2-4, 6", "3.4" (a German "3,4" that became a decimal),
+// "2-4 (5 mit Exp.)". Returns { list, bad }: bad = something non-empty couldn't be read.
+export function readCounts(v, max = 12) {
   const out = new Set();
-  for (const part of String(v ?? '').split(/[,;/]|\bor\b|\bund\b|\band\b/)) {
-    const p = part.trim().replace(/[–—]/g, '-');
+  let bad = false;
+  const text = String(v ?? '')
+    .replace(/\([^)]*\)|\[[^\]]*\]/g, ' ')                 // comments in brackets
+    .replace(/[–—]/g, '-')
+    .replace(/\s*\b(?:bis|to|until)\b\s*/gi, '-');
+  for (const raw of text.split(/[,;/|&]|\b(?:oder|or|und|and)\b/i)) {
+    // drop words around the numbers ("best 3", "3 players", "ca. 4")
+    const p = raw.replace(/^[^\d]+/, '').replace(/[^\d+]+$/, '').trim();
+    if (!p) { if (/\d/.test(raw)) bad = true; continue; }
     let m;
-    if ((m = p.match(/^(\d+)\s*-\s*(\d+)$/))) for (let k = +m[1]; k <= +m[2]; k++) out.add(k);
-    else if ((m = p.match(/^(\d+)\s*\+$/))) for (let k = +m[1]; k <= Math.max(max, +m[1]); k++) out.add(k);
+    if ((m = p.match(/^(\d+)\s*-\s*(\d+)$/))) {
+      const [a, b] = [+m[1], +m[2]].sort((x, y) => x - y);
+      for (let k = a; k <= b; k++) out.add(k);
+    } else if ((m = p.match(/^(\d+)\s*\+$/))) for (let k = +m[1]; k <= Math.max(max, +m[1]); k++) out.add(k);
+    else if ((m = p.match(/^(\d+)\.(\d+)$/))) { out.add(+m[1]); out.add(+m[2]); }
     else if ((m = p.match(/^(\d+)$/))) out.add(+m[1]);
+    else bad = true;
   }
-  return [...out].sort((a, b) => a - b);
+  out.delete(0);
+  const list = [...out].filter(k => k <= 99).sort((a, b) => a - b);
+  if (!list.length && String(v ?? '').trim()) bad = true;
+  return { list, bad };
 }
+export const parseCounts = (v, max = 12) => readCounts(v, max).list;
 
 // Stable negative id for games without a BGG entry.
 export const localId = name => { let h = 7; for (const c of name.toLowerCase()) h = (h * 31 + c.codePointAt(0)) | 0; return -(Math.abs(h) % 1e9) - 1; };
@@ -159,13 +176,26 @@ export function parseSheet(rows, cfg) {
     const num = i => (i >= 0 ? Number(String(r[i] ?? '').replace(',', '.')) : NaN);
     if (num(ci.minTime) > 0 || num(ci.maxTime) > 0 || num(ci.weight) > 0)
       g.manualTime = { minTime: num(ci.minTime) || null, maxTime: num(ci.maxTime) || null, weight: num(ci.weight) || null };
-    if (ci.min >= 0 && ci.max >= 0 && +r[ci.min] > 0 && +r[ci.max] > 0) {
-      g.manual = {
-        min: +r[ci.min], max: +r[ci.max],
-        rec: ci.rec >= 0 ? parseCounts(r[ci.rec]) : [],
-        best: ci.best >= 0 ? parseCounts(r[ci.best]) : [],
-      };
-    }
+    // hand-entered player counts: each field on its own (missing ones fall back to BGG)
+    const label = g.name ?? `#${id}`;
+    const one = (i, what) => {
+      if (i < 0) return null;
+      const cell = String(r[i] ?? '').trim();
+      if (!cell) return null;
+      const { list, bad } = readCounts(cell);
+      if (bad || list.length !== 1) { warnings.push(`${label}: couldn't read ${what} "${cell}"`); return list.length ? list[0] : null; }
+      return list[0];
+    };
+    const many = (i, what) => {
+      if (i < 0) return null;
+      const cell = String(r[i] ?? '').trim();
+      if (!cell) return null;
+      const { list, bad } = readCounts(cell);
+      if (bad) warnings.push(`${label}: couldn't fully read ${what} "${cell}"`);
+      return list.length ? list : null;
+    };
+    const man = { min: one(ci.min, 'min players'), max: one(ci.max, 'max players'), rec: many(ci.rec, 'recommended'), best: many(ci.best, 'best') };
+    if (Object.values(man).some(v => v !== null)) g.manual = man;
     if (ci.explainer >= 0 && g.explainerText && !g.explainers.length)
       warnings.push(`${g.name ?? id}: explainer "${g.explainerText}" is not a player column`);
     games.push(g);
@@ -173,15 +203,44 @@ export function parseSheet(rows, cfg) {
   return { players, games, warnings };
 }
 
-// Player counts for one game: 'best' | 'rec' | 'any'. Sheet columns win over BGG.
-export function allowedCounts(game, bgg, source) {
-  const d = game.manual ?? bgg;
-  if (!d || !(d.min > 0)) return null;
-  const range = [];
-  for (let k = d.min; k <= Math.min(d.max, 31); k++) range.push(k);
-  const best = (d.best ?? []).filter(k => k <= 31);
-  const rec = [...new Set([...(d.rec ?? []), ...best])].filter(k => k <= 31).sort((a, b) => a - b);
-  if (source === 'any') return range;
-  if (source === 'best') return best.length ? best : rec.length ? rec : range;
-  return rec.length ? rec : range;
+export const MIN_POLL_VOTES = 10;
+
+// Resolve player counts field by field:
+//   1. the sheet, if readable   2. BGG (poll data only with enough votes)
+//   3. derived: best <- recommended <- min..max, and min/max from the listed counts
+// Recommended/best are then clipped to min..max. Returns null if nothing is known.
+export function resolveCounts(game, b) {
+  const m = game.manual ?? {}, notes = [];
+  const pollOk = b && !(b.pollVotes >= 0 && b.pollVotes < MIN_POLL_VOTES);
+  let min = m.min ?? (b?.min > 0 ? b.min : null), max = m.max ?? (b?.max > 0 ? b.max : null);
+  let best = m.best ?? (pollOk && b.best?.length ? b.best : null);
+  let rec = m.rec ?? (pollOk && b.rec?.length ? b.rec : null);
+  if (b && !pollOk && (b.best?.length || b.rec?.length)) notes.push(`BGG poll has only ${b.pollVotes} votes, ignored`);
+  const listed = [...(rec ?? []), ...(best ?? [])];
+  if (min === null && listed.length) min = Math.min(...listed);
+  if (max === null && listed.length) max = Math.max(...listed);
+  if (min === null && max === null) return null;
+  if (min === null) min = Math.min(2, max);
+  if (max === null) max = Math.max(min, 4);
+  if (min > max) [min, max] = [max, min];
+  max = Math.min(max, 31);
+  const clip = (l, what) => {
+    if (!l) return null;
+    const inside = l.filter(k => k >= min && k <= max);
+    if (inside.length < l.length) notes.push(`${what} ${l.filter(k => k < min || k > max).join(', ')} outside ${min}–${max}, ignored`);
+    return inside.length ? inside : null;
+  };
+  best = clip(best, 'best'); rec = clip(rec, 'recommended');
+  const range = []; for (let k = min; k <= max; k++) range.push(k);
+  // unknown recommended: best if known (conservative), else the full range
+  rec = [...new Set([...(rec ?? best ?? range), ...(best ?? [])])].sort((a, z) => a - z);
+  best = best ?? rec;
+  return { min, max, range, rec, best, notes };
+}
+
+// Player counts for one game: 'best' | 'rec' | 'any'.
+export function allowedCounts(game, b, source) {
+  const r = resolveCounts(game, b);
+  if (!r) return null;
+  return source === 'any' ? r.range : source === 'best' ? r.best : r.rec;
 }

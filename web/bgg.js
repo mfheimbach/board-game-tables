@@ -3,7 +3,9 @@
 import { parseCounts } from './sheet.js';
 
 const decode = s => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#039;|&apos;/g, "'")
-  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n));
+  .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
+  .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+  .replace(/&ndash;/g, '–').replace(/&mdash;/g, '—').replace(/&nbsp;/g, ' ');
 const attr = (xml, tag) => { const m = xml.match(new RegExp(`<${tag}[^>]*\\svalue="([^"]*)"`)); return m ? decode(m[1]) : null; };
 
 const links = (x, type) => [...x.matchAll(new RegExp(`<link[^>]*type="${type}"[^>]*value="([^"]*)"`, 'g'))].map(m => decode(m[1])).filter(v => v && v !== '(Uncredited)');
@@ -19,6 +21,8 @@ export function parseItem(x) {
     categories: links(x, 'boardgamecategory'), mechanics: links(x, 'boardgamemechanic'), designers: links(x, 'boardgamedesigner'),
   };
   const sum = x.match(/<poll-summary[^>]*name="suggested_numplayers"[\s\S]*?<\/poll-summary>/);
+  const pv = x.match(/<poll[^>]*name="suggested_numplayers"[^>]*totalvotes="(\d+)"/);
+  g.pollVotes = pv ? +pv[1] : null;
   if (sum) {
     const best = (sum[0].match(/name="bestwith"[^>]*value="([^"]*)"/) || [])[1] ?? '';
     const rec = (sum[0].match(/name="recomm+endedwith"[^>]*value="([^"]*)"/) || [])[1] ?? '';
@@ -26,13 +30,15 @@ export function parseItem(x) {
     g.best = parseCounts(strip(best), g.max ?? 12);
     g.rec = parseCounts(strip(rec), g.max ?? 12);
   }
-  if (!g.best.length || !g.rec.length) {  // fall back to the raw poll
+  // any field the summary didn't fill comes from the raw poll
+  const needBest = !g.best.length, needRec = !g.rec.length;
+  if (needBest || needRec) {
     for (const r of x.matchAll(/<results numplayers="(\d+)">([\s\S]*?)<\/results>/g)) {
       const v = k => +((r[2].match(new RegExp(`value="${k}"\\s+numvotes="(\\d+)"`)) || [])[1] ?? 0);
       const [b, rc, n] = [v('Best'), v('Recommended'), v('Not Recommended')];
       if (b + rc + n === 0) continue;
-      if (!sum && b >= rc && b >= n) g.best.push(+r[1]);
-      if (!sum && b + rc > n) g.rec.push(+r[1]);
+      if (needBest && b >= rc && b >= n) g.best.push(+r[1]);
+      if (needRec && b + rc > n) g.rec.push(+r[1]);
     }
   }
   return g;
