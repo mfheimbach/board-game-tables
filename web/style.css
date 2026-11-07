@@ -115,6 +115,13 @@ h3 { font-size: .95rem; margin-bottom: 10px; }
 
 .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; padding: 18px 16px calc(24px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); text-align: center; }
 .bgg img { display: block; height: 32px; }
+/* Horst Chan, mascot: decorative, never catches taps. Sits in the footer's corner so she covers no buttons;
+   floats in the bottom-right corner only when the screen has a free margin beside the content. */
+.foot { position: relative; padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+.mascot { position: absolute; right: max(4px, env(safe-area-inset-right)); bottom: max(4px, env(safe-area-inset-bottom)); width: 140px; pointer-events: none; }
+.mascot img { display: block; width: 100%; height: auto; }
+@media (min-width: 900px) { .foot { padding-bottom: calc(24px + env(safe-area-inset-bottom)); padding-right: 170px; padding-left: 170px; } }
+@media (min-width: 1560px) { .mascot { position: fixed; width: 170px; z-index: 5; } .foot { padding-right: 16px; padding-left: 16px; } }
 .bgg-text { display: inline-block; padding: 6px 10px; border: 1.5px solid currentColor; border-radius: 8px; font-weight: 800; letter-spacing: .02em; }
 .bgg, .bgg-text { text-decoration: none; color: #ff5100; }
 
