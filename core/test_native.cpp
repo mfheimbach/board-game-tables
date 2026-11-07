@@ -8,7 +8,7 @@
 #include <random>
 using namespace tables;
 
-struct BT { int g; Mask m; long long key; int dur; };
+struct BT { int g; Mask m; long long key; int dur; long long fair; };
 
 int main() {
   std::mt19937 rng(42);
@@ -19,6 +19,7 @@ int main() {
     o.maxTables = 1 + rng() % 8; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
     o.needExplainer = rng() % 2; o.minPerTable = 1 + rng() % 2;
     if (rng() % 3 == 0) o.maxGap = 15 + rng() % 200;
+    if (rng() % 2) { o.fairW.resize(nP); for (auto& w : o.fairW) w = rng() % 101; }
     std::vector<Game> G(nG);
     for (auto& g : G) {
       g.counts = 0;
@@ -33,6 +34,7 @@ int main() {
       }
       g.rating.resize(nP);
       for (auto& r : g.rating) r = (int8_t)((int)(rng() % 4) - 1);
+      if (rng() % 2) { g.value.resize(nP); for (auto& v : g.value) v = (int16_t)(rng() % 170); }
     }
     Mask att = rng() & ((1u << nP) - 1);
     if (!att) att = 1;
@@ -54,12 +56,14 @@ int main() {
       int team = f ? __builtin_popcountll(f->req) : 0;
       for (Mask m = att; m; m = (m - 1) & att) {
         int k = __builtin_popcountll(m);
-        long long sc = 0, gu = 0; bool ok = true;
+        long long sc = 0, gu = 0, va = 0, fa = 0; bool ok = true;
         for (int p = 0; p < nP; ++p) if (m >> p & 1) {
           int r = G[g].rating[p], eff = r < 0 ? (o.blankAsZero ? 0 : 1) : r;
           bool forced = f && (f->req >> p & 1);
           if (!forced && (eff < o.minRating || (G[g].banned >> p & 1))) ok = false;
           sc += eff; gu += r < 0;
+          va += p < (int)G[g].value.size() ? G[g].value[p] : 64 * eff;
+          fa += (eff == 2 && p < (int)o.fairW.size()) ? o.fairW[p] : 0;
         }
         if (f && f->exact) { if (m != f->req) continue; }
         else {
@@ -73,7 +77,7 @@ int main() {
         }
         size_t kk = (size_t)k;
         const auto& dv = (m & ~G[g].known) == 0 ? G[g].durKnown : G[g].durNew;
-        cand.push_back({g, m, sc * 128 - gu, kk < dv.size() ? (int)dv[kk] : 0});
+        cand.push_back({g, m, va * 128 - gu, kk < dv.size() ? (int)dv[kk] : 0, fa});
       }
       return cand.size() > before;
     };
@@ -97,7 +101,8 @@ int main() {
         for (int t : pick) if (cand[t].dur > 0) { lo = std::min(lo, cand[t].dur); hi = std::max(hi, cand[t].dur); }
         if (o.maxGap > 0 && hi > 0 && lo < INT_MAX && hi - lo > o.maxGap) return;
         long long pen = (hi > 0 && lo < hi) ? std::min(1023LL, (long long)std::lround(std::log((double)hi / lo) * 400.0)) : 0;
-        key = key * 1024 - pen;
+        long long fsum = 0; for (int t : pick) fsum += cand[t].fair;
+        key = key * (1LL << 24) + fsum * 1024 - pen;
         ++count;
         auto it = bestBySet.find(gs);
         if (it == bestBySet.end() || it->second < key) bestBySet[gs] = key;

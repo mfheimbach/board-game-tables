@@ -15,7 +15,7 @@ const ICON = {
 const MAX_TABLES = 8;  // matches core/tables.hpp
 const DEFAULTS = {
   attend: null, maxTables: 3, locks: [], excluded: [], bans: {}, known: {},
-  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false },
+  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false, picky: false },
 };
 
 let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, gamesFolded = true, sheetGame = null, sheetFocus = null;
@@ -55,7 +55,29 @@ function status(g, att = new Set(attendIdx())) {
 }
 
 // ---------- packing for the WASM core (layout documented in core/wasm_api.cpp) ----------
+// Ranking points per player and game (64 = one rating step). With "cater to picky
+// players" each person's ratings are standardized (z-score, rescaled to the group's
+// mean/sd, like a T-score) and blended 50/50 with the raw rating, so a "yes" from
+// someone who rarely says yes counts a bit more.
+function rankValues() {
+  const blank = state.set.blanks === 'zero' ? 0 : 1;
+  const eff = (g, p) => (g.ratings[p] < 0 ? blank : g.ratings[p]);
+  const G = model.games, P = model.players.map((_, i) => i);
+  if (!state.set.picky) return G.map(g => P.map(p => 64 * eff(g, p)));
+  const all = G.flatMap(g => P.map(p => eff(g, p)));
+  const mean = a => a.reduce((s, x) => s + x, 0) / (a.length || 1);
+  const sd = a => { const m = mean(a); return Math.sqrt(mean(a.map(x => (x - m) ** 2))); };
+  const gm = mean(all), gs = sd(all) || 1;
+  const stats = P.map(p => { const own = G.map(g => eff(g, p)); return { m: mean(own), s: sd(own) }; });
+  return G.map(g => P.map(p => {
+    const r = eff(g, p), { m, s } = stats[p];
+    const t = s > 0 ? gm + (r - m) / s * gs : gm;
+    return Math.round(64 * (0.5 * r + 0.5 * Math.min(2.5, Math.max(0, t))));
+  }));
+}
+
 function pack(alt) {
+  const values = rankValues();
   const s = state.set, G = model.games, att = attendIdx(), attSet = new Set(att), pm = pIdx();
   const locks = state.locks.filter(l => gameById(l.id) >= 0);
   const lockFor = id => locks.find(l => l.id === id);
@@ -63,7 +85,7 @@ function pack(alt) {
   const buf = [model.players.length, G.length, alt ? alt.length : Math.min(MAX_TABLES, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
     alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0, alt ? 1500 : budgetOnce || 1500];
-  buf.push(att.length, ...att);
+  buf.push(att.length, ...att, ...model.players.map(() => 0));   // fairness weights: unused
   for (const g of G) {
     const st = status(g, attSet);
     const ban = bansOf(g.id).map(n => pm.get(n)).filter(i => i !== undefined);
@@ -71,7 +93,7 @@ function pack(alt) {
     const d = timeData(g), nd = Math.min(32, model.players.length + 1);
     const durs = allKnow => Array.from({ length: nd }, (_, k) => k ? Math.round(estimate(d, k, allKnow)?.total ?? 0) : 0);
     buf.push(st.counts.reduce((m, k) => m | (1 << k), 0), g.explainers.length, ...g.explainers, ban.length, ...ban,
-      kn.length, ...kn, nd, ...durs(false), ...durs(true), ...g.ratings);
+      kn.length, ...kn, nd, ...durs(false), ...durs(true), ...g.ratings, ...values[G.indexOf(g)]);
   }
   const lockedIds = new Set(locks.map(l => l.id));
   const excl = G.map((_, i) => i).filter(i => alt ? !alt.includes(i)

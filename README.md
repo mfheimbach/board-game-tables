@@ -29,6 +29,9 @@ It runs entirely in the browser (C++ core compiled to WebAssembly), so it works 
 - Who knows a game: explainers, the optional `*Kennen` column, and per device in the game sheet.
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
+## Cater to picky players (optional)
+Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.
+
 ## Config
 Edit `web/config.json` to change:
 - sheet id, tab, header row

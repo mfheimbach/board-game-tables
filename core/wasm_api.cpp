@@ -4,10 +4,10 @@
 //   nPlayers, nGames, maxTables, minRating, blankAsZero, needExplainer,
 //   minPerTable, keepCombos, keepSeatings, alternates, nodeCapMillions,
 //   maxGapMinutes (0 = off), timeBudgetMs (0 = none),
-//   nAttendees, attendee...,
+//   nAttendees, attendee..., fairW[nPlayers] (0..100),
 //   per game: countMask, nExplainers, explainer..., nBanned, banned...,
 //             nKnown, known..., nDur, durNew[nDur], durKnown[nDur] (index = table size),
-//             rating[nPlayers] (-1 = blank),
+//             rating[nPlayers] (-1 = blank), value[nPlayers] (ranking points, 64 = one step),
 //   nExcluded, excludedGame...,
 //   nFrozen, per frozen: game, exact, nReq, reqPlayer...
 // Output: JSON string, see bottom.
@@ -47,6 +47,8 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
 
   Mask att = 0;
   for (int n = next(); n > 0; --n) att |= Mask(1) << next();
+  o.fairW.resize(nP);
+  for (int p = 0; p < nP; ++p) o.fairW[p] = next();
   std::vector<Game> games(nG);
   for (auto& g : games) {
     g.counts = (uint32_t)next();
@@ -59,6 +61,8 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
     for (auto& d : g.durKnown) d = (uint16_t)next();
     g.rating.resize(nP);
     for (int p = 0; p < nP; ++p) g.rating[p] = (int8_t)next();
+    g.value.resize(nP);
+    for (int p = 0; p < nP; ++p) g.value[p] = (int16_t)next();
   }
   std::vector<int> excl;
   for (int n = next(); n > 0; --n) excl.push_back(next());

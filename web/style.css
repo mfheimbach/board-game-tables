@@ -290,3 +290,5 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 .adv > summary { cursor: pointer; color: var(--muted); font-size: .9rem; padding: 6px 0; }
 .adv[open] > summary { margin-bottom: 8px; }
 .tables-row #tWord { font-weight: 500; }
+
+.hint { margin: -6px 0 10px 32px; }

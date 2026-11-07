@@ -279,13 +279,14 @@ export function renderStats(S, open = new Set(['numbers'])) {
   const allR = S.gs.flatMap(o => o.rs);
   const wantW = S.gs.filter(o => S.b(o.g).weight > 0).map(o => ({ w: S.b(o.g).weight, k: o.n2 }));
   const avgWantedW = wantW.reduce((s, o) => s + o.w * o.k, 0) / (wantW.reduce((s, o) => s + o.k, 0) || 1);
+  const collW = wantW.length ? wantW.reduce((s, o) => s + o.w, 0) / wantW.length : 0;
 
   const tiles = `<div class="tiles">
     ${tile('🎲', S.G.length, S.G.length < S.allGames ? `of ${S.allGames} games on the table` : 'games')}${tile('🧑‍🤝‍🧑', S.P.length, 'players')}
     ${tile('✅', pct(allR.filter(x => x === 2).length / (allR.length || 1)), 'of ratings are “yes”')}
     ${tile('🚫', pct(allR.filter(x => x === 0).length / (allR.length || 1)), 'are “no”')}
     ${tile('❓', pct(1 - allR.length / ((S.G.length * S.P.length) || 1)), 'left blank')}
-    ${avgWantedW > 0 ? tile('⚖️', avgWantedW.toFixed(1), 'avg weight of a “yes”') : ''}
+    ${avgWantedW > 0 ? tile('⚖️', avgWantedW.toFixed(1), `typical weight of a “yes” · collection ${collW.toFixed(1)}`) : ''}
   </div>`;
 
   const P = [

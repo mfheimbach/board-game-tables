@@ -38,6 +38,7 @@ struct Game {
   Mask known = 0;              // players who have played it (no teach if a table is all known)
   std::vector<uint16_t> durNew, durKnown;  // minutes by table size k (index k), 0 = unknown
   std::vector<int8_t> rating;  // per player: 0, 1, 2, or -1 = blank
+  std::vector<int16_t> value;  // per player: points used for ranking (64 = one rating step); empty = 64 x rating
 };
 
 struct Frozen {   // "this game must be played" (+ optionally by these players)
@@ -58,6 +59,7 @@ struct Options {
   int maxGap = 0;             // >0: all tables end within this many minutes of each other
   long long nodeCap = 200000000;
   int timeBudgetMs = 0;        // >0: stop after this long and return the best found
+  std::vector<int> fairW;      // per player 0..100: weight of their "yes" in the fairness tie-break
 };
 
 struct Table {
@@ -66,7 +68,9 @@ struct Table {
   int score;    // sum of (effective) ratings
   int guesses;  // seats whose rating was blank
   int dur;      // estimated minutes, 0 = unknown
-  long long key() const { return (long long)score * 128 - guesses; }
+  int val;      // ranking points (sum of values)
+  int fair;     // fairness points: weights of seated players who rated it "yes"
+  long long key() const { return (long long)val * 128 - guesses; }
 };
 
 struct Seating { long long key; std::vector<int> t; };       // t: indices into cands
@@ -108,12 +112,15 @@ class Solver {
     for (int t : free) byLow[__builtin_ctzll(res.cands[t].mask)].push_back(t);
     for (auto& v : byLow) sortByKey(v);
     chosen.assign(o.maxTables, 0);
+    vmax = 128;
+    for (auto& gm : G) for (int16_t v : gm.value) vmax = std::max<long long>(vmax, v);
+    for (int w : o.fairW) fmax = std::max<long long>(fmax, w);
   }
 
   Result run() {
     deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(o.timeBudgetMs);
     if (res.blockedFrozen.empty() && att != 0 && (int)fz.size() <= o.maxTables)
-      recFrozen(0, att, 0, 0, INT_MAX, 0);
+      recFrozen(0, att, 0, 0, 0, INT_MAX, 0);
     std::vector<std::pair<long long, SetKey>> ord(order.rbegin(), order.rend());
     for (auto& kv : ord) {
       Combo c = combos[kv.second];
@@ -134,6 +141,7 @@ class Solver {
   std::vector<std::vector<int>> fcands, byLow;
   std::vector<int> chosen;
   std::chrono::steady_clock::time_point deadline;
+  long long vmax = 128, fmax = 0;   // best possible points / fairness per remaining seat (for the bound)
   std::unordered_map<SetKey, Combo, SetKeyHash> combos;
   std::set<std::pair<long long, SetKey>> order;  // (best key, game-set key)
 
@@ -155,22 +163,22 @@ class Solver {
     };
     if (exact) {
       if (!req) return;
-      Table t{g, req, 0, 0, durOf(gm, req)};
+      Table t{g, req, 0, 0, durOf(gm, req), 0, 0};
       for (int p = 0; p < nP; ++p) if (req >> p & 1) {
         int eff; bool guess; rate(p, eff, guess);
-        t.score += eff; t.guesses += guess;
+        t.score += eff; t.guesses += guess; t.val += valueOf(gm, p, eff); t.fair += fairOf(p, eff);
       }
       out.push_back((int)res.cands.size());
       res.cands.push_back(t);
       return;
     }
-    std::vector<int> el, effs, gs;
+    std::vector<int> el, effs, gs, vs, fs;
     for (int p = 0; p < nP; ++p) {
       if (!(att >> p & 1)) continue;
       int eff; bool guess; rate(p, eff, guess);
       if (!(req >> p & 1) && (gm.banned >> p & 1)) continue;
       if ((req >> p & 1) || eff >= o.minRating) {
-        el.push_back(p); effs.push_back(eff); gs.push_back(guess);
+        el.push_back(p); effs.push_back(eff); gs.push_back(guess); vs.push_back(valueOf(gm, p, eff)); fs.push_back(fairOf(p, eff));
       }
     }
     int n = (int)el.size(), team = __builtin_popcountll(req);
@@ -181,11 +189,11 @@ class Solver {
       std::vector<int> c(k);
       for (int i = 0; i < k; ++i) c[i] = i;
       while (true) {
-        Mask m = 0; int sc = 0, gu = 0;
-        for (int i = 0; i < k; ++i) { m |= Mask(1) << el[c[i]]; sc += effs[c[i]]; gu += gs[c[i]]; }
+        Mask m = 0; int sc = 0, gu = 0, va = 0, fa = 0;
+        for (int i = 0; i < k; ++i) { int e = c[i]; m |= Mask(1) << el[e]; sc += effs[e]; gu += gs[e]; va += vs[e]; fa += fs[e]; }
         if ((m & req) == req && (relaxed || !o.needExplainer || (m & gm.explainers))) {
           out.push_back((int)res.cands.size());
-          res.cands.push_back({g, m, sc, gu, durOf(gm, m)});
+          res.cands.push_back({g, m, sc, gu, durOf(gm, m), va, fa});
         }
         int i = k - 1;
         while (i >= 0 && c[i] == n - k + i) --i;
@@ -194,6 +202,13 @@ class Solver {
         for (int j = i + 1; j < k; ++j) c[j] = c[j - 1] + 1;
       }
     }
+  }
+
+  int valueOf(const Game& gm, int p, int eff) const {
+    return p < (int)gm.value.size() ? gm.value[p] : 64 * eff;
+  }
+  int fairOf(int p, int eff) const {
+    return eff == 2 && p < (int)o.fairW.size() ? o.fairW[p] : 0;
   }
 
   static int durOf(const Game& gm, Mask m) {
@@ -209,7 +224,12 @@ class Solver {
       return std::min(1023LL, (long long)std::lround(std::log((double)dmax / dmin) * 400.0));
     return 0;
   }
-  static long long leafKey(long long base, int dmin, int dmax) { return base * 1024 - spreadPen(dmin, dmax); }
+  // Ranking key, most significant first: points, fewer guesses, fairness to picky
+  // players, tables ending close together.  base = val*128 - guesses.
+  static constexpr long long G_UNIT = 1LL << 24;   // > max fairness (100 x 64) x 1024
+  static long long leafKey(long long base, int fair, int dmin, int dmax) {
+    return base * G_UNIT + (long long)fair * 1024 - spreadPen(dmin, dmax);
+  }
   bool outOfTime() {
     if (!o.timeBudgetMs || (res.nodes & 4095)) return false;
     return std::chrono::steady_clock::now() > deadline;
@@ -274,8 +294,8 @@ class Solver {
     order.insert({key, gk});
   }
 
-  void recFrozen(size_t fi, Mask rem, int depth, long long key, int dmin, int dmax) {
-    if (fi == fz.size()) { rec(rem, depth, key, dmin, dmax); return; }
+  void recFrozen(size_t fi, Mask rem, int depth, long long key, int fair, int dmin, int dmax) {
+    if (fi == fz.size()) { rec(rem, depth, key, fair, dmin, dmax); return; }
     for (int t : fcands[fi]) {
       const Table& T = res.cands[t];
       if (T.mask & ~rem) continue;
@@ -283,17 +303,18 @@ class Solver {
       widen(T.dur, lo, hi);
       if (tooSpread(lo, hi)) continue;
       chosen[depth] = t;
-      recFrozen(fi + 1, rem ^ T.mask, depth + 1, key + T.key(), lo, hi);
+      recFrozen(fi + 1, rem ^ T.mask, depth + 1, key + T.key(), fair + T.fair, lo, hi);
       if (res.truncated) return;
     }
   }
 
-  void rec(Mask rem, int depth, long long key, int dmin, int dmax) {
+  void rec(Mask rem, int depth, long long key, int fair, int dmin, int dmax) {
     if (++res.nodes > o.nodeCap || outOfTime()) { res.truncated = true; return; }
-    if (!rem) { leaf(depth, leafKey(key, dmin, dmax)); return; }
+    if (!rem) { leaf(depth, leafKey(key, fair, dmin, dmax)); return; }
     if (depth == o.maxTables) return;
     // upper bound: every remaining seat scores 2, spread can only grow
-    if ((key + 256LL * __builtin_popcountll(rem)) * 1024 - spreadPen(dmin, dmax) <= threshold()) return;
+    long long r = __builtin_popcountll(rem);
+    if ((key + 128LL * vmax * r) * G_UNIT + (fair + fmax * r) * 1024 - spreadPen(dmin, dmax) <= threshold()) return;
     for (int t : byLow[__builtin_ctzll(rem)]) {
       const Table& T = res.cands[t];
       if (T.mask & ~rem) continue;
@@ -305,7 +326,7 @@ class Solver {
       widen(T.dur, lo, hi);
       if (tooSpread(lo, hi)) continue;
       chosen[depth] = t;
-      rec(rem ^ T.mask, depth + 1, key + T.key(), lo, hi);
+      rec(rem ^ T.mask, depth + 1, key + T.key(), fair + T.fair, lo, hi);
       if (res.truncated) return;
     }
   }
