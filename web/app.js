@@ -11,7 +11,7 @@ const ICON = {
 };
 const DEFAULTS = {
   attend: null, maxTables: 3, locks: [], excluded: [], bans: {}, known: {},
-  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, sync: 'off', minutes: false },
+  set: { source: 'rec', minRating: 1, blanks: 'neutral', minPerTable: 2, explainer: true, owner: true, gap: 3, minutes: false },
 };
 
 let cfg, model, bgg, storeKey, state, last = null, shown = 10, gamesOpen = false, sheetGame = null, sheetFocus = null;
@@ -58,7 +58,7 @@ function pack(alt) {
   // pinned games win over the table limit
   const buf = [model.players.length, G.length, alt ? alt.length : Math.min(5, Math.max(state.maxTables, locks.length)), +s.minRating,
     s.blanks === 'zero' ? 1 : 0, s.explainer && hasExplainers() ? 1 : 0, +s.minPerTable,
-    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, { off: 0, loose: 200, tight: 150 }[s.sync] ?? 0];
+    alt ? 1 : 30, alt ? 6 : 1, alt ? 1 : 0, 200, GAPS[s.gap]?.[0] ?? 0];
   buf.push(att.length, ...att);
   for (const g of G) {
     const st = status(g, attSet);
@@ -170,6 +170,10 @@ function tableHtml(t) {
     </div></div>`;
 }
 
+// "tables finish within": slider ticks (minutes, 0 = any), roughly doubling
+const GAPS = [[30, '½ h'], [60, '1 h'], [120, '2 h'], [0, 'any']];
+const gapLabel = i => GAPS[i]?.[0] ? `Tables finish within ${GAPS[i][1]} of each other` : 'Tables may finish at different times';
+
 function syncChip(tables) {
   const ds = tables.filter(t => t.d > 0);
   if (ds.length < 2) return '';
@@ -214,7 +218,7 @@ function renderResults(r, ms) {
     if (state.maxTables < 5) fixes.push(['+1 table', 'tables']);
     if (+s.minRating === 2) fixes.push(['Also seat "would play"', 'rating']);
     if (s.source !== 'any') fixes.push(['Any player count', 'source']);
-    if (s.sync !== 'off') fixes.unshift(['Allow different lengths', 'sync']);
+    if (GAPS[s.gap]?.[0]) fixes.unshift(['Allow different lengths', 'sync']);
     if (s.explainer && hasExplainers()) fixes.push(['Ignore explainers', 'explainer']);
     if (state.locks.length) fixes.push(['Clear locks', 'locks']);
     if (state.excluded.length) fixes.push(['Bring back left-out games', 'excluded']);
@@ -272,6 +276,8 @@ function renderGameList() {
     el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === v));
   }
   document.querySelectorAll('.toggle input').forEach(i => { i.checked = !!state.set[i.dataset.key]; });
+  $('#gap').value = state.set.gap ?? 3;
+  $('#gapLabel').textContent = gapLabel(state.set.gap ?? 3);
   const nb = Object.keys(bgg.games).length;
   $('#dataInfo').innerHTML = `
     <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${model.source === 'live' ? 'live from the sheet' : 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
@@ -486,7 +492,7 @@ function wire() {
     else if (d.fix) {
       const s = state.set;
       ({ tables: () => state.maxTables++, rating: () => { s.minRating = 1; }, source: () => { s.source = 'any'; },
-        explainer: () => { s.explainer = false; }, sync: () => { s.sync = 'off'; }, locks: () => { state.locks = []; state.bans = {}; }, excluded: () => { state.excluded = []; } })[d.fix]();
+        explainer: () => { s.explainer = false; }, sync: () => { s.gap = 3; }, locks: () => { state.locks = []; state.bans = {}; }, excluded: () => { state.excluded = []; } })[d.fix]();
     } else if (d.pin) {
       const id = +d.pin;
       if (lockOf(id)) state.locks = state.locks.filter(l => l.id !== id);
@@ -512,8 +518,10 @@ function wire() {
   });
   document.addEventListener('change', e => {
     if (e.target.matches('.toggle input')) { state.set[e.target.dataset.key] = e.target.checked; update(); }
+    if (e.target.id === 'gap') { state.set.gap = +e.target.value; update(); }
   });
   $('#gameSearch').addEventListener('input', renderGameList);
+  $('#gap').addEventListener('input', e => { $('#gapLabel').textContent = gapLabel(+e.target.value); });
   $('#settings').addEventListener('click', e => { if (e.target === $('#settings')) $('#settings').close(); });
 }
 

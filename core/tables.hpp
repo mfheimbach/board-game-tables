@@ -43,7 +43,7 @@ struct Options {
   int keepCombos = 30;        // distinct game sets to return
   int keepSeatings = 1;       // seatings kept per game set
   bool alternates = false;    // all leaves share one game set: rank seatings
-  double maxRatio = 0;        // >0: longest table at most maxRatio x the shortest
+  int maxGap = 0;             // >0: all tables end within this many minutes of each other
   long long nodeCap = 200000000;
 };
 
@@ -196,7 +196,7 @@ class Solver {
     return base * 1024 - pen;
   }
   bool tooSpread(int dmin, int dmax) const {
-    return o.maxRatio > 0 && dmax > 0 && dmin < INT_MAX && dmax > dmin * o.maxRatio;
+    return o.maxGap > 0 && dmax > 0 && dmin < INT_MAX && dmax - dmin > o.maxGap;
   }
   static void widen(int d, int& dmin, int& dmax) {
     if (d > 0) { dmin = std::min(dmin, d); dmax = std::max(dmax, d); }

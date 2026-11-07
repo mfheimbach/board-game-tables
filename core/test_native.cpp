@@ -18,7 +18,7 @@ int main() {
     Options o;
     o.maxTables = 1 + rng() % 4; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
     o.needExplainer = rng() % 2; o.minPerTable = 1 + rng() % 2;
-    if (rng() % 3 == 0) o.maxRatio = 1.2 + (rng() % 20) / 10.0;
+    if (rng() % 3 == 0) o.maxGap = 15 + rng() % 200;
     std::vector<Game> G(nG);
     for (auto& g : G) {
       g.counts = 0;
@@ -95,7 +95,7 @@ int main() {
         for (auto& f : fz) if (!std::binary_search(gs.begin(), gs.end(), f.game)) return;
         int lo = INT_MAX, hi = 0;
         for (int t : pick) if (cand[t].dur > 0) { lo = std::min(lo, cand[t].dur); hi = std::max(hi, cand[t].dur); }
-        if (o.maxRatio > 0 && hi > 0 && lo < INT_MAX && hi > lo * o.maxRatio) return;
+        if (o.maxGap > 0 && hi > 0 && lo < INT_MAX && hi - lo > o.maxGap) return;
         long long pen = (hi > 0 && lo < hi) ? std::min(1023LL, (long long)std::lround(std::log((double)hi / lo) * 400.0)) : 0;
         key = key * 1024 - pen;
         ++count;

@@ -191,3 +191,6 @@ button.game:hover { text-decoration: underline; }
 .known summary { cursor: pointer; font-weight: 600; font-size: .95rem; }
 .kchip { min-height: 36px; padding: 6px 12px; font-size: .88rem; }
 .kchip:disabled { opacity: 1; cursor: default; }
+
+#gap { width: 100%; accent-color: var(--accent); margin: 4px 0 0; }
+.ticks { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); padding: 0 2px; }
