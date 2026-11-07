@@ -264,10 +264,14 @@ function facetBars(list, title) {
   return s + '</svg>';
 }
 
+// collapsible section; `open` = set of open section keys
+const sec = (open, key, title, teaser, body) =>
+  `<details class="st-sec" data-sec="${key}"${open.has(key) ? ' open' : ''}><summary><h2>${title}</h2>${teaser ? `<span class="teaser">${teaser}</span>` : ''}</summary>${body}</details>`;
+
 const trunc = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
 const gname = (S, g) => g.name || S.b(g).name || `#${g.id}`;
 
-export function renderStats(S) {
+export function renderStats(S, open = new Set(['numbers'])) {
   const nm = p => esc(S.name(p));
   const pl = S.pl.filter(x => x.n >= 3);
   const share = (x, k) => x.c[k] / x.n;
@@ -321,22 +325,25 @@ export function renderStats(S) {
     ${x.favDesigner && x.favDesigner.v >= 1.5 ? `<span>🎨 ${esc(x.favDesigner.t)}</span>` : ''}</li>`).join('');
   const hasBggTags = S.mech.length || S.cats.length;
 
-  return `
-    <section class="st-sec"><h2>📊 The numbers</h2>${tiles}</section>
-    <section class="st-sec"><h2>🏆 Player awards</h2><div class="awards">${P}</div></section>
-    <section class="st-sec"><h2>🎖️ Game awards</h2><div class="awards">${Gm}</div></section>
-    ${S.coords ? `<section class="st-sec"><h2>🗺️ Taste map</h2><p class="muted small">Close together = similar ratings. Distances are approximate.</p><div class="chart-box">${tasteMap(S)}</div></section>` : ''}
-    ${S.pairs.length ? `<section class="st-sec"><h2>💞 Who agrees with whom</h2><div class="chart-box scroll">${twinMatrix(S)}</div></section>` : ''}
-    <section class="st-sec"><h2>🌡️ Every rating</h2>
+  const winner = (list, f) => (list.length ? f(list[0]) : '');
+  const crowd = pick(gs, o => o.n2 + o.mean / 10), twins = pick(S.pairs, x => x.agree);
+  const scatter = gamesScatter(S), mechB = facetBars(S.mech, 'Favorite mechanics'), catB = facetBars(S.cats, 'Favorite themes');
+  return [
+    sec(open, 'numbers', '📊 The numbers', '', tiles),
+    sec(open, 'players', '🏆 Player awards', winner(twins, x => `👯 ${nm(x.p)} & ${nm(x.q)} …`), `<div class="awards">${P}</div>`),
+    sec(open, 'games', '🎖️ Game awards', winner(crowd, o => `👑 ${gn(o)} …`), `<div class="awards">${Gm}</div>`),
+    S.coords ? sec(open, 'map', '🗺️ Taste map', 'who sits where, taste-wise', `<p class="muted small">Close together = similar ratings. Distances are approximate.</p><div class="chart-box">${tasteMap(S)}</div>`) : '',
+    S.pairs.length ? sec(open, 'twins', '💞 Who agrees with whom', '', `<div class="chart-box scroll">${twinMatrix(S)}</div>`) : '',
+    sec(open, 'heat', '🌡️ Every rating', `${S.G.length} games × ${S.P.length} players`, `
       <div class="legend"><span><i style="background:var(--div-pos)"></i> yes</span><span><i style="background:var(--div-mid)"></i> maybe</span><span><i style="background:var(--div-neg)"></i> no</span><span><i class="blank-sw"></i> blank</span></div>
       <p class="muted small">Players sorted along the taste map, games by who likes them.</p>
-      <div class="chart-box scroll">${heatmap(S)}</div></section>
-    ${gamesScatter(S) ? `<section class="st-sec"><h2>🏋️ Heavy vs wanted</h2><p class="muted small">Each dot is a game: how heavy it is and how many say “yes”.</p><div class="chart-box">${gamesScatter(S)}</div></section>` : ''}
-    ${hasBggTags ? `
-      ${facetBars(S.mech, 'Favorite mechanics') ? `<section class="st-sec"><h2>⚙️ Favorite mechanics</h2><p class="muted small">Average rating, mechanics with 3+ games.</p><div class="chart-box">${facetBars(S.mech, 'Favorite mechanics')}</div></section>` : ''}
-      ${facetBars(S.cats, 'Favorite themes') ? `<section class="st-sec"><h2>🏷️ Favorite themes</h2><div class="chart-box">${facetBars(S.cats, 'Favorite themes')}</div></section>` : ''}
-      ${tastes ? `<section class="st-sec"><h2>🧩 Personal tastes</h2><p class="muted small">Mechanic each person likes most / least compared to the group, and a designer they rate highly.</p>
-        <ul class="tastes">${tastes}</ul></section>` : ''}`
-      : `<section class="st-sec"><p class="muted small">⚙️ Mechanics and themes appear once the BGG data has been refreshed.</p></section>`}
+      <div class="chart-box scroll">${heatmap(S)}</div>`),
+    scatter ? sec(open, 'heavy', '🏋️ Heavy vs wanted', '', `<p class="muted small">Each dot is a game: how heavy it is and how many say “yes”.</p><div class="chart-box">${scatter}</div>`) : '',
+    hasBggTags ? [
+      mechB ? sec(open, 'mech', '⚙️ Favorite mechanics', '', `<p class="muted small">Average rating, mechanics with 3+ games.</p><div class="chart-box">${mechB}</div>`) : '',
+      catB ? sec(open, 'cats', '🏷️ Favorite themes', '', `<div class="chart-box">${catB}</div>`) : '',
+      tastes ? sec(open, 'tastes', '🧩 Personal tastes', '', `<p class="muted small">Mechanic each person likes most / least compared to the group, and a designer they rate highly.</p><ul class="tastes">${tastes}</ul>`) : '',
+    ].join('') : '<p class="muted small st-foot">⚙️ Mechanics and themes appear once the BGG data has been refreshed.</p>',
+  ].join('') + `
     <p class="muted small st-foot">r = correlation (−1 to 1). Pairs need ${S.pairs.length ? 'enough' : 'more'} shared ratings to count.</p>`;
 }

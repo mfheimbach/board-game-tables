@@ -253,3 +253,13 @@ button.game:hover { text-decoration: underline; }
 .tastes { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .tastes li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .88rem; }
 .tastes li b { flex-basis: 100%; }
+
+details.st-sec { margin-top: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0 12px; }
+details.st-sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 0; }
+details.st-sec > summary::-webkit-details-marker { display: none; }
+details.st-sec > summary h2 { margin: 0; font-size: 1.05rem; flex: none; }
+details.st-sec > summary .teaser { flex: 1; min-width: 0; color: var(--muted); font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+details.st-sec > summary::after { content: '▾'; color: var(--muted); margin-left: auto; transition: transform .15s; }
+details.st-sec[open] > summary::after { transform: rotate(180deg); }
+details.st-sec[open] { padding-bottom: 12px; }
+details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.st-sec .tastes li { background: var(--bg); }

@@ -326,7 +326,9 @@ function renderStatsView() {
   if ($('#statsView').hidden) return;
   const idx = statsWho === 'here' ? attendIdx() : model.players.map((_, i) => i);
   $('#statsWho').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.value === statsWho));
-  $('#statsBody').innerHTML = idx.length < 2 ? '<div class="empty muted">Need at least two players.</div>' : renderStats(computeStats(model, bgg, idx));
+  let open = new Set(['numbers']);
+  try { const o = JSON.parse(localStorage.getItem('bgt:statsOpen')); if (Array.isArray(o)) open = new Set(o); } catch {}
+  $('#statsBody').innerHTML = idx.length < 2 ? '<div class="empty muted">Need at least two players.</div>' : renderStats(computeStats(model, bgg, idx), open);
 }
 function showStats(on) {
   $('#statsView').hidden = !on;
@@ -473,6 +475,10 @@ function wireTips() {
 
 function wire() {
   wireTips();
+  $('#statsBody').addEventListener('toggle', () => {
+    const open = [...document.querySelectorAll('#statsBody details[open]')].map(d => d.dataset.sec);
+    try { localStorage.setItem('bgt:statsOpen', JSON.stringify(open)); } catch {}
+  }, true);
   document.addEventListener('pointerdown', e => {
     const c = e.target.closest('.chip.g');
     if (!c) return;
