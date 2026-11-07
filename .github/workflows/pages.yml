@@ -23,6 +23,14 @@ jobs:
       - uses: actions/checkout@v5
       - uses: mymindstorm/setup-emsdk@v14
       - run: ./build.sh
+      - name: Version assets so phones never mix old and new files
+        run: |
+          V="${GITHUB_SHA::8}"
+          sed -i -E "s#(href|src)=\"(style\.css|app\.js)\"#\1=\"\2?v=$V\"#g" web/index.html
+          sed -i -E "s#from '\./([a-z]+\.js)'#from './\1?v=$V'#g" web/app.js
+          sed -i -E "s#new Worker\('worker\.js'\)#new Worker('worker.js?v=$V')#" web/app.js
+          sed -i -E "s#importScripts\('tables\.js'\)#importScripts('tables.js?v=$V')#" web/worker.js
+          grep -c "?v=$V" web/index.html web/app.js web/worker.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: web }

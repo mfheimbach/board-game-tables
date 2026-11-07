@@ -615,35 +615,67 @@ async function fetchText(url) {
   } finally { clearTimeout(t); }
 }
 
-async function loadSheet() {
-  const tab = curTab();
+// Parsed tabs stay in memory for the session: switching is instant, and the
+// live sheet is re-read in the background.
+const tabCache = new Map();
+const cacheKey = (sheetId, tab) => `${sheetId}:${tabKey(tab)}`;
+const fingerprint = m => JSON.stringify([m.players, m.games.map(g => [g.id, g.ratings, g.explainers, g.knownBy])]);
+
+async function fetchModel(sheetId, tab) {
+  let m;
   try {
-    const res = await loadTab(fetchText, cur.sheetId, tab, cfg);
-    model = res.model;
-    tab.headerRow = res.headerRow;
-    model.source = 'live';
+    const res = await loadTab(fetchText, sheetId, tab, cfg);
+    m = res.model; tab.headerRow = res.headerRow; m.source = 'live';
   } catch (err) {
     console.warn('live sheet failed:', err);
     if (!tab.snapshot) throw new Error(`Couldn't read that sheet (${err.message}). It must be shared as "anyone with the link" and use the same columns.`);
-    model = parseSheet(parseCSV(await (await fetch(tab.snapshot, { cache: 'no-store' })).text()), cfg);
-    model.source = 'snapshot';
+    m = parseSheet(parseCSV(await (await fetch(tab.snapshot, { cache: 'no-store' })).text()), cfg);
+    m.source = 'snapshot';
   }
-  model.loadedAt = new Date();
+  m.loadedAt = new Date();
+  tabCache.set(cacheKey(sheetId, tab), m);
+  return m;
 }
+
+async function loadSheet() { model = await fetchModel(cur.sheetId, curTab()); }
 
 // Switch sheet/tab: keep who's here, table count and settings; pins/exclusions are per tab.
 async function select(sheetId, tabs, i) {
   const carry = state && { attend: state.attend, maxTables: state.maxTables, set: state.set };
-  const prev = cur;
+  const prev = cur, cached = tabCache.get(cacheKey(sheetId, tabs[i]));
   cur = { sheetId, tabs, i };
   storeKey = `bgt:${sheetId}:${tabKey(tabs[i])}`;
-  try { await loadSheet(); }
-  catch (err) { cur = prev; if (prev) storeKey = `bgt:${prev.sheetId}:${tabKey(curTab())}`; throw err; }
+  if (cached) model = cached;
+  else {
+    try { await loadSheet(); }
+    catch (err) { cur = prev; if (prev) storeKey = `bgt:${prev.sheetId}:${tabKey(curTab())}`; throw err; }
+  }
   state = load();
   if (carry) Object.assign(state, carry);
   try { localStorage.setItem('bgt:sel', JSON.stringify({ sheetId, key: tabKey(tabs[i]) })); } catch {}
   shown = 10; openAlts.clear(); last = null;
   renderTabs(); renderBanner(); update();
+  if (cached) refreshInBackground(sheetId, tabs[i]);
+  else prefetchTabs();
+}
+
+async function refreshInBackground(sheetId, tab) {
+  const before = tabCache.get(cacheKey(sheetId, tab));
+  try {
+    const fresh = await fetchModel(sheetId, tab);
+    if (cur.sheetId === sheetId && curTab() === tab && fingerprint(fresh) !== fingerprint(before)) {
+      model = fresh; renderBanner(); update();
+    }
+  } catch {}
+}
+
+let prefetched = false;
+async function prefetchTabs() {
+  if (prefetched) return;
+  prefetched = true;
+  for (const t of cur.tabs) {
+    if (!tabCache.has(cacheKey(cur.sheetId, t))) { try { await fetchModel(cur.sheetId, t); } catch {} }
+  }
 }
 
 function renderTabs() {
