@@ -3,8 +3,10 @@
 // Input layout (int32):
 //   nPlayers, nGames, maxTables, minRating, blankAsZero, needExplainer,
 //   minPerTable, keepCombos, keepSeatings, alternates, nodeCapMillions,
+//   maxRatioPercent (0 = off),
 //   nAttendees, attendee...,
 //   per game: countMask, nExplainers, explainer..., nBanned, banned...,
+//             nKnown, known..., nDur, durNew[nDur], durKnown[nDur] (index = table size),
 //             rating[nPlayers] (-1 = blank),
 //   nExcluded, excludedGame...,
 //   nFrozen, per frozen: game, exact, nReq, reqPlayer...
@@ -39,6 +41,7 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
   o.maxTables = next(); o.minRating = next(); o.blankAsZero = next();
   o.needExplainer = next(); o.minPerTable = next(); o.keepCombos = next();
   o.keepSeatings = next(); o.alternates = next(); o.nodeCap = (long long)next() * 1000000LL;
+  o.maxRatio = next() / 100.0;
   if (nP > 64) nP = 64;
 
   Mask att = 0;
@@ -48,6 +51,11 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
     g.counts = (uint32_t)next();
     for (int n = next(); n > 0; --n) g.explainers |= Mask(1) << next();
     for (int n = next(); n > 0; --n) g.banned |= Mask(1) << next();
+    for (int n = next(); n > 0; --n) g.known |= Mask(1) << next();
+    int nd = next();
+    g.durNew.resize(nd); g.durKnown.resize(nd);
+    for (auto& d : g.durNew) d = (uint16_t)next();
+    for (auto& d : g.durKnown) d = (uint16_t)next();
     g.rating.resize(nP);
     for (int p = 0; p < nP; ++p) g.rating[p] = (int8_t)next();
   }
@@ -89,7 +97,8 @@ extern "C" EXPORT const char* solve_buf(const int32_t* b, int len) {
         out += (k ? ",{" : "{");
         out += "\"g\":" + std::to_string(T.game) + ",\"p\":";
         maskJson(out, T.mask);
-        out += ",\"s\":" + std::to_string(T.score) + ",\"q\":" + std::to_string(T.guesses) + "}";
+        out += ",\"s\":" + std::to_string(T.score) + ",\"q\":" + std::to_string(T.guesses) +
+               ",\"d\":" + std::to_string(T.dur) + "}";
       }
       out += "]}";
     }

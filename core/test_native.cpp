@@ -3,10 +3,12 @@
 #include <cstdio>
 #include <functional>
 #include <map>
+#include <climits>
+#include <cmath>
 #include <random>
 using namespace tables;
 
-struct BT { int g; Mask m; long long key; };
+struct BT { int g; Mask m; long long key; int dur; };
 
 int main() {
   std::mt19937 rng(42);
@@ -16,12 +18,19 @@ int main() {
     Options o;
     o.maxTables = 1 + rng() % 4; o.minRating = rng() % 3; o.blankAsZero = rng() % 2;
     o.needExplainer = rng() % 2; o.minPerTable = 1 + rng() % 2;
+    if (rng() % 3 == 0) o.maxRatio = 1.2 + (rng() % 20) / 10.0;
     std::vector<Game> G(nG);
     for (auto& g : G) {
       g.counts = 0;
       for (int k = 1; k <= 6; ++k) if (rng() % 2) g.counts |= 1u << k;
       g.explainers = rng() & ((1u << nP) - 1);
       if (rng() % 2) g.banned = rng() & rng() & ((1u << nP) - 1);
+      if (rng() % 2) g.known = rng() & ((1u << nP) - 1);
+      int nd = rng() % 4 == 0 ? 0 : 3 + rng() % 8;   // sometimes no data, sometimes short vector
+      for (int k = 0; k < nd; ++k) {
+        g.durNew.push_back(rng() % 5 == 0 ? 0 : 30 + rng() % 300);
+        g.durKnown.push_back(rng() % 5 == 0 ? 0 : 20 + rng() % 200);
+      }
       g.rating.resize(nP);
       for (auto& r : g.rating) r = (int8_t)((int)(rng() % 4) - 1);
     }
@@ -62,7 +71,9 @@ int main() {
           }
           if (f && (m & f->req) != f->req) continue;
         }
-        cand.push_back({g, m, sc * 128 - gu});
+        size_t kk = (size_t)k;
+        const auto& dv = (m & ~G[g].known) == 0 ? G[g].durKnown : G[g].durNew;
+        cand.push_back({g, m, sc * 128 - gu, kk < dv.size() ? (int)dv[kk] : 0});
       }
       return cand.size() > before;
     };
@@ -82,6 +93,11 @@ int main() {
         std::vector<int> gs; for (int t : pick) gs.push_back(cand[t].g);
         std::sort(gs.begin(), gs.end());
         for (auto& f : fz) if (!std::binary_search(gs.begin(), gs.end(), f.game)) return;
+        int lo = INT_MAX, hi = 0;
+        for (int t : pick) if (cand[t].dur > 0) { lo = std::min(lo, cand[t].dur); hi = std::max(hi, cand[t].dur); }
+        if (o.maxRatio > 0 && hi > 0 && lo < INT_MAX && hi > lo * o.maxRatio) return;
+        long long pen = (hi > 0 && lo < hi) ? std::min(1023LL, (long long)std::lround(std::log((double)hi / lo) * 400.0)) : 0;
+        key = key * 1024 - pen;
         ++count;
         auto it = bestBySet.find(gs);
         if (it == bestBySet.end() || it->second < key) bestBySet[gs] = key;

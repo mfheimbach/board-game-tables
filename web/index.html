@@ -102,6 +102,14 @@
       </label>
       <label class="toggle"><input type="checkbox" data-key="explainer"> Someone who can explain sits at the table</label>
       <label class="toggle"><input type="checkbox" data-key="owner"> Only games whose owner is here</label>
+      <label class="field">Similar lengths (longest table vs shortest)
+        <div class="seg" data-key="sync">
+          <button type="button" value="off">Any</button>
+          <button type="button" value="loose">≤ 2×</button>
+          <button type="button" value="tight">≤ 1.5×</button>
+        </div>
+      </label>
+      <label class="toggle"><input type="checkbox" data-key="minutes"> Show minutes (box time and estimate)</label>
     </section>
 
     <section>
@@ -143,6 +151,11 @@
       <div id="gsPeople" class="chips"></div>
       <div id="gsNotes" class="small notes"></div>
     </section>
+    <details class="known">
+      <summary>Already played it <span id="gsKnownCount" class="muted"></span></summary>
+      <p class="muted small">If everyone at a table knows it, there's no teach and the estimate shrinks (🎓). Explainers count automatically.</p>
+      <div id="gsKnown" class="chips"></div>
+    </details>
     <button class="done">Done</button>
   </form>
 </dialog>

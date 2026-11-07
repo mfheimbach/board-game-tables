@@ -17,6 +17,10 @@
     "minPlayers": "min.players",
     "maxPlayers": "max.players",
     "recPlayers": "rec.players",
-    "bestPlayers": "best.players"
+    "bestPlayers": "best.players",
+    "known": "*Kennen",
+    "minTime": "min.time",
+    "maxTime": "max.time",
+    "weight": "weight"
   }
 }

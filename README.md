@@ -20,11 +20,21 @@ It runs entirely in the browser (C++ core compiled to WebAssembly), so it works 
    - BGG's terms require the logo, linked to boardgamegeek.com, and naming BGG as the data source.
    - The footer already does both.
 
+## Time estimate
+`web/time.js`. Assumes newcomers at every table unless everyone seated has played the game:
+- box(n): a BGG time range maps its minimum to the fewest legal players and its maximum to the most; a single number counts as the time at max players, 40% fixed / 60% per player.
+- with newcomers: `teach(w) + box(n)·(1 + 0.08·w)`, with `teach(w) = max(10, 10 + 25·(w − 2))` min, w = BGG weight
+- everyone knows it: `1.1·box(n)`
+- Shown as log-ish bins (¾ h, 1 h, 1½ h, 2 h, 3 h, 4 h, 5 h+); exact minutes via settings.
+- Who knows a game: explainers, the optional `*Kennen` column, and per device in the game sheet.
+- Ranking: score, then fewer guesses, then smallest log(longest/shortest table). Optional filter: longest table ≤ 2× / 1.5× the shortest.
+
 ## Config
 Edit `web/config.json` to change:
 - sheet id, tab, header row
 - column names: game, BGG id/link, explainer, owner (`*Bringbär`)
 - optional manual player-count columns, which take precedence over BGG data
+- optional `*Kennen` (who has played it), `min.time`, `max.time`, `weight` columns for games without BGG data
 
 Player columns are detected automatically: any column whose cells are only 0/1/2/blank.
 Columns starting with `*` are ignored.

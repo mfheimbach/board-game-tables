@@ -180,3 +180,14 @@ button.game:hover { text-decoration: underline; }
 .notes .link { border: 0; background: none; color: var(--accent); padding: 0; font: inherit; text-decoration: underline; }
 .sheet .done { width: 100%; min-height: 48px; border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 1rem; }
 #clearPeople { border: 0; background: none; color: var(--accent); }
+
+/* durations */
+.dur { white-space: nowrap; }
+.dur.long { color: var(--r1); font-weight: 650; }
+.dur.epic { color: var(--r0); font-weight: 700; }
+.nerd { font-size: .74rem; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.sync { font-size: .78rem; padding: 3px 9px; border-radius: 999px; background: var(--r1-bg); color: var(--r1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 48%; }
+.sync.ok { background: var(--r2-bg); color: var(--r2); }
+.known summary { cursor: pointer; font-weight: 600; font-size: .95rem; }
+.kchip { min-height: 36px; padding: 6px 12px; font-size: .88rem; }
+.kchip:disabled { opacity: 1; cursor: default; }

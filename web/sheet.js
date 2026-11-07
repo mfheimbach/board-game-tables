@@ -112,6 +112,7 @@ export function parseSheet(rows, cfg) {
     game: find(col.game), bgg: find(col.bgg), explainer: find(col.explainer),
     bringer: find(col.bringer), min: find(col.minPlayers), max: find(col.maxPlayers),
     rec: find(col.recPlayers), best: find(col.bestPlayers),
+    known: find(col.known), minTime: find(col.minTime), maxTime: find(col.maxTime), weight: find(col.weight),
   };
   const known = new Set(Object.values(ci).filter(i => i >= 0));
   // Rows with a BGG id, or (small/obscure games) a real name instead. Totals rows
@@ -151,8 +152,13 @@ export function parseSheet(rows, cfg) {
       explainers: ci.explainer >= 0 ? matchPlayers(r[ci.explainer], players) : [],
       explainerText: ci.explainer >= 0 ? String(r[ci.explainer] ?? '').trim() : '',
       bringers: ci.bringer >= 0 ? matchPlayers(r[ci.bringer], players) : [],
+      knownBy: ci.known >= 0 ? matchPlayers(r[ci.known], players) : [],
       manual: null,
+      manualTime: null,
     };
+    const num = i => (i >= 0 ? Number(String(r[i] ?? '').replace(',', '.')) : NaN);
+    if (num(ci.minTime) > 0 || num(ci.maxTime) > 0 || num(ci.weight) > 0)
+      g.manualTime = { minTime: num(ci.minTime) || null, maxTime: num(ci.maxTime) || null, weight: num(ci.weight) || null };
     if (ci.min >= 0 && ci.max >= 0 && +r[ci.min] > 0 && +r[ci.max] > 0) {
       g.manual = {
         min: +r[ci.min], max: +r[ci.max],
