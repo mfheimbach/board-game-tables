@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-07T05:42:38.224Z",
+ "updated": "2026-11-07T06:44:41.374Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -17,6 +17,31 @@
     5,
     6,
     7
+   ],
+   "categories": [
+    "Economic",
+    "Humor",
+    "Negotiation",
+    "Political"
+   ],
+   "mechanics": [
+    "Area Movement",
+    "Betting and Bluffing",
+    "Dice Rolling",
+    "Events",
+    "Hand Management",
+    "Simultaneous Action Selection",
+    "Trading",
+    "Variable Player Powers",
+    "Voting"
+   ],
+   "designers": [
+    "Eric Goldberg",
+    "Ben Grossman",
+    "Steve Marsh (I)",
+    "Steven Marsh (II)",
+    "Vincent Tsao",
+    "Nikola Vrtis"
    ]
   },
   "2122": {
@@ -33,6 +58,28 @@
    "rec": [
     4,
     5
+   ],
+   "categories": [
+    "Bluffing",
+    "Card Game",
+    "Collectible Components",
+    "Fighting",
+    "Horror",
+    "Political"
+   ],
+   "mechanics": [
+    "Acting",
+    "Deck Construction",
+    "Hand Management",
+    "Multi-Use Cards",
+    "Negotiation",
+    "Player Elimination",
+    "Voting"
+   ],
+   "designers": [
+    "Richard Garfield",
+    "Robert Goudie",
+    "L. Scott Johnson"
    ]
   },
   "8829": {
@@ -56,6 +103,20 @@
     8,
     9,
     10
+   ],
+   "categories": [
+    "Bluffing",
+    "Humor",
+    "Party Game",
+    "Trivia",
+    "Word Game"
+   ],
+   "mechanics": [
+    "Simultaneous Action Selection",
+    "Voting"
+   ],
+   "designers": [
+    "Bertram Kaes"
    ]
   },
   "37111": {
@@ -73,6 +134,32 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Bluffing",
+    "Deduction",
+    "Movies / TV / Radio theme",
+    "Negotiation",
+    "Science Fiction",
+    "Space Exploration"
+   ],
+   "mechanics": [
+    "Area Movement",
+    "Cooperative Game",
+    "Dice Rolling",
+    "Hand Management",
+    "Hidden Roles",
+    "Once-Per-Game Abilities",
+    "Role Playing",
+    "Semi-Cooperative Game",
+    "Team-Based Game",
+    "Traitor Game",
+    "Variable Player Powers",
+    "Variable Set-up",
+    "Voting"
+   ],
+   "designers": [
+    "Corey Konieczka"
    ]
   },
   "63888": {
@@ -89,6 +176,23 @@
    "rec": [
     2,
     3
+   ],
+   "categories": [
+    "Card Game",
+    "Civilization"
+   ],
+   "mechanics": [
+    "Follow",
+    "Hand Management",
+    "Layering",
+    "Melding and Splaying",
+    "Sudden Death Ending",
+    "Tags",
+    "Take That",
+    "Tech Trees / Tech Tracks"
+   ],
+   "designers": [
+    "Carl Chudyk"
    ]
   },
   "148319": {
@@ -106,6 +210,23 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Bluffing",
+    "Card Game",
+    "Deduction",
+    "Murder / Mystery"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Deduction",
+    "Grid Movement",
+    "Hand Management",
+    "Memory",
+    "Team-Based Game"
+   ],
+   "designers": [
+    "BakaFire"
    ]
   },
   "151771": {
@@ -123,6 +244,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Bluffing",
+    "Card Game",
+    "Mafia",
+    "Negotiation"
+   ],
+   "mechanics": [
+    "Dice Rolling",
+    "Hand Management",
+    "Take That",
+    "Team-Based Game"
+   ],
+   "designers": [
+    "Johannes Sich"
    ]
   },
   "156129": {
@@ -147,6 +283,27 @@
     10,
     11,
     12
+   ],
+   "categories": [
+    "Bluffing",
+    "Deduction",
+    "Murder / Mystery",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Deduction",
+    "Events",
+    "Finale Ending",
+    "Hidden Roles",
+    "Roles with Asymmetric Information",
+    "Storytelling",
+    "Team-Based Game",
+    "Traitor Game",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Tobey Ho"
    ]
   },
   "170216": {
@@ -160,7 +317,31 @@
    "best": [
     4
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Fantasy",
+    "Fighting",
+    "Miniatures",
+    "Mythology"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Area Majority / Influence",
+    "Area Movement",
+    "Card Play Conflict Resolution",
+    "Closed Drafting",
+    "Contracts",
+    "Hand Management",
+    "Interrupts",
+    "Map Reduction",
+    "Memory",
+    "Simultaneous Action Selection",
+    "Take That",
+    "Turn Order: Progressive"
+   ],
+   "designers": [
+    "Eric M. Lang"
+   ]
   },
   "234260": {
    "name": "Prey Another Day",
@@ -178,6 +359,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Animals",
+    "Bluffing",
+    "Card Game",
+    "Print & Play"
+   ],
+   "mechanics": [
+    "Player Elimination",
+    "Score-and-Reset Game",
+    "Simultaneous Action Selection"
+   ],
+   "designers": [
+    "Matthew Dunstan",
+    "Brett J. Gilbert"
    ]
   },
   "237182": {
@@ -194,6 +390,33 @@
    "rec": [
     3,
     4
+   ],
+   "categories": [
+    "Animals",
+    "Fantasy",
+    "Negotiation",
+    "Territory Building",
+    "Wargame"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Action Queue",
+    "Action Retrieval",
+    "Area Majority / Influence",
+    "Area Movement",
+    "Dice Rolling",
+    "Hand Management",
+    "Multi-Use Cards",
+    "Negotiation",
+    "Point to Point Movement",
+    "Race",
+    "Sudden Death Ending",
+    "Take That",
+    "Variable Player Powers",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Cole Wehrle"
    ]
   },
   "245659": {
@@ -211,6 +434,23 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Bluffing",
+    "Card Game",
+    "Horror"
+   ],
+   "mechanics": [
+    "Area Majority / Influence",
+    "Auction / Bidding",
+    "Deck, Bag, and Pool Building",
+    "Hand Management",
+    "Take That",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Charlie Cleveland",
+    "Bruno Faidutti"
    ]
   },
   "256960": {
@@ -230,6 +470,32 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Economic",
+    "Educational",
+    "Negotiation",
+    "Political",
+    "Post-Napoleonic"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Area Majority / Influence",
+    "Area Movement",
+    "Auction: Dutch",
+    "Bribery",
+    "Hand Management",
+    "Increase Value of Unchosen Resources",
+    "Negotiation",
+    "Open Drafting",
+    "Score-and-Reset Game",
+    "Simulation",
+    "Solo / Solitaire Game",
+    "Tags",
+    "Take That"
+   ],
+   "designers": [
+    "Cole Wehrle"
    ]
   },
   "257305": {
@@ -248,6 +514,23 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Negotiation",
+    "Political",
+    "Territory Building"
+   ],
+   "mechanics": [
+    "Alliances",
+    "Area Majority / Influence",
+    "Set Collection",
+    "Simulation",
+    "Take That",
+    "Trading",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Zain Memon"
    ]
   },
   "274566": {
@@ -265,6 +548,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Adventure",
+    "Horror",
+    "Miniatures"
+   ],
+   "mechanics": [
+    "Area Movement",
+    "Deck, Bag, and Pool Building",
+    "Modular Board",
+    "Traitor Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "German Tikhomirov"
    ]
   },
   "279886": {
@@ -279,7 +577,21 @@
     2,
     4
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Action / Dexterity",
+    "Adventure",
+    "Fantasy",
+    "Fighting"
+   ],
+   "mechanics": [
+    "Flicking",
+    "Team-Based Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Brian Gomez"
+   ]
   },
   "295192": {
    "name": "Tinderblox",
@@ -299,6 +611,18 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Action / Dexterity",
+    "Adventure",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Player Elimination",
+    "Stacking and Balancing"
+   ],
+   "designers": [
+    "Rob Sparks"
    ]
   },
   "300905": {
@@ -320,6 +644,19 @@
     7,
     8,
     9
+   ],
+   "categories": [
+    "Party Game"
+   ],
+   "mechanics": [
+    "Cooperative Game",
+    "Deduction",
+    "Ordering",
+    "Player Judge",
+    "Targeted Clues"
+   ],
+   "designers": [
+    "Aurélien Picolet"
    ]
   },
   "301880": {
@@ -338,6 +675,23 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Ancient"
+   ],
+   "mechanics": [
+    "Contracts",
+    "Dice Rolling",
+    "Die Icon Resolution",
+    "Hand Management",
+    "Open Drafting",
+    "Solo / Solitaire Game",
+    "Variable Player Powers",
+    "Worker Placement",
+    "Worker Placement, Different Worker Types"
+   ],
+   "designers": [
+    "Shem Phillips"
    ]
   },
   "306482": {
@@ -357,6 +711,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Exploration",
+    "Science Fiction"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Layering",
+    "Mancala",
+    "Modular Board",
+    "Worker Placement, Different Worker Types"
+   ],
+   "designers": [
+    "Bragou",
+    "Sams"
    ]
   },
   "319329": {
@@ -376,6 +745,21 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Horror",
+    "Humor",
+    "Movies / TV / Radio theme",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Storytelling",
+    "Voting"
+   ],
+   "designers": [
+    "Clem Seurat",
+    "Yann Uhart",
+    "Yann and Clem"
    ]
   },
   "321608": {
@@ -393,6 +777,24 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Economic",
+    "Educational",
+    "Negotiation",
+    "Political"
+   ],
+   "mechanics": [
+    "Action / Event",
+    "Hand Management",
+    "Simulation",
+    "Variable Player Powers",
+    "Voting",
+    "Worker Placement, Different Worker Types"
+   ],
+   "designers": [
+    "Vangelis Bagiartakis",
+    "Varnavas Timotheou"
    ]
   },
   "322289": {
@@ -411,6 +813,26 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Exploration",
+    "Travel"
+   ],
+   "mechanics": [
+    "Contracts",
+    "Ownership",
+    "Pick-up and Deliver",
+    "Point to Point Movement",
+    "Set Collection",
+    "Solo / Solitaire Game",
+    "Turn Order: Claim Action",
+    "Variable Set-up",
+    "Worker Placement",
+    "Worker Placement, Different Worker Types"
+   ],
+   "designers": [
+    "Simone Luciani",
+    "Nestore Mangone"
    ]
   },
   "327778": {
@@ -433,6 +855,19 @@
     7,
     8,
     9
+   ],
+   "categories": [
+    "Card Game",
+    "Number"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Cooperative Game",
+    "Deduction",
+    "Ordering"
+   ],
+   "designers": [
+    "326"
    ]
   },
   "329714": {
@@ -452,6 +887,18 @@
     6,
     7,
     8
+   ],
+   "categories": [
+    "Card Game"
+   ],
+   "mechanics": [
+    "Auction / Bidding",
+    "Betting and Bluffing",
+    "Set Collection"
+   ],
+   "designers": [
+    "Joanna Kijanka",
+    "Bruno Faidutti"
    ]
   },
   "329839": {
@@ -472,6 +919,17 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Party Game",
+    "Word Game"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Cooperative Game"
+   ],
+   "designers": [
+    "François Romain"
    ]
   },
   "335212": {
@@ -491,6 +949,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Card Game",
+    "Comic Book / Strip",
+    "Fighting"
+   ],
+   "mechanics": [
+    "Cooperative Game",
+    "Hand Management",
+    "Solo / Solitaire Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Christopher Badell",
+    "Adam Rebottaro"
    ]
   },
   "340466": {
@@ -508,6 +981,25 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Bluffing",
+    "Deduction",
+    "Fantasy",
+    "Horror",
+    "Novel-based"
+   ],
+   "mechanics": [
+    "Area Movement",
+    "Hand Management",
+    "Hidden Roles",
+    "Team-Based Game",
+    "Traitor Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Tony Fanchi",
+    "Corey Konieczka"
    ]
   },
   "341169": {
@@ -526,6 +1018,25 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "American West",
+    "Animals",
+    "Farming"
+   ],
+   "mechanics": [
+    "Deck, Bag, and Pool Building",
+    "Hand Management",
+    "Ownership",
+    "Rondel",
+    "Set Collection",
+    "Solo / Solitaire Game",
+    "Tags",
+    "Track Movement",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Alexander Pfister"
    ]
   },
   "342070": {
@@ -542,6 +1053,31 @@
    "rec": [
     3,
     4
+   ],
+   "categories": [
+    "Dice",
+    "Fighting",
+    "Miniatures",
+    "Racing"
+   ],
+   "mechanics": [
+    "Dice Rolling",
+    "Die Icon Resolution",
+    "Grid Movement",
+    "Hexagon Grid",
+    "Player Elimination",
+    "Resource to Move",
+    "Roll / Spin and Move",
+    "Take That"
+   ],
+   "designers": [
+    "Dave Chalker",
+    "Brett Myers",
+    "Noah Cohen",
+    "Rob Daviau",
+    "Justin D. Jacobson",
+    "Jim Keifer",
+    "Brian Neff"
    ]
   },
   "357873": {
@@ -560,6 +1096,23 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game",
+    "Fantasy",
+    "Medieval"
+   ],
+   "mechanics": [
+    "Betting and Bluffing",
+    "Card Play Conflict Resolution",
+    "Deck, Bag, and Pool Building",
+    "Hand Management",
+    "Selection Order Bid",
+    "Simultaneous Action Selection",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Pablo Clark"
    ]
   },
   "358737": {
@@ -579,6 +1132,29 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Adventure",
+    "Card Game",
+    "Fantasy",
+    "Fighting",
+    "Video Game Theme"
+   ],
+   "mechanics": [
+    "Action / Event",
+    "Action Points",
+    "Cooperative Game",
+    "Events",
+    "Grid Coverage",
+    "Grid Movement",
+    "Hand Management",
+    "Scenario / Mission / Campaign Game",
+    "Solo / Solitaire Game",
+    "Square Grid",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Justin Kemppainen"
    ]
   },
   "359871": {
@@ -597,6 +1173,27 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Science Fiction",
+    "Space Exploration"
+   ],
+   "mechanics": [
+    "Area Majority / Influence",
+    "Area Movement",
+    "Campaign / Battle Card Driven",
+    "Dice Rolling",
+    "Die Icon Resolution",
+    "Hand Management",
+    "Negotiation",
+    "Resource to Move",
+    "Take That",
+    "Trick-taking",
+    "Turn Order: Claim Action",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Cole Wehrle"
    ]
   },
   "364356": {
@@ -610,7 +1207,30 @@
    "best": [
     2
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Economic",
+    "Miniatures",
+    "Video Game Theme",
+    "Wargame",
+    "World War II"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Automatic Resource Growth",
+    "Income",
+    "Multiple Maps",
+    "Real-Time",
+    "Team-Based Game",
+    "Turn Order: Progressive",
+    "Variable Player Powers",
+    "Variable Set-up",
+    "Zone of Control"
+   ],
+   "designers": [
+    "Chris Gabrielson",
+    "Bryan Kromrey"
+   ]
   },
   "368954": {
    "name": "Council of Shadows",
@@ -628,6 +1248,19 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Science Fiction",
+    "Space Exploration"
+   ],
+   "mechanics": [
+    "Action Queue",
+    "Area Majority / Influence",
+    "Turn Order: Stat-Based"
+   ],
+   "designers": [
+    "Martin Kallenborn",
+    "Jochen Scherer"
    ]
   },
   "375651": {
@@ -647,6 +1280,18 @@
     6,
     7,
     8
+   ],
+   "categories": [
+    "Bluffing",
+    "Card Game",
+    "Memory",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Memory"
+   ],
+   "designers": [
+    "Kasper Lapp"
    ]
   },
   "379629": {
@@ -664,6 +1309,18 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game"
+   ],
+   "mechanics": [
+    "Hand Management",
+    "Open Drafting",
+    "Race",
+    "Set Collection"
+   ],
+   "designers": [
+    "Thomas Dupont"
    ]
   },
   "380109": {
@@ -678,7 +1335,20 @@
     4,
     5
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Word Game"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Cooperative Game",
+    "Deduction",
+    "Paper-and-Pencil",
+    "Turn Order: Progressive"
+   ],
+   "designers": [
+    "Keisei"
+   ]
   },
   "381248": {
    "name": "Nemesis: Retaliation",
@@ -698,6 +1368,27 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Exploration",
+    "Fighting",
+    "Horror",
+    "Miniatures",
+    "Science Fiction"
+   ],
+   "mechanics": [
+    "Cooperative Game",
+    "Dice Rolling",
+    "Hidden Roles",
+    "Modular Board",
+    "Player Elimination",
+    "Semi-Cooperative Game",
+    "Solo / Solitaire Game",
+    "Traitor Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Adam Kwapiński"
    ]
   },
   "397598": {
@@ -717,6 +1408,31 @@
     3,
     4,
     6
+   ],
+   "categories": [
+    "Movies / TV / Radio theme",
+    "Novel-based",
+    "Science Fiction"
+   ],
+   "mechanics": [
+    "Automatic Resource Growth",
+    "Card Play Conflict Resolution",
+    "Contracts",
+    "Deck, Bag, and Pool Building",
+    "Delayed Purchase",
+    "Force Commitment",
+    "Increase Value of Unchosen Resources",
+    "Multi-Use Cards",
+    "Open Drafting",
+    "Solo / Solitaire Game",
+    "Tags",
+    "Team-Based Game",
+    "Turn Order: Progressive",
+    "Variable Player Powers",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Paul Dennen"
    ]
   },
   "400495": {
@@ -736,6 +1452,18 @@
     5,
     6,
     7
+   ],
+   "categories": [
+    "Humor",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Bingo",
+    "Chaining",
+    "Paper-and-Pencil"
+   ],
+   "designers": [
+    "Martin Ang"
    ]
   },
   "407233": {
@@ -755,6 +1483,19 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game",
+    "City Building"
+   ],
+   "mechanics": [
+    "Action Drafting",
+    "Open Drafting",
+    "Pattern Building",
+    "Solo / Solitaire Game"
+   ],
+   "designers": [
+    "Benjie Talbott"
    ]
   },
   "408547": {
@@ -768,7 +1509,18 @@
    "best": [
     4
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Deduction",
+    "Party Game",
+    "Word Game"
+   ],
+   "mechanics": [
+    "Induction"
+   ],
+   "designers": [
+    "Peter C. Hayward"
+   ]
   },
   "409583": {
    "name": "Take the Throne",
@@ -784,7 +1536,21 @@
    "rec": [
     3,
     4
-   ]
+   ],
+   "categories": [
+    "Card Game",
+    "Medieval",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Card Play Conflict Resolution",
+    "Hand Management",
+    "King of the Hill",
+    "Rock-Paper-Scissors",
+    "Take That",
+    "Turn Order: Progressive"
+   ],
+   "designers": []
   },
   "414117": {
    "name": "Wroth",
@@ -801,6 +1567,25 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Fantasy",
+    "Territory Building"
+   ],
+   "mechanics": [
+    "Action Drafting",
+    "Area Majority / Influence",
+    "Cooperative Game",
+    "Dice Rolling",
+    "Die Icon Resolution",
+    "Moving Multiple Units",
+    "Once-Per-Game Abilities",
+    "Open Drafting",
+    "Solo / Solitaire Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Manny Trembley"
    ]
   },
   "416079": {
@@ -820,6 +1605,23 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Animals",
+    "Civilization",
+    "Exploration"
+   ],
+   "mechanics": [
+    "Area Majority / Influence",
+    "Grid Movement",
+    "Hexagon Grid",
+    "Map Addition",
+    "Modular Board",
+    "Tile Placement"
+   ],
+   "designers": [
+    "Tim Eisner",
+    "Ryan Swisher"
    ]
   },
   "416851": {
@@ -837,6 +1639,21 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game",
+    "Medieval"
+   ],
+   "mechanics": [
+    "End Game Bonuses",
+    "Open Drafting",
+    "Set Collection",
+    "Tags",
+    "Tile Placement"
+   ],
+   "designers": [
+    "Grégory Grard",
+    "Mathieu Roussel"
    ]
   },
   "419639": {
@@ -852,7 +1669,17 @@
     5,
     6
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Party Game"
+   ],
+   "mechanics": [
+    "Cooperative Game",
+    "Drawing"
+   ],
+   "designers": [
+    "Die 7 Bazis"
+   ]
   },
   "421246": {
    "name": "Neon Hope",
@@ -870,6 +1697,27 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Adventure",
+    "Card Game",
+    "Collectible Components",
+    "Science Fiction"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Cooperative Game",
+    "Deck Construction",
+    "Events",
+    "Narrative Choice / Paragraph",
+    "Scenario / Mission / Campaign Game",
+    "Solo / Solitaire Game",
+    "Storytelling",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Francesco Grothe",
+    "Dominik Schönleben"
    ]
   },
   "421254": {
@@ -888,6 +1736,23 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game",
+    "Fantasy",
+    "Mythology"
+   ],
+   "mechanics": [
+    "Contracts",
+    "Deck Construction",
+    "Hand Management",
+    "Market",
+    "Push Your Luck",
+    "Solo / Solitaire Game",
+    "Take That"
+   ],
+   "designers": [
+    "Owen Davey"
    ]
   },
   "423577": {
@@ -906,6 +1771,25 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Adventure",
+    "Exploration",
+    "Fantasy",
+    "Mythology",
+    "Video Game Theme"
+   ],
+   "mechanics": [
+    "Action / Event",
+    "Cooperative Game",
+    "Dice Rolling",
+    "Die Icon Resolution",
+    "Events",
+    "Finale Ending",
+    "Scenario / Mission / Campaign Game"
+   ],
+   "designers": [
+    "Ole Steiness"
    ]
   },
   "424751": {
@@ -926,6 +1810,20 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Action / Dexterity",
+    "Animals"
+   ],
+   "mechanics": [
+    "Cooperative Game",
+    "Multi-Use Cards",
+    "Solo / Solitaire Game",
+    "Stacking and Balancing",
+    "Three Dimensional Movement"
+   ],
+   "designers": [
+    "Masakazu Takizawa (たきざわ まさかず)"
    ]
   },
   "428635": {
@@ -943,6 +1841,21 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Ancient",
+    "Card Game",
+    "Exploration"
+   ],
+   "mechanics": [
+    "Hand Management",
+    "Ladder Climbing",
+    "Layering",
+    "Lose a Turn",
+    "Ownership"
+   ],
+   "designers": [
+    "John D. Clair"
    ]
   },
   "430533": {
@@ -961,6 +1874,25 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Economic",
+    "Farming"
+   ],
+   "mechanics": [
+    "Bias",
+    "Chaining",
+    "Closed Drafting",
+    "Contracts",
+    "End Game Bonuses",
+    "Rondel",
+    "Set Collection",
+    "Simultaneous Action Selection",
+    "Variable Set-up",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Ben Rosset"
    ]
   },
   "432456": {
@@ -979,6 +1911,16 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Card Game"
+   ],
+   "mechanics": [
+    "Hand Management",
+    "Ladder Climbing"
+   ],
+   "designers": [
+    "Kei Kajino (梶野 桂)"
    ]
   },
   "436217": {
@@ -997,6 +1939,23 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Fantasy",
+    "Novel-based"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Cooperative Game",
+    "Dice Rolling",
+    "Hand Management",
+    "Set Collection",
+    "Solo / Solitaire Game",
+    "Tags",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Matt Leacock"
    ]
   },
   "436790": {
@@ -1014,6 +1973,20 @@
     2,
     3,
     4
+   ],
+   "categories": [],
+   "mechanics": [
+    "Auction: Sealed Bid",
+    "Hand Management",
+    "Set Collection",
+    "Variable Player Powers",
+    "Victory Points as a Resource",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Erik Haffner",
+    "Henneke Holst",
+    "Cornel Krizsan"
    ]
   },
   "436842": {
@@ -1030,6 +2003,20 @@
    "rec": [
     1,
     2
+   ],
+   "categories": [
+    "Card Game",
+    "Fantasy"
+   ],
+   "mechanics": [
+    "Hand Management",
+    "Income",
+    "Set Collection",
+    "Solo / Solitaire Game",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Zong-Ger(蔥哥)"
    ]
   },
   "437705": {
@@ -1049,6 +2036,23 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Horror",
+    "Miniatures"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Cooperative Game",
+    "Dice Rolling",
+    "Pick-up and Deliver",
+    "Point to Point Movement",
+    "Solo / Solitaire Game",
+    "Variable Player Powers",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Peter Lee"
    ]
   },
   "441548": {
@@ -1067,6 +2071,21 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Post-Napoleonic"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Action Queue",
+    "Deck, Bag, and Pool Building",
+    "Simultaneous Action Selection",
+    "Worker Placement",
+    "Worker Placement, Different Worker Types"
+   ],
+   "designers": [
+    "Richard Ámann",
+    "Viktor Péter"
    ]
   },
   "441850": {
@@ -1084,6 +2103,21 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Animals",
+    "Card Game",
+    "Fantasy"
+   ],
+   "mechanics": [
+    "End Game Bonuses",
+    "Hand Management",
+    "Multi-Use Cards",
+    "Tags"
+   ],
+   "designers": [
+    "Simone Luciani",
+    "Roberto Pellei"
    ]
   },
   "444234": {
@@ -1102,6 +2136,18 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Mythology"
+   ],
+   "mechanics": [
+    "Area Majority / Influence",
+    "Deck, Bag, and Pool Building"
+   ],
+   "designers": [
+    "Trevor Benjamin",
+    "Brett J. Gilbert",
+    "David Thompson (I)"
    ]
   },
   "446930": {
@@ -1121,6 +2167,14 @@
     6,
     7,
     8
+   ],
+   "categories": [
+    "Party Game"
+   ],
+   "mechanics": [],
+   "designers": [
+    "Johannes Berger",
+    "Julien Gupta"
    ]
   },
   "447379": {
@@ -1139,6 +2193,17 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Card Game",
+    "Dice"
+   ],
+   "mechanics": [
+    "Dice Rolling",
+    "Hand Management"
+   ],
+   "designers": [
+    "Alex Nogués"
    ]
   },
   "449854": {
@@ -1157,6 +2222,19 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Environmental",
+    "Fantasy",
+    "Territory Building"
+   ],
+   "mechanics": [
+    "Area Majority / Influence",
+    "Pattern Building",
+    "Set Collection"
+   ],
+   "designers": [
+    "Thomas Franken"
    ]
   },
   "451924": {
@@ -1176,6 +2254,18 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Dice"
+   ],
+   "mechanics": [
+    "Dice Rolling",
+    "Predictive Bid",
+    "Team-Based Game"
+   ],
+   "designers": [
+    "Carsten Rohlfs",
+    "Ralf zur Linde"
    ]
   },
   "452817": {
@@ -1192,6 +2282,19 @@
    "rec": [
     3,
     4
+   ],
+   "categories": [
+    "Fantasy"
+   ],
+   "mechanics": [
+    "Auction / Bidding",
+    "Set Collection",
+    "Turn Order: Claim Action",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Rob Fisher",
+    "Adam Porter"
    ]
   },
   "454103": {
@@ -1211,6 +2314,25 @@
     4,
     5,
     6
+   ],
+   "categories": [
+    "Animals",
+    "Dice",
+    "Humor",
+    "Party Game",
+    "Racing"
+   ],
+   "mechanics": [
+    "Dice Rolling",
+    "Open Drafting",
+    "Race",
+    "Roll / Spin and Move",
+    "Track Movement",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Richard Garfield",
+    "Takashi Ishida"
    ]
   },
   "456860": {
@@ -1228,6 +2350,16 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "City Building"
+   ],
+   "mechanics": [
+    "Auction / Bidding",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Huy Pham"
    ]
   },
   "463441": {
@@ -1250,6 +2382,21 @@
     6,
     7,
     8
+   ],
+   "categories": [
+    "Card Game",
+    "Number",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Interrupts",
+    "Push Your Luck",
+    "Score-and-Reset Game",
+    "Take That"
+   ],
+   "designers": [
+    "Eric Olsen",
+    "Alyssa Swatek"
    ]
   },
   "465286": {
@@ -1268,6 +2415,25 @@
     2,
     3,
     4
+   ],
+   "categories": [
+    "Card Game",
+    "Humor",
+    "Video Game Theme"
+   ],
+   "mechanics": [
+    "Deck, Bag, and Pool Building",
+    "End Game Bonuses",
+    "Hand Management",
+    "Multi-Use Cards",
+    "Open Drafting",
+    "Set Collection",
+    "Solo / Solitaire Game",
+    "Turn Order: Stat-Based"
+   ],
+   "designers": [
+    "Rico Besteher",
+    "Frank Noack"
    ]
   },
   "465849": {
@@ -1283,7 +2449,25 @@
     3,
     4
    ],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Adventure",
+    "Card Game",
+    "Deduction",
+    "Exploration",
+    "Fantasy"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Cooperative Game",
+    "Deduction",
+    "Scenario / Mission / Campaign Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Vlaada Chvátil",
+    "Felix Podlesny"
+   ]
   },
   "469375": {
    "name": "Deckers: Duplicity",
@@ -1294,7 +2478,24 @@
    "maxTime": 90,
    "weight": 0,
    "best": [],
-   "rec": []
+   "rec": [],
+   "categories": [
+    "Expansion for Base-game",
+    "Science Fiction"
+   ],
+   "mechanics": [
+    "Command Cards",
+    "Cooperative Game",
+    "Deck, Bag, and Pool Building",
+    "Modular Board",
+    "Network and Route Building",
+    "Solo / Solitaire Game",
+    "Variable Player Powers",
+    "Variable Set-up"
+   ],
+   "designers": [
+    "Richard Wilkins"
+   ]
   },
   "479457": {
    "name": "Braided Skies",
@@ -1314,6 +2515,17 @@
     3,
     4,
     5
+   ],
+   "categories": [
+    "Economic",
+    "Fantasy"
+   ],
+   "mechanics": [
+    "Track Movement",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Dan Germain"
    ]
   }
  }
