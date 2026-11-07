@@ -207,15 +207,16 @@ export const MIN_POLL_VOTES = 10;
 
 // Resolve player counts field by field:
 //   1. the sheet, if readable   2. BGG (poll data only with enough votes)
-//   3. derived: best <- recommended <- min..max, and min/max from the listed counts
-// Recommended/best are then clipped to min..max. Returns null if nothing is known.
+//   3. anything missing falls back to the next more permissive level:
+//      best <- recommended <- full range. min/max come from the listed counts if absent.
+// Poll counts outside the box range are trusted (fan variants): they widen the range.
 export function resolveCounts(game, b) {
   const m = game.manual ?? {}, notes = [];
   const pollOk = b && !(b.pollVotes >= 0 && b.pollVotes < MIN_POLL_VOTES);
   let min = m.min ?? (b?.min > 0 ? b.min : null), max = m.max ?? (b?.max > 0 ? b.max : null);
   let best = m.best ?? (pollOk && b.best?.length ? b.best : null);
   let rec = m.rec ?? (pollOk && b.rec?.length ? b.rec : null);
-  if (b && !pollOk && (b.best?.length || b.rec?.length)) notes.push(`BGG poll has only ${b.pollVotes} votes, ignored`);
+  if (b && !pollOk && (b.best?.length || b.rec?.length)) notes.push(`BGG poll has only ${b.pollVotes} votes, using the full range`);
   const listed = [...(rec ?? []), ...(best ?? [])];
   if (min === null && listed.length) min = Math.min(...listed);
   if (max === null && listed.length) max = Math.max(...listed);
@@ -223,17 +224,10 @@ export function resolveCounts(game, b) {
   if (min === null) min = Math.min(2, max);
   if (max === null) max = Math.max(min, 4);
   if (min > max) [min, max] = [max, min];
+  if (listed.length) { min = Math.min(min, ...listed); max = Math.max(max, ...listed); }
   max = Math.min(max, 31);
-  const clip = (l, what) => {
-    if (!l) return null;
-    const inside = l.filter(k => k >= min && k <= max);
-    if (inside.length < l.length) notes.push(`${what} ${l.filter(k => k < min || k > max).join(', ')} outside ${min}–${max}, ignored`);
-    return inside.length ? inside : null;
-  };
-  best = clip(best, 'best'); rec = clip(rec, 'recommended');
   const range = []; for (let k = min; k <= max; k++) range.push(k);
-  // unknown recommended: best if known (conservative), else the full range
-  rec = [...new Set([...(rec ?? best ?? range), ...(best ?? [])])].sort((a, z) => a - z);
+  rec = [...new Set([...(rec ?? range), ...(best ?? [])])].sort((a, z) => a - z);
   best = best ?? rec;
   return { min, max, range, rec, best, notes };
 }

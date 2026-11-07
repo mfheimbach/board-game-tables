@@ -253,13 +253,14 @@ function gamesScatter(S) {
 function facetBars(list, title) {
   if (list.length < 3) return '';
   const top = [...list].sort((a, z) => z.mean - a.mean).slice(0, 10);
-  const W = 340, rh = 22, lw = 150, H = top.length * rh + 8;
+  // label on its own line above each bar, so long names never get cut
+  const W = 340, rh = 34, H = top.length * rh + 4, bw = W - 46;
   let s = `<svg viewBox="0 0 ${W} ${H}" class="chart bars" role="img" aria-label="${esc(title)}">`;
   top.forEach((f, i) => {
-    const y = 4 + i * rh, w = Math.max(2, f.mean / 2 * (W - lw - 44));
-    s += `<text x="${lw - 6}" y="${y + 15}" text-anchor="end" class="ax">${esc(trunc(f.t, 24))}</text>`;
-    s += `<rect data-tip="${esc(`${f.t}: avg ${f.mean.toFixed(2)} over ${f.games.length} games`)}" x="${lw}" y="${y + 4}" width="${w}" height="${rh - 8}" rx="4" class="bar"/>`;
-    s += `<text x="${lw + w + 6}" y="${y + 15}" class="val">${f.mean.toFixed(2)}</text>`;
+    const y = 2 + i * rh, w = Math.max(2, f.mean / 2 * bw);
+    s += `<text x="0" y="${y + 11}" class="ax">${esc(f.t)} <tspan class="val">· ${f.games.length} games</tspan></text>`;
+    s += `<rect data-tip="${esc(`${f.t}: avg ${f.mean.toFixed(2)} over ${f.games.length} games`)}" x="0" y="${y + 16}" width="${w}" height="10" rx="4" class="bar"/>`;
+    s += `<text x="${w + 6}" y="${y + 25}" class="val">${f.mean.toFixed(2)}</text>`;
   });
   return s + '</svg>';
 }
