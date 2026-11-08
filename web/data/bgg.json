@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-07T11:12:22.874Z",
+ "updated": "2026-11-08T11:23:49.251Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -396,7 +396,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8433,
+   "weight": 3.8434,
    "best": [
     4
    ],
@@ -798,7 +798,7 @@
    "max": 4,
    "minTime": 90,
    "maxTime": 180,
-   "weight": 4.2597,
+   "weight": 4.2606,
    "best": [
     4
    ],
@@ -865,6 +865,34 @@
     "Nestore Mangone"
    ],
    "pollVotes": 360
+  },
+  "324711": {
+   "name": "Schadenfreude",
+   "year": 2020,
+   "min": 3,
+   "max": 5,
+   "minTime": 15,
+   "maxTime": 20,
+   "weight": 1.7317,
+   "best": [
+    4
+   ],
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "categories": [
+    "Card Game"
+   ],
+   "mechanics": [
+    "Set Collection",
+    "Trick-taking"
+   ],
+   "designers": [
+    "ctr"
+   ],
+   "pollVotes": 51
   },
   "327778": {
    "name": "ito",
@@ -1038,44 +1066,6 @@
    ],
    "pollVotes": 171
   },
-  "341169": {
-   "name": "Great Western Trail: Second Edition",
-   "year": 2021,
-   "min": 1,
-   "max": 4,
-   "minTime": 75,
-   "maxTime": 150,
-   "weight": 3.7019,
-   "best": [
-    3
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "American West",
-    "Animals",
-    "Farming"
-   ],
-   "mechanics": [
-    "Deck, Bag, and Pool Building",
-    "Hand Management",
-    "Ownership",
-    "Rondel",
-    "Set Collection",
-    "Solo / Solitaire Game",
-    "Tags",
-    "Track Movement",
-    "Variable Set-up"
-   ],
-   "designers": [
-    "Alexander Pfister"
-   ],
-   "pollVotes": 349
-  },
   "342070": {
    "name": "Thunder Road: Vendetta",
    "year": 2023,
@@ -1083,7 +1073,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 75,
-   "weight": 1.9483,
+   "weight": 1.9486,
    "best": [
     4
    ],
@@ -1452,7 +1442,7 @@
    "max": 6,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.5309,
+   "weight": 3.5316,
    "best": [
     4
    ],
@@ -1497,7 +1487,7 @@
    "max": 7,
    "minTime": 30,
    "maxTime": 45,
-   "weight": 1.05,
+   "weight": 1.0476,
    "best": [
     5,
     6
@@ -2037,7 +2027,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 418
+   "pollVotes": 419
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2101,43 +2091,6 @@
     "Zong-Ger(蔥哥)"
    ],
    "pollVotes": 5
-  },
-  "437705": {
-   "name": "Horrified: Dungeons & Dragons",
-   "year": 2025,
-   "min": 1,
-   "max": 5,
-   "minTime": 45,
-   "maxTime": 60,
-   "weight": 2.1667,
-   "best": [
-    4
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4,
-    5
-   ],
-   "categories": [
-    "Horror",
-    "Miniatures"
-   ],
-   "mechanics": [
-    "Action Points",
-    "Cooperative Game",
-    "Dice Rolling",
-    "Pick-up and Deliver",
-    "Point to Point Movement",
-    "Solo / Solitaire Game",
-    "Variable Player Powers",
-    "Variable Set-up"
-   ],
-   "designers": [
-    "Peter Lee"
-   ],
-   "pollVotes": 18
   },
   "441548": {
    "name": "Trickerion: Anniversary Edition",
@@ -2396,7 +2349,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1818,
+   "weight": 1.1802,
    "best": [
     5,
     6
@@ -2463,7 +2416,7 @@
    "max": 28,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.0385,
+   "weight": 1.0377,
    "best": [
     4,
     5,
@@ -2606,7 +2559,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.913,
+   "weight": 2.8846,
    "best": [
     1,
     4
