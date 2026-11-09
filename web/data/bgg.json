@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-08T11:23:49.251Z",
+ "updated": "2026-11-09T11:18:16.659Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -312,7 +312,7 @@
    "designers": [
     "Tobey Ho"
    ],
-   "pollVotes": 324
+   "pollVotes": 325
   },
   "170216": {
    "name": "Blood Rage",
@@ -353,7 +353,7 @@
    "designers": [
     "Eric M. Lang"
    ],
-   "pollVotes": 1084
+   "pollVotes": 1085
   },
   "234260": {
    "name": "Prey Another Day",
@@ -431,7 +431,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 1457
+   "pollVotes": 1459
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -512,7 +512,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 636
+   "pollVotes": 637
   },
   "257305": {
    "name": "SHASN",
@@ -892,7 +892,7 @@
    "designers": [
     "ctr"
    ],
-   "pollVotes": 51
+   "pollVotes": 52
   },
   "327778": {
    "name": "ito",
@@ -901,7 +901,7 @@
    "max": 10,
    "minTime": 10,
    "maxTime": 10,
-   "weight": 1.011,
+   "weight": 1.0109,
    "best": [
     5,
     6
@@ -928,7 +928,7 @@
    "designers": [
     "326"
    ],
-   "pollVotes": 76
+   "pollVotes": 78
   },
   "329714": {
    "name": "Dreadful Circus",
@@ -1151,7 +1151,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 90,
-   "weight": 2.6091,
+   "weight": 2.6126,
    "best": [
     2,
     3
@@ -1185,7 +1185,7 @@
    "designers": [
     "Justin Kemppainen"
    ],
-   "pollVotes": 93
+   "pollVotes": 94
   },
   "359871": {
    "name": "Arcs",
@@ -1306,7 +1306,7 @@
    "max": 8,
    "minTime": 15,
    "maxTime": 15,
-   "weight": 1.0647,
+   "weight": 1.0643,
    "best": [
     5
    ],
@@ -1519,7 +1519,7 @@
    "max": 5,
    "minTime": 30,
    "maxTime": 60,
-   "weight": 2.0833,
+   "weight": 2.0816,
    "best": [
     2,
     3
@@ -1543,7 +1543,7 @@
    "designers": [
     "Benjie Talbott"
    ],
-   "pollVotes": 51
+   "pollVotes": 52
   },
   "408547": {
    "name": "Things in Rings",
@@ -1818,7 +1818,7 @@
    "designers": [
     "Owen Davey"
    ],
-   "pollVotes": 18
+   "pollVotes": 19
   },
   "423577": {
    "name": "Valheim: The Board Game",
@@ -1971,7 +1971,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.3247,
+   "weight": 1.3205,
    "best": [
     4
    ],
@@ -1991,7 +1991,7 @@
    "designers": [
     "Kei Kajino (梶野 桂)"
    ],
-   "pollVotes": 90
+   "pollVotes": 91
   },
   "436217": {
    "name": "The Lord of the Rings: Fate of the Fellowship",
@@ -2000,7 +2000,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1047,
+   "weight": 3.1063,
    "best": [
     3
    ],
@@ -2027,7 +2027,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 419
+   "pollVotes": 420
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2379,7 +2379,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 237
+   "pollVotes": 238
   },
   "456860": {
    "name": "Yotei",
@@ -2388,9 +2388,10 @@
    "max": 4,
    "minTime": 30,
    "maxTime": 60,
-   "weight": 2.3333,
+   "weight": 2.25,
    "best": [
-    3
+    3,
+    4
    ],
    "rec": [
     2,
@@ -2407,7 +2408,7 @@
    "designers": [
     "Huy Pham"
    ],
-   "pollVotes": 4
+   "pollVotes": 5
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
@@ -2561,7 +2562,6 @@
    "maxTime": 90,
    "weight": 2.8846,
    "best": [
-    1,
     4
    ],
    "rec": [
@@ -2582,7 +2582,7 @@
    "designers": [
     "Dan Germain"
    ],
-   "pollVotes": 9
+   "pollVotes": 11
   }
  }
 }

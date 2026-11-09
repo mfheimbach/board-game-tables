@@ -1,30 +1,22 @@
 {
- "updated": "2026-11-08T11:23:40.502Z",
+ "updated": "2026-11-09T11:18:07.372Z",
  "sheets": [
   {
    "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
    "tabs": [
     {
-     "gid": null,
+     "gid": "0",
      "name": "Core Games",
      "headerRow": 3,
-     "snapshot": "data/sheet-Core_Games.csv",
-     "games": 38,
+     "snapshot": "data/sheet-0.csv",
+     "games": 64,
      "players": 12
     },
     {
-     "gid": null,
-     "name": "Filler Games",
-     "headerRow": 3,
-     "snapshot": "data/sheet-Filler_Games.csv",
-     "games": 26,
-     "players": 11
-    },
-    {
-     "gid": null,
+     "gid": "1214368593",
      "name": "Party Games",
      "headerRow": 3,
-     "snapshot": "data/sheet-Party_Games.csv",
+     "snapshot": "data/sheet-1214368593.csv",
      "games": 11,
      "players": 9
     }
