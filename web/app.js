@@ -260,6 +260,39 @@ function cardHtml(c, i, nAtt) {
 const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
 
 const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp" alt="" width="280" height="184"></picture>`;
+// Horst Chan: tap her face for a tip; new visitors get a hello once.
+const HORST_TIPS = [
+  'Hold a game chip to pick who plays it. Your ✓ beats every rule!',
+  'Tap a game once: 📌 it gets played. Twice: ⊘ it’s out.',
+  'Dinner in an hour? ⏱ “at most 1 h” and I’ll keep it short.',
+  'Like a table? 🔒 Lock it and I’ll reshuffle everyone else.',
+  '“Seatings” shows the same games with other people.',
+  'Played it before? Tick it in the game sheet. No teach, shorter game 🎓',
+  'Want all tables to finish together? There’s a slider in the settings.',
+  'Picky friends? Settings → “Cater to picky players” 💅',
+  '📊 Stats has awards. Someone here is the Biggest hater…',
+  'Before you send it to the group: is it <i>really</i> decided? 😇',
+  'Everything you tap stays on your phone. Go wild!',
+  'Confused? <a href="help.html">How it works</a> explains every rule.',
+];
+let horstT, horstI = -1;
+function horstHide() { clearTimeout(horstT); const p = $('#horstPop'); p.hidden = true; p.innerHTML = ''; }
+function horstSay(text) {
+  if (text === undefined) {
+    try { horstI = +(localStorage.getItem('bgt:horstTip') ?? -1); } catch {}
+    horstI = (horstI + 1) % HORST_TIPS.length;
+    try { localStorage.setItem('bgt:horstTip', horstI); } catch {}
+    text = HORST_TIPS[horstI];
+  }
+  const p = $('#horstPop'); clearTimeout(horstT);
+  p.innerHTML = HORST.replace('class="horst-art" ', '') + `<p class="horst-say">${text}</p>`;
+  p.hidden = false;
+  horstT = setTimeout(horstHide, 7000);
+}
+function horstHello() {
+  try { if (localStorage.getItem('bgt:horstHi')) return; localStorage.setItem('bgt:horstHi', '1'); } catch { return; }
+  setTimeout(() => horstSay('Hi, I’m Horst Chan! ☕ Tap me any time for a tip.'), 1500);
+}
 function renderResults(r, ms) {
   const nAtt = attendIdx().length, s = state.set, out = $('#results');
   $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · stopped after 1.5 s, best found' : ''}` : '';
@@ -577,12 +610,9 @@ function wire() {
     e.preventDefault();
     if (!longPressed) openGame(+c.dataset.g);
   });
-  let horstT;
-  $('#horstBtn').addEventListener('click', () => {
-    const p = $('#horstPop'); clearTimeout(horstT);
-    p.innerHTML = HORST.replace('class="horst-art" ', ''); p.hidden = false;
-    horstT = setTimeout(() => { p.hidden = true; p.innerHTML = ''; }, 3300);
-  });
+  $('#horstBtn').addEventListener('click', () => horstSay());
+  $('#horstPop').addEventListener('click', e => { if (!e.target.closest('a')) horstHide(); });
+
   $('#gameSheet').addEventListener('click', e => { if (e.target === $('#gameSheet')) $('#gameSheet').close(); });
   $('#gameSheet').addEventListener('close', () => { sheetGame = null; });
   document.addEventListener('click', e => {
@@ -818,6 +848,7 @@ async function init() {
     const sh = pool.find(s => s.sheetId === sel?.sheetId) ?? pool[0];
     const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key || t.name === sel?.key));
     await select(sh.sheetId, sh.tabs, i);
+    horstHello();
   } catch (err) {
     $('#results').innerHTML = `<div class="empty">${HORST}<h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>
       ${custom ? '<div class="btns"><button id="dropCustom">Back to the retreat sheet</button></div>' : ''}</div>`;

@@ -122,9 +122,10 @@ h3 { font-size: .95rem; margin-bottom: 10px; }
 .horst-art { display: block; width: min(240px, 70%); height: auto; margin: -6px auto 4px; }
 .horst-side { display: none; }
 @media (min-width: 900px) { .horst-side { display: block; margin-top: 18px; } .horst-side img { display: block; width: 100%; max-width: 300px; height: auto; margin: 0 auto; } }
-.horst-pop { position: fixed; left: 10px; top: calc(58px + env(safe-area-inset-top)); width: 240px; padding: 6px; z-index: 40; pointer-events: none; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 10px 30px rgb(0 0 0 / .18); transform-origin: 20px 0; animation: horstIn .25s ease-out; }
+.horst-pop { position: fixed; left: 10px; top: calc(58px + env(safe-area-inset-top)); width: min(260px, calc(100vw - 20px)); padding: 6px; z-index: 40; cursor: pointer; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 10px 30px rgb(0 0 0 / .18); transform-origin: 20px 0; animation: horstIn .25s ease-out; }
 .horst-pop::before { content: ''; position: absolute; left: 16px; top: -7px; width: 12px; height: 12px; background: var(--card); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }
 .horst-pop img { display: block; width: 100%; height: auto; }
+.horst-say { margin: 2px 8px 6px; font-size: .92rem; line-height: 1.4; }
 @keyframes horstIn { from { opacity: 0; transform: translateY(-8px) scale(.9); } }
 @media (prefers-reduced-motion: reduce) { .horst-pop { animation: none; } }
 .bgg-text { display: inline-block; padding: 6px 10px; border: 1.5px solid currentColor; border-radius: 8px; font-weight: 800; letter-spacing: .02em; }
