@@ -25,7 +25,9 @@ const openAlts = new Set();
 // ---------- state ----------
 function load() {
   try {
-    const s = JSON.parse(localStorage.getItem(storeKey));
+    // tabs used to be keyed by name; pick up those saves once they're keyed by gid
+    const t = cur && curTab(), old = t?.gid != null && t.name ? `bgt:${cur.sheetId}:${t.name}` : null;
+    const s = JSON.parse(localStorage.getItem(storeKey) ?? (old && localStorage.getItem(old)));
     if (s) return { ...structuredClone(DEFAULTS), ...s, set: { ...DEFAULTS.set, ...s.set }, bans: s.bans ?? {}, known: s.known ?? {} };
   } catch {}
   return structuredClone(DEFAULTS);
@@ -808,13 +810,13 @@ async function init() {
     document.title = $('#title').textContent = cfg.title || 'Game Tables';
     bgg = bj ?? { games: {} };
     sheets = tj?.sheets?.filter(s => s.tabs.length) ?? [];
-    if (!sheets.length) sheets = [{ sheetId: cfg.sheetId, tabs: [{ name: cfg.tab, headerRow: cfg.headerRow, snapshot: 'data/sheet-Core_Games.csv' }] }];
+    if (!sheets.length) sheets = [{ sheetId: cfg.sheetId, tabs: [{ name: cfg.tab, headerRow: cfg.headerRow }] }];
     try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
     let sel = null;
     try { sel = JSON.parse(localStorage.getItem('bgt:sel')); } catch {}
     const pool = custom ? [custom] : sheets;
     const sh = pool.find(s => s.sheetId === sel?.sheetId) ?? pool[0];
-    const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key));
+    const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key || t.name === sel?.key));
     await select(sh.sheetId, sh.tabs, i);
   } catch (err) {
     $('#results').innerHTML = `<div class="empty">${HORST}<h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>

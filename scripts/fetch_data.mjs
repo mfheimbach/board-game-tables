@@ -2,8 +2,8 @@
 // snapshot of each, writes web/data/tabs.json, then fetches BGG data for all games.
 // Runs server-side (GitHub Action) so the BGG token never reaches a browser.
 //   BGG_TOKEN=... node scripts/fetch_data.mjs
-import { readFile, writeFile } from 'node:fs/promises';
-import { loadTab } from '../web/sheet.js';
+import { readFile, writeFile, readdir, unlink } from 'node:fs/promises';
+import { loadTab, gvizUrl } from '../web/sheet.js';
 import { fetchThings } from '../web/bgg.js';
 
 const root = new URL('../web/', import.meta.url);
@@ -14,6 +14,7 @@ const fetchText = async url => {
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.text();
 };
+const unescapeJs = s => s.replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))).replace(/\\(.)/g, '$1');
 const unescapeHtml = s => s.replace(/&amp;/g, '&').replace(/&#39;|&#039;/g, "'").replace(/&quot;/g, '"').trim();
 
 // Tab names + gids from the sheet's public HTML view.
@@ -22,6 +23,8 @@ async function discoverTabs(sheetId) {
     const html = await fetchText(`https://docs.google.com/spreadsheets/d/${sheetId}/htmlview`);
     const found = new Map();
     for (const m of html.matchAll(/sheet-button-(\d+)"[\s\S]{0,300}?>([^<>]{1,100})</g)) found.set(m[1], unescapeHtml(m[2]));
+    // current format: items.push({name: "Core Games", pageUrl: "...", gid: "1866250012", ...})
+    for (const m of html.matchAll(/name:\s*"((?:[^"\\]|\\.){1,200})",[^{}]*?gid:\s*"(\d+)"/g)) found.set(m[2], unescapeJs(m[1]));
     for (const m of html.matchAll(/\{[^{}]*?"name"\s*:\s*"([^"]{1,100})"[^{}]*?"gid"\s*:\s*"?(\d+)/g)) found.set(m[2], m[1]);
     console.log(`  htmlview: ${found.size} tabs found`);
     return [...found].map(([gid, name]) => ({ gid, name }));
@@ -32,12 +35,21 @@ const sheetIds = [cfg.sheetId, ...(cfg.extraSheets ?? [])];
 const tabsOut = [], allIds = new Set();
 for (const sheetId of sheetIds) {
   console.log(`sheet ${sheetId}`);
+  // The sheet itself decides which tabs exist. config.tabs is only a fallback when discovery fails,
+  // and then each name is checked: gviz silently returns the first tab for a name that doesn't exist.
   const tabs = await discoverTabs(sheetId);
-  for (const name of cfg.tabs ?? [cfg.tab]) if (name && !tabs.some(t => t.name === name)) tabs.push({ name });
+  const fallback = !tabs.length;
+  if (fallback) for (const name of cfg.tabs ?? [cfg.tab]) if (name) tabs.push({ name });
+  const missingCsv = {};
+
   const kept = [];
   for (const tab of tabs) {
     try {
       const { model, headerRow, csv } = await loadTab(fetchText, sheetId, tab, cfg);
+      if (fallback) {
+        missingCsv[headerRow] ??= await fetchText(gvizUrl(sheetId, { name: '__no_such_tab__' }, headerRow)).catch(() => '');
+        if (csv === missingCsv[headerRow]) throw new Error('tab not found in the sheet');
+      }
       const key = tab.gid ?? tab.name.replace(/\W+/g, '_');
       if (kept.some(k => k.name === tab.name)) continue;
       await writeFile(new URL(`data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, root), csv);
@@ -50,6 +62,9 @@ for (const sheetId of sheetIds) {
   tabsOut.push({ sheetId, tabs: kept });
 }
 if (!tabsOut[0]?.tabs.length) throw new Error('No usable tab found in the main sheet');
+// drop snapshots of tabs that no longer exist
+const keep = new Set(tabsOut.flatMap(s => s.tabs.map(t => t.snapshot.replace('data/', ''))));
+for (const f of await readdir(new URL('data/', root))) if (/^sheet-.*\.csv$/.test(f) && !keep.has(f)) await unlink(new URL('data/' + f, root));
 await writeFile(new URL('data/tabs.json', root), JSON.stringify({ updated: new Date().toISOString(), sheets: tabsOut }, null, 1));
 
 // 2) BoardGameGeek
