@@ -1,0 +1,16 @@
+name: Probe sheet tabs (temporary)
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          ID=1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA
+          for u in htmlview "htmlview?widget=true" pubhtml edit; do
+            curl -sSL -A "Mozilla/5.0" -o p.html -w "$u %{http_code} %{size_download}\n" "https://docs.google.com/spreadsheets/d/$ID/$u"
+            echo "  sheet-button: $(grep -o 'sheet-button-[0-9]*' p.html | sort -u | tr '\n' ' ')"
+            grep -oE '.{0,60}(Core Games|Filler Games|Party Games).{0,60}' p.html | head -8
+          done
+          for t in "Core%20Games" "Filler%20Games" "Party%20Games" "Does%20Not%20Exist"; do
+            curl -sSL -o "$t.csv" -w "gviz $t %{http_code} " "https://docs.google.com/spreadsheets/d/$ID/gviz/tq?tqx=out:csv&sheet=$t"; md5sum "$t.csv" | cut -c1-12; head -c 160 "$t.csv"; echo
+          done
