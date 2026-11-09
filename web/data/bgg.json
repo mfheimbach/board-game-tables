@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-09T11:41:09.842Z",
+ "updated": "2026-11-09T13:06:29.034Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -275,7 +275,7 @@
    "max": 12,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.5926,
+   "weight": 1.5934,
    "best": [
     6,
     7,
@@ -396,7 +396,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8434,
+   "weight": 3.8431,
    "best": [
     4
    ],
@@ -692,7 +692,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 80,
-   "weight": 2.7669,
+   "weight": 2.7703,
    "best": [
     3
    ],
@@ -873,7 +873,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.7317,
+   "weight": 1.7619,
    "best": [
     4
    ],
@@ -901,7 +901,7 @@
    "max": 10,
    "minTime": 10,
    "maxTime": 10,
-   "weight": 1.0109,
+   "weight": 1.0108,
    "best": [
     5,
     6
@@ -1115,7 +1115,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7057,
+   "weight": 3.7067,
    "best": [
     3
    ],
@@ -1151,7 +1151,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 90,
-   "weight": 2.6126,
+   "weight": 2.6161,
    "best": [
     2,
     3
@@ -1194,7 +1194,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4549,
+   "weight": 3.4574,
    "best": [
     3,
     4
@@ -1782,7 +1782,7 @@
     "Francesco Grothe",
     "Dominik Schönleben"
    ],
-   "pollVotes": 7
+   "pollVotes": 8
   },
   "421254": {
    "name": "Fame & Fable",
@@ -1791,7 +1791,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 90,
-   "weight": 2.2,
+   "weight": 2.1875,
    "best": [
     2
    ],
@@ -1971,7 +1971,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.3205,
+   "weight": 1.3291,
    "best": [
     4
    ],
@@ -2000,7 +2000,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1063,
+   "weight": 3.1061,
    "best": [
     3
    ],
@@ -2349,7 +2349,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1802,
+   "weight": 1.1786,
    "best": [
     5,
     6
@@ -2379,7 +2379,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 238
+   "pollVotes": 239
   },
   "456860": {
    "name": "Yotei",
@@ -2388,7 +2388,7 @@
    "max": 4,
    "minTime": 30,
    "maxTime": 60,
-   "weight": 2.25,
+   "weight": 2.2,
    "best": [
     3,
     4
@@ -2417,7 +2417,7 @@
    "max": 28,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.0377,
+   "weight": 1.037,
    "best": [
     4,
     5,
@@ -2446,7 +2446,7 @@
     "Eric Olsen",
     "Alyssa Swatek"
    ],
-   "pollVotes": 29
+   "pollVotes": 30
   },
   "465286": {
    "name": "Trash Poker",
@@ -2560,7 +2560,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.8846,
+   "weight": 2.8889,
    "best": [
     4
    ],
