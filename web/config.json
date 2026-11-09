@@ -1,14 +1,5 @@
 {
-  "title": "Boardgame Retreat '26",
   "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
-  "tab": "Core Games",
-  "tabs": [
-    "Core Games",
-    "Filler Games",
-    "Party Games"
-  ],
-  "extraSheets": [],
-  "headerRow": 3,
   "columns": {
     "game": "Spiel",
     "bgg": "BGG ID",

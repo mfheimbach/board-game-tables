@@ -1,12 +1,5 @@
 // Sheet + BGG data -> model. Shared by the web app and scripts/fetch_data.mjs.
 
-export function sheetCsvUrl(cfg) {
-  const q = new URLSearchParams({
-    tqx: 'out:csv', sheet: cfg.tab, headers: '1', range: `A${cfg.headerRow}:ZZ`,
-  });
-  return `https://docs.google.com/spreadsheets/d/${cfg.sheetId}/gviz/tq?${q}`;
-}
-
 // One tab as CSV via the gviz endpoint (works from browsers for link-shared sheets).
 // tab = { gid } or { name }; the range starts at the header row so gviz keeps the
 // header labels (it drops text in numeric columns otherwise).
@@ -22,7 +15,7 @@ export const gidFromUrl = u => (String(u).match(/[#&?]gid=(\d+)/) || [])[1] ?? n
 // Fetch + parse one tab. Unknown header row: try likely rows until the BGG column
 // is the header. Returns { model, headerRow, csv } or throws if the tab doesn't fit.
 export async function loadTab(fetchText, sheetId, tab, cfg) {
-  const tries = [...new Set([tab.headerRow, cfg.headerRow, 1, 2, 3, 4, 5, 6, 7, 8].filter(Boolean))];
+  const tries = [...new Set([tab.headerRow, 1, 2, 3, 4, 5, 6, 7, 8].filter(Boolean))];
   let lastErr = new Error('no fitting header row');
   for (const h of tries) {
     try {
@@ -140,7 +133,7 @@ export function parseSheet(rows, cfg) {
   const isRating = v => /^\s*$/.test(v) || /^\s*-?\d+(\.\d+)?\s*$/.test(v);
   let playerCols = head.map((c, i) => i).filter(i =>
     !known.has(i) && head[i] && !head[i].startsWith('*') &&
-    body.every(r => isRating(r[i] ?? '')) && body.some(r => /\d/.test(r[i] ?? '')));
+    body.every(r => isRating(r[i] ?? '')));
 
   const rate = v => {
     const s = String(v ?? '').trim();
@@ -150,10 +143,8 @@ export function parseSheet(rows, cfg) {
     if (x > 2) return 2; if (x < 0) return 0;
     return Number.isInteger(x) ? x : 1;
   };
-  // players who never rated anything 1 or 2 are dropped (as in the R version)
-  const silent = playerCols.filter(i => !body.some(r => rate(r[i]) >= 1));
-  if (silent.length) warnings.push(`No ratings from: ${silent.map(i => head[i]).join(', ')}`);
-  playerCols = playerCols.filter(i => !silent.includes(i));
+  // People who haven't rated yet stay in: their blanks count like any other blank.
+  // Trailing blank-header columns are already out (head[i] is empty).
   const players = playerCols.map(i => head[i]);
 
   const seen = new Set();

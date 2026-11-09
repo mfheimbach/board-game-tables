@@ -36,14 +36,17 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.
 
 ## Config
-Edit `web/config.json` to change:
-- sheet id, tab, header row
-- column names: game, BGG id/link, explainer, owner (`*Bringbär`)
-- optional manual player-count columns, which take precedence over BGG data
-- optional `*Kennen` (who has played it), `min.time`, `max.time`, `weight` columns for games without BGG data
+`web/config.json` holds only what the sheet can't tell us:
+- `sheetId`
+- `columns`: the sheet's header names for game, BGG id/link, explainer, owner (`*Bringbär`), and the optional manual columns (player counts, `*Kennen`, `min.time`, `max.time`, `weight`)
 
-Player columns are detected automatically: any column whose cells are only 0/1/2/blank.
-Columns starting with `*` are ignored.
+Everything else comes from the sheet itself (via the daily action):
+- title: the spreadsheet's name
+- tabs: every tab that has the game and BGG id columns (others, like a scheduling tab, are skipped)
+- header row: detected
+- players: every column holding only ratings (0/1/2/blank), including people who haven't rated yet. Columns starting with `*` are ignored.
+
+After restructuring the sheet, run **Actions → Update game data** to pick up the change right away.
 
 ## Local development
 ```

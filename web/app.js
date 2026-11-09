@@ -807,10 +807,10 @@ async function init() {
   try {
     const [c, bj, tj] = await Promise.all([fetch('config.json', { cache: 'no-cache' }).then(r => r.json()), getJSON('data/bgg.json'), getJSON('data/tabs.json')]);
     cfg = c;
-    document.title = $('#title').textContent = cfg.title || 'Game Tables';
+    document.title = $('#title').textContent = tj?.sheets?.[0]?.title || 'Game Tables';
     bgg = bj ?? { games: {} };
     sheets = tj?.sheets?.filter(s => s.tabs.length) ?? [];
-    if (!sheets.length) sheets = [{ sheetId: cfg.sheetId, tabs: [{ name: cfg.tab, headerRow: cfg.headerRow }] }];
+    if (!sheets.length) throw new Error('No game data yet. Run "Update game data" on GitHub once.');
     try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
     let sel = null;
     try { sel = JSON.parse(localStorage.getItem('bgt:sel')); } catch {}

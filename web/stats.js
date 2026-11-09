@@ -37,7 +37,8 @@ function mds(D) {
 }
 
 export function computeStats(model, bgg, playerIdx) {
-  const P = playerIdx, G = model.games;
+  // people who haven't rated anything yet have no stats
+  const G = model.games, P = playerIdx.filter(p => G.some(g => g.ratings[p] >= 0));
   const name = p => model.players[p];
   const r = (g, p) => g.ratings[p];
   const b = g => bgg.games[g.id] ?? {};
