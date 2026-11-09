@@ -259,7 +259,7 @@ function cardHtml(c, i, nAtt) {
 }
 const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
 
-const HORST = `<picture><source srcset="img/horst-chan-still.png" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp" alt="" width="280" height="184"></picture>`;
+const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp" alt="" width="280" height="184"></picture>`;
 function renderResults(r, ms) {
   const nAtt = attendIdx().length, s = state.set, out = $('#results');
   $('#stats').textContent = r ? `${fmt(r.nCand)} possible tables · ${fmt(r.seatings)} seatings checked · ${ms < 1 ? '<1' : Math.round(ms)} ms${r.truncated ? ' · stopped after 1.5 s, best found' : ''}` : '';

@@ -324,3 +324,5 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 .time-panel .trow { grid-template-columns: 52px 1fr; gap: 6px; }
 .time-panel .chips { gap: 4px; }
 .chip.t { padding: 4px 9px; font-size: .85rem; }
+/* the reduced-motion still of Horst Chan is portrait: keep it from growing tall */
+@media (prefers-reduced-motion: reduce) { .horst-art, .horst-side img, .horst-pop img { width: auto; max-width: 100%; max-height: 200px; margin-inline: auto; } }
