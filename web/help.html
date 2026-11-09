@@ -44,7 +44,7 @@
   <nav class="toc">
     <a href="#ratings">Ratings</a><a href="#screen">Main screen</a><a href="#rules">The rules</a>
     <a href="#overrides">Overruling them</a><a href="#order">Order</a><a href="#result">Reading a result</a>
-    <a href="#time">Play times</a><a href="#privacy">Your phone only</a>
+    <a href="#time">Play times</a><a href="#privacy">Your phone only</a><a href="#own">Your own sheet</a>
   </nav>
 
   <h2 id="ratings">⭐ Where the data comes from</h2>
@@ -129,6 +129,23 @@
     <li>Settings → <b>Reset everything</b> starts fresh.</li>
   </ul>
 
+  <h2 id="own">📄 Using your own sheet</h2>
+  <p>Any Google Sheet tab with the same layout works. Settings → Data → <b>Use another sheet</b>, then paste the link to the tab. Only your phone switches. "Back to the retreat sheet" switches back.</p>
+  <ul>
+    <li><b>Sharing:</b> the sheet must be shared as "Anyone with the link: Viewer".</li>
+    <li><b>Which tab:</b> the one in your link (the <code>#gid=…</code> part). Cell <b>A1</b> is used as its name.</li>
+    <li><b>Header row:</b> anywhere in the first 8 rows. Rows above it are free for notes.</li>
+    <li><b>One column per person:</b> the header is the name, the cells are 0, 1, 2 or empty. People who haven't rated yet still count.</li>
+    <li>Columns starting with <code>*</code> are ignored, apart from the ones below.</li>
+  </ul>
+  <h3>Column names</h3>
+  <p>Spelling has to match. Upper and lower case don't matter. Only the BGG column is required.</p>
+  <table class="rules" id="cols">
+    <thead><tr><th>Header</th><th>What goes in</th></tr></thead>
+    <tbody><tr><td colspan="2" class="muted">Loading…</td></tr></tbody>
+  </table>
+  <p class="card-note small"><b>BoardGameGeek data</b> (player counts, play time, weight) is only available for games that are also in the retreat sheet, because it's fetched ahead of time. For other games, fill in the player-count and time columns yourself. Otherwise the app assumes 2–4 players and shows no time.</p>
+
   <h2>🤷 No result?</h2>
   <p>Some groups just don't split under the current rules, e.g. 7 people with only 4-player games. The app then suggests what to loosen: one more table, "would play" games too, any player count, and so on. Tap one to try it.</p>
 </main>
@@ -137,5 +154,27 @@
   <a href="https://boardgamegeek.com" target="_blank" rel="noopener" class="bgg"><img src="img/powered-by-bgg.svg" alt="Powered by BGG" height="36"></a>
   <span class="muted small">Player counts, play times, weight, mechanics, themes and designers from <a href="https://boardgamegeek.com" target="_blank" rel="noopener">BoardGameGeek</a>.</span>
 </footer>
+<script>
+// Column names come from config.json, so this page never disagrees with the app.
+const DESC = {
+  game: ['', 'Name of the game. Without it, BGG\'s name is used.'],
+  bgg: ['required', 'BoardGameGeek ID or link. Can be empty for small games, then the name is used.'],
+  explainer: ['', 'Who can explain it. Names as in the person columns, separated by commas.'],
+  bringer: ['', 'Who owns or brings it. Same format.'],
+  known: ['', 'Who has played it before (no rules explanation needed). Same format.'],
+  minPlayers: ['', 'Fewest players, e.g. 2.'],
+  maxPlayers: ['', 'Most players, e.g. 5.'],
+  recPlayers: ['', 'Recommended player counts, e.g. "3-5" or "3, 4".'],
+  bestPlayers: ['', 'Best player counts, same format.'],
+  minTime: ['', 'Shortest play time in minutes.'],
+  maxTime: ['', 'Longest play time in minutes.'],
+  weight: ['', 'How heavy, 1 (light) to 5 (very heavy), like on BGG.'],
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+fetch('config.json', { cache: 'no-cache' }).then(r => r.json()).then(cfg => {
+  document.querySelector('#cols tbody').innerHTML = Object.entries(DESC).filter(([k]) => cfg.columns[k]).map(([k, [req, d]]) =>
+    `<tr><td><code>${esc(cfg.columns[k])}</code>${req ? ' <span class="muted small">· required</span>' : ''}</td><td>${esc(d)}</td></tr>`).join('');
+}).catch(() => { document.querySelector('#cols tbody').innerHTML = '<tr><td colspan="2" class="muted">Couldn\'t load the column list.</td></tr>'; });
+</script>
 </body>
 </html>
