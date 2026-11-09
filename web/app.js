@@ -259,7 +259,7 @@ function cardHtml(c, i, nAtt) {
 }
 const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
 
-const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp" alt="" width="280" height="184"></picture>`;
+const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp?v=3" alt="" width="280" height="184"></picture>`;
 // Horst Chan: tap her face for a tip; new visitors get a hello once.
 const HORST_TIPS = [
   'Hold a game chip to pick who plays it. Your ✓ beats every rule!',
