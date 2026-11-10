@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09T13:06:19.542Z",
+ "updated": "2026-11-10T12:47:58.382Z",
  "sheets": [
   {
    "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
@@ -10,7 +10,7 @@
      "name": "Core Games",
      "headerRow": 3,
      "snapshot": "data/sheet-0.csv",
-     "games": 64,
+     "games": 62,
      "players": 12
     },
     {
