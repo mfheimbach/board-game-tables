@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-10T12:48:09.392Z",
+ "updated": "2026-11-11T11:58:34.507Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -475,7 +475,7 @@
    "max": 5,
    "minTime": 45,
    "maxTime": 120,
-   "weight": 3.8392,
+   "weight": 3.8394,
    "best": [
     4
    ],
@@ -512,7 +512,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 637
+   "pollVotes": 638
   },
   "257305": {
    "name": "SHASN",
@@ -994,6 +994,44 @@
    ],
    "pollVotes": 222
   },
+  "334379": {
+   "name": "Doodle Dash",
+   "year": 2021,
+   "min": 3,
+   "max": 7,
+   "minTime": 15,
+   "maxTime": 20,
+   "weight": 1,
+   "best": [
+    5,
+    6,
+    7
+   ],
+   "rec": [
+    4,
+    5,
+    6,
+    7
+   ],
+   "categories": [
+    "Party Game",
+    "Real-time"
+   ],
+   "mechanics": [
+    "Communication Limits",
+    "Drawing",
+    "Line Drawing",
+    "Score-and-Reset Game"
+   ],
+   "designers": [
+    "Fridtjof Buvarp",
+    "Maija Buvarp",
+    "Pauline Buvarp",
+    "Eilif Svensson",
+    "Åsmund Svensson"
+   ],
+   "pollVotes": 20
+  },
   "335212": {
    "name": "Sentinels of the Multiverse: Definitive Edition",
    "year": 2022,
@@ -1115,7 +1153,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7067,
+   "weight": 3.7077,
    "best": [
     3
    ],
@@ -1194,7 +1232,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4574,
+   "weight": 3.458,
    "best": [
     3,
     4
@@ -1234,7 +1272,7 @@
    "max": 2,
    "minTime": 90,
    "maxTime": 150,
-   "weight": 3.4906,
+   "weight": 3.5,
    "best": [
     2
    ],
@@ -1306,7 +1344,7 @@
    "max": 8,
    "minTime": 15,
    "maxTime": 15,
-   "weight": 1.078,
+   "weight": 1.0775,
    "best": [
     5
    ],
@@ -1478,7 +1516,7 @@
    "designers": [
     "Paul Dennen"
    ],
-   "pollVotes": 548
+   "pollVotes": 549
   },
   "400495": {
    "name": "JinxO",
@@ -1511,6 +1549,45 @@
     "Martin Ang"
    ],
    "pollVotes": 20
+  },
+  "401110": {
+   "name": "Dying Message",
+   "year": 2023,
+   "min": 4,
+   "max": 30,
+   "minTime": 10,
+   "maxTime": 30,
+   "weight": 1.8,
+   "best": [
+    7,
+    8,
+    9
+   ],
+   "rec": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "categories": [
+    "Bluffing",
+    "Deduction",
+    "Murder / Mystery",
+    "Party Game"
+   ],
+   "mechanics": [
+    "Deduction",
+    "Hidden Roles",
+    "Role Playing",
+    "Voting"
+   ],
+   "designers": [
+    "Songsit Phraephet"
+   ],
+   "pollVotes": 3
   },
   "407233": {
    "name": "Tenby",
@@ -1749,7 +1826,7 @@
     "Francesco Grothe",
     "Dominik Schönleben"
    ],
-   "pollVotes": 8
+   "pollVotes": 9
   },
   "421254": {
    "name": "Fame & Fable",
@@ -1967,7 +2044,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1057,
+   "weight": 3.1074,
    "best": [
     3
    ],
@@ -1994,7 +2071,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 422
+   "pollVotes": 425
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2058,6 +2135,40 @@
     "Zong-Ger(蔥哥)"
    ],
    "pollVotes": 5
+  },
+  "439093": {
+   "name": "Red Dog Junction",
+   "year": 2026,
+   "min": 1,
+   "max": 5,
+   "minTime": 30,
+   "maxTime": 90,
+   "weight": 2.3333,
+   "best": [
+    4
+   ],
+   "rec": [
+    3,
+    4,
+    5
+   ],
+   "categories": [
+    "Science Fiction",
+    "Space Exploration"
+   ],
+   "mechanics": [
+    "Deck, Bag, and Pool Building",
+    "Market",
+    "Pick-up and Deliver",
+    "Race",
+    "Victory Points as a Resource",
+    "Worker Placement"
+   ],
+   "designers": [
+    "Tyler Cheves",
+    "Brendon Cheves"
+   ],
+   "pollVotes": 2
   },
   "441850": {
    "name": "Echoes of Time",
@@ -2282,7 +2393,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.177,
+   "weight": 1.1754,
    "best": [
     5,
     6
@@ -2486,6 +2597,29 @@
    ],
    "pollVotes": 0
   },
+  "477517": {
+   "name": "Eggsposed",
+   "year": 2026,
+   "min": 3,
+   "max": 8,
+   "minTime": 20,
+   "maxTime": 20,
+   "weight": 1,
+   "best": [],
+   "rec": [],
+   "categories": [
+    "Animals",
+    "Bluffing",
+    "Deduction"
+   ],
+   "mechanics": [
+    "Deduction"
+   ],
+   "designers": [
+    "Ali Mussell"
+   ],
+   "pollVotes": 0
+  },
   "479457": {
    "name": "Braided Skies",
    "year": 2026,
@@ -2495,6 +2629,7 @@
    "maxTime": 90,
    "weight": 2.8889,
    "best": [
+    2,
     4
    ],
    "rec": [
@@ -2515,7 +2650,7 @@
    "designers": [
     "Dan Germain"
    ],
-   "pollVotes": 11
+   "pollVotes": 12
   }
  }
 }
