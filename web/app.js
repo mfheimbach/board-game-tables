@@ -202,11 +202,9 @@ function tableHtml(t, ctx = {}) {
   const dur = bn ? ` · <span class="dur ${tone}" title="${allKnow ? 'everyone knows it: no teach' : 'with teach for newcomers'}">${bn.label}${allKnow ? ' 🎓' : ''}</span>` : '';
   const nerd = state.set.minutes && est ? `<div class="nerd">box ${boxText(d)} → ${Math.round(est.box)}′ at ${t.p.length}p · ${est.teach ? `teach ${Math.round(est.teach)} + ` : ''}play ${Math.round(est.play)} = <b>${hm(est.total)}</b> (${hm(est.total * 0.8)}–${hm(est.total * 1.5)})</div>` : '';
   return `<div class="tbl${lk ? ' locked' : ''}">
-    <div><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${dur}</span>${nerd}</div>
-    <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div>
-    <div class="acts">
-      <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>
-    </div></div>`;
+    <div class="tline"><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${dur}</span>
+      <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>${nerd}</div>
+    <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div></div>`;
 }
 
 // ---------- time slot (min/max length per table) ----------
@@ -223,12 +221,12 @@ function renderTime() {
   $('#timeBtn').classList.toggle('on', !!(lo || hi));
   const chip = (key, v, label, on, dis) => `<button class="chip t" data-tset="${key}:${v}" aria-pressed="${on}"${dis ? ' disabled' : ''}>${label}</button>`;
   $('#tminChips').innerHTML = [0, 60, 90, 120, 180].map(v => chip('tmin', v, v ? tLabel(v) : 'any', lo === v, hi && v > hi)).join('');
-  $('#tmaxChips').innerHTML = [60, 90, 120, 180, 0].map(v => chip('tmax', v, v ? tLabel(v) : 'any', hi === v, v && lo > v)).join('');
+  $('#tmaxChips').innerHTML = [0, 60, 90, 120, 180].map(v => chip('tmax', v, v ? tLabel(v) : 'any', hi === v, v && lo > v)).join('');
 }
 
 // "tables finish within": slider ticks (minutes, 0 = any), roughly doubling
 const GAPS = [[30, '½ h'], [60, '1 h'], [120, '2 h'], [0, 'any']];
-const gapLabel = i => GAPS[i]?.[0] ? `Tables finish within ${GAPS[i][1]} of each other` : 'Tables may finish at different times';
+const gapLabel = i => `All tables finish within <b>${GAPS[i]?.[0] ? GAPS[i][1] + ' of each other' : 'any time'}</b>`;
 
 function syncChip(tables) {
   const ds = tables.filter(t => t.d > 0);
@@ -239,7 +237,7 @@ function syncChip(tables) {
   return `<span class="sync ${tone}" title="${esc(tip)}" aria-label="${esc(tip)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 3h6"/></svg></span>`;
 }
 
-function cardHtml(c, i, nAtt) {
+function cardHtml(c, i, nAtt, list = []) {
   const s = c.seatings[0];
   const pct = Math.round(100 * s.score / (2 * nAtt));
   const tables = [...s.tables].sort((a, b) => b.p.length - a.p.length);
@@ -254,12 +252,20 @@ function cardHtml(c, i, nAtt) {
       <span class="spacer"></span>
       <button class="ghost" data-alts="${i}" title="Other seatings with the same games">${openAlts.has(key(s)) ? 'Hide' : 'Seatings'}</button>
       <button class="ghost icon" data-share="${i}" title="Send to the group" aria-label="Send to the group">${ICON.share}</button>
+      ${tieHtml(list, i, ctx)}
     </div>
     ${tables.map(t => tableHtml(t, ctx)).join('')}
     <div class="alts" hidden></div>
   </article>`;
 }
 const key = s => s.tables.map(t => t.g).sort((a, b) => a - b).join('-');
+// Same score as a neighbour: say what decided the order (fewer guesses, then tables ending closer together)
+function tieHtml(list, i, ctx) {
+  const sc = k => list[k]?.seatings[0].score;
+  if (sc(i) !== sc(i - 1) && sc(i) !== sc(i + 1)) return '';
+  const end = !ctx.lo ? '' : ctx.hi - ctx.lo < 15 ? 'tables end together' : `longest table runs ${fmtDiff(ctx.hi - ctx.lo)} longer`;
+  return `<div class="why muted small">Same score as ${sc(i) === sc(i - 1) ? 'the one above' : 'the one below'}${end ? ` · ${end}` : ''}</div>`;
+}
 
 const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp?v=3" alt="" width="280" height="184"></picture>`;
 // Horst Chan: tap her face for a tip; new visitors get a hello once.
@@ -340,7 +346,7 @@ function renderResults(r, ms) {
   const list = r.combos.slice(0, shown);
   const capped = r.truncated ? `<div class="capped">⏳ Big group: these are the best seatings found in ${budgetUsed / 1000} s, not guaranteed to be the very best.
     ${budgetUsed < 10000 ? '<button id="deepSearch">Search for 10 s</button>' : ''}</div>` : '';
-  out.innerHTML = capped + list.map((c, i) => cardHtml(c, i, nAtt)).join('') +
+  out.innerHTML = capped + list.map((c, i) => cardHtml(c, i, nAtt, list)).join('') +
     (r.combos.length > shown ? `<div class="btns" style="justify-content:center"><button id="more">Show more</button></div>` : '');
   list.forEach((c, i) => { if (openAlts.has(key(c.seatings[0]))) showAlts(i); });
 }
@@ -407,7 +413,7 @@ function renderGameList() {
   }
   document.querySelectorAll('.toggle input').forEach(i => { i.checked = !!state.set[i.dataset.key]; });
   $('#gap').value = state.set.gap ?? 3;
-  $('#gapLabel').textContent = gapLabel(state.set.gap ?? 3);
+  $('#gapLabel').innerHTML = gapLabel(state.set.gap ?? 3);
   const nb = Object.keys(bgg.games).length;
   $('#dataInfo').innerHTML = `
     <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${{ live: 'live from the sheet', pending: 'saved copy, checking the sheet…' }[model.source] ?? 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
@@ -423,7 +429,7 @@ function renderBanner() {
   if (model.source === 'snapshot') msgs.push('Couldn\'t reach the sheet — showing the saved copy.');
   $('#banner').hidden = !msgs.length;
   $('#banner').textContent = msgs.join(' ');
-  $('#dataState').textContent = { snapshot: 'saved copy', pending: 'updating…' }[model.source] ?? '';
+  $('#dataState').textContent = model.source === 'pending' ? 'updating…' : '';   // a saved copy is announced by the banner
 }
 
 // ---------- update loop ----------
@@ -761,7 +767,7 @@ function wire() {
     if (e.target.id === 'gap') { state.set.gap = +e.target.value; update(); }
   });
   $('#gameSearch').addEventListener('input', renderGameList);
-  $('#gap').addEventListener('input', e => { $('#gapLabel').textContent = gapLabel(+e.target.value); });
+  $('#gap').addEventListener('input', e => { $('#gapLabel').innerHTML = gapLabel(+e.target.value); });
   $('#settings').addEventListener('click', e => { if (e.target === $('#settings')) $('#settings').close(); });
 }
 

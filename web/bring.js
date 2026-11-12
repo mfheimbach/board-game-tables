@@ -12,8 +12,8 @@ const verdict = ([lo, hi]) => lo >= CUT ? 'bring' : hi < CUT ? 'leave' : lo >= Z
 // knobs for the curious, folded away: how many weekends, how strictly the group follows the ranking,
 // how much long games are worth
 const SIZES = [[4000, '4,000'], [20000, '20,000'], [Infinity, 'until I stop']];
-const ALPHAS = [[0, 'same as short'], [0.25, 'a bit more'], [0.5, 'more (default)'], [0.75, 'a lot more'], [1, 'in proportion to time']];
-const STRICT = [[Infinity, 'always #1'], [2, 'strictly'], [1, 'mostly'], [0.5, 'loosely (default)'], [0, 'any of them']];
+const ALPHAS = [[0, 'the same as short ones', 'same'], [0.25, 'a bit more', 'a bit'], [0.5, 'more (default)', 'more'], [0.75, 'a lot more', 'a lot'], [1, 'in proportion to their length', '∝ time']];
+const STRICT = [[Infinity, 'always #1', '#1 only'], [2, 'strictly', 'strict'], [1, 'mostly', 'mostly'], [0.5, 'loosely (default)', 'loosely'], [0, 'any of them', 'any']];
 const TOPK = [[5, 'top 5'], [10, 'top 10 (default)'], [30, 'top 30 (slow)']];
 let opts = { size: 4000, alpha: 0.5, strict: 0.5, topK: 10 };
 try { opts = { ...opts, ...JSON.parse(localStorage.getItem('bgt:bringOpts')) }; if (opts.size === null) opts.size = Infinity; if (opts.strict === null) opts.strict = Infinity; } catch {}
@@ -125,7 +125,11 @@ function resultsHtml() {
   const out = G.filter((g, i) => input?.games[i]?.out);
   const pct = x => `${(x * 100).toFixed(1)}%`;
   const status = open ? `${open} not decided yet. More weekends will tell.` : `All decided${border ? `, ${border} borderline (right at the line, either way is fine)` : ''}.`;
+  const leave = rows.filter(r => r.v === 'leave'), bord = rows.filter(r => r.v === 'border');
+  const names = rs => rs.map(r => esc(gName(r.g))).join(', ');
   return `<p class="br-sum"><b>${nKeep}</b> of ${rows.length} games get played at least once every 10 weekends. <span class="muted">${status}</span></p>
+    ${leave.length ? `<div class="br-leave"><b>🏠 Can stay at home (${leave.length})</b>${names(leave)}</div>` : ''}
+    ${bord.length ? `<div class="br-leave"><b>🤷 Borderline, your call (${bord.length})</b>${names(bord)}</div>` : ''}
     <ol class="br-list">${rows.map((r, i) => {
       const owner = r.g.bringers.map(p => P[p]).join(', ');
       return `${i === nKeep ? '<li class="br-cut"><span>Below here: played less than once every 10 weekends</span></li>' : ''}
@@ -154,6 +158,20 @@ function update(force = false, msg = '') {
   if (!force && now - lastDraw < 900) return;
   lastDraw = now;
   $('#brResults').innerHTML = resultsHtml();
+}
+const knobSlider = (key, label, list) => {
+  const i = Math.max(0, list.findIndex(([v]) => v === opts[key]));
+  return `<label class="knob small">${label}: <b id="kv-${key}">${list[i][1]}</b>
+    <input type="range" min="0" max="${list.length - 1}" step="1" value="${i}" data-knob="${key}" aria-label="${label}">
+    <span class="ticks">${list.map(x => `<span>${x[2]}</span>`).join('')}</span></label>`;
+};
+function onKnob(e) {
+  const key = e.target.dataset.knob, list = key === 'strict' ? STRICT : ALPHAS, [v, l] = list[+e.target.value];
+  opts[key] = v; saveOpts();
+  $(`#kv-${key}`).textContent = l;
+  if (key === 'alpha') { $('#brAlpha').textContent = v; $('#brAlpha1').textContent = (2 * Math.pow(1 / 3, v)).toFixed(1); }
+  if (snap) stale = true;
+  update();
 }
 function renderShell() {
   const { esc } = ctx;
@@ -194,14 +212,11 @@ function renderShell() {
       <label class="field small">The group picks from the
         <div class="seg">${TOPK.map(([v, l]) => `<button type="button" data-topk="${v}" aria-pressed="${opts.topK === v}">${l}</button>`).join('')}</div>
       </label>
-      <label class="field small">The group follows the ranking
-        <div class="seg seg-wrap">${STRICT.map(([v, l]) => `<button type="button" data-strict="${v}" aria-pressed="${opts.strict === v}">${l}</button>`).join('')}</div>
-      </label>
-      <label class="field small">Compared with short games, long games are worth
-        <div class="seg seg-wrap">${ALPHAS.map(([v, l]) => `<button type="button" data-alpha="${v}" aria-pressed="${opts.alpha === v}">${l}</button>`).join('')}</div>
-      </label>
+      ${knobSlider('strict', 'The group follows the ranking', STRICT)}
+      ${knobSlider('alpha', 'Compared with short games, long games are worth', ALPHAS)}
       <p class="muted small">Changes apply to the next run.</p>
     </details>`;
+  document.querySelectorAll('#bringBody [data-knob]').forEach(r => r.addEventListener('input', onKnob));
   update(true);
 }
 
@@ -218,17 +233,6 @@ export function onBringClick(e) {
   if (b.dataset.topk) {
     opts.topK = +b.dataset.topk; saveOpts();
     b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
-    knob(); return true;
-  }
-  if (b.dataset.strict) {
-    opts.strict = +b.dataset.strict; saveOpts();
-    b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
-    knob(); return true;
-  }
-  if (b.dataset.alpha) {
-    opts.alpha = +b.dataset.alpha; saveOpts();
-    b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
-    $('#brAlpha').textContent = opts.alpha; $('#brAlpha1').textContent = (2 * Math.pow(1 / 3, opts.alpha)).toFixed(1);
     knob(); return true;
   }
   if (b.dataset.bt) {
