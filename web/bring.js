@@ -2,7 +2,8 @@
 // Simulation in simworker.js; here: inputs, regression, and the list.
 // ctx from app.js: { model, bgg, state, status, bansOf, gName, esc, hasExplainers, timeData, estimate, sheetId }
 const $ = s => document.querySelector(s);
-let ctx, workers = [], parts = [], running = false, snap = null, schedule, input = null, tables = 3;
+let snapModel = null;
+let ctx, workers = [], parts = [], running = false, stale = false, lastDraw = 0, snap = null, schedule, input = null, tables = 3;
 
 const P_BRING = 0.5;
 // knobs for the curious, folded away: how many weekends, how much long games are worth
@@ -17,9 +18,9 @@ export async function openBring(c) {
   if (schedule === undefined) {
     try { schedule = c.sheetId ? await (await fetch('data/schedule.json', { cache: 'no-cache' })).json() : null; } catch { schedule = null; }
   }
-  snap = null; tables = c.state.maxTables;
-  render();
-  start();
+  if (snap && snapModel !== c.model) { stopRun(); snap = null; }   // other tab or reloaded data: old result no longer fits
+  if (!snap) tables = c.state.maxTables;
+  renderShell();
 }
 export function closeBring() { stopRun(); }
 
@@ -73,19 +74,20 @@ const NW = Math.max(1, Math.min(4, (navigator.hardwareConcurrency || 2) - 1));
 function start() {
   stopRun();
   input = buildInput();
-  running = true; parts = []; snap = null;
+  running = true; parts = []; snap = null; snapModel = ctx.model;
   let done = 0;
   for (let k = 0; k < NW; k++) {
     const w = new Worker('simworker.js');
     w.onmessage = ({ data }) => {
-      if (data.type === 'progress') { parts[k] = data; snap = merge(parts); render(); }
-      if (data.type === 'done' && ++done === NW) { running = false; render(); }
+      if (data.type === 'progress') { parts[k] = data; snap = merge(parts); update(); }
+      if (data.type === 'done' && ++done === NW) { running = false; update(true); }
     };
-    w.onerror = e => { running = false; render(`The simulation stopped: ${e.message ?? 'unknown error'}`); };
+    w.onerror = e => { stopRun(); update(true, `The simulation stopped: ${e.message ?? 'unknown error'}`); };
     w.postMessage({ type: 'run', input: { ...input, seed: input.seed + 7919 * k, maxWeekends: Math.ceil(opts.size / NW) } });
     workers.push(w);
   }
-  render();
+  stale = false;
+  update(true);
 }
 function stopRun() { workers.forEach(w => w.terminate()); workers = []; running = false; }
 function merge(ps) {
@@ -129,12 +131,11 @@ function invert(A) {
   return M.map(r => r.slice(n));
 }
 
-function render(msg = '') {
+// The page frame is drawn once; while the simulation runs only the progress line, the button and
+// the list change (at most about once a second), so buttons and open folds stay put.
+function resultsHtml() {
   const { model, esc, gName } = ctx, G = model.games, P = model.players;
-  const sch = schedule?.slots?.length
-    ? `${schedule.slots.length} time slots from “${esc(schedule.tab ?? 'schedule')}”`
-    : 'no schedule found: everyone, Friday evening plus two full days';
-  let list = '<p class="muted">Simulating…</p>', head = '';
+  let list = snap ? '<p class="muted">Simulating…</p>' : '', head = '';
   if (snap?.n >= 60) {
     const est = ols(snap);
     if (est) {
@@ -159,16 +160,34 @@ function render(msg = '') {
       }).join('')}</ol>${out.length ? `<p class="muted small">Left out (⊘): ${out.map(g => esc(gName(g))).join(', ')}</p>` : ''}`;
     }
   }
-  const prog = snap ? `${snap.n.toLocaleString('en')} weekends${running ? '…' : ''} · ${snap.rounds ? Math.round(snap.fails / snap.rounds * 100) : 0}% of rounds without a fitting seating` : '';
+  return head + list;
+}
+function progText(msg = '') {
+  if (!snap) return msg || 'Press Start to simulate. It takes about a minute.';
+  return `${snap.n.toLocaleString('en')} weekends${running ? '…' : ''} · ${snap.rounds ? Math.round(snap.fails / snap.rounds * 100) : 0}% of rounds without a fitting seating${stale ? ' · settings changed since this run' : ''}${msg ? ` · ${msg}` : ''}`;
+}
+function update(force = false, msg = '') {
+  const now = Date.now();
+  $('#brRun').textContent = running ? 'Stop' : snap ? 'Start again' : 'Start';
+  $('#brRun').classList.toggle('primary', !running);
+  $('#brProg').textContent = progText(msg);
+  if (!force && now - lastDraw < 900) return;
+  lastDraw = now;
+  $('#brResults').innerHTML = resultsHtml();
+}
+function renderShell() {
+  const { esc } = ctx;
+  const sch = schedule?.slots?.length
+    ? `${schedule.slots.length} time slots from “${esc(schedule.tab ?? 'schedule')}”`
+    : 'no schedule found: everyone, Friday evening plus two full days';
   $('#bringBody').innerHTML = `
     <p class="small">How many points a game adds to the weekend just by being there. It's a bit like asking “what if we left it at home?”, tried over thousands of simulated weekends.</p>
     <div class="br-ctl">
-      <span>Up to</span><span class="stepper"><button type="button" data-bt="-1" aria-label="Fewer tables">−</button><output>${tables}</output><button type="button" data-bt="1" aria-label="More tables">+</button></span><span>tables a round</span>
-      <button type="button" id="brRun" class="ghost-btn">${running ? 'Stop' : 'Run again'}</button>
+      <span>Up to</span><span class="stepper"><button type="button" data-bt="-1" aria-label="Fewer tables">−</button><output id="brTables">${tables}</output><button type="button" data-bt="1" aria-label="More tables">+</button></span><span>tables a round</span>
+      <button type="button" id="brRun" class="ghost-btn"></button>
     </div>
-    <p class="muted small">${prog}${msg ? ` · ${esc(msg)}` : ''}</p>
-    ${head}
-    ${list}
+    <p class="muted small" id="brProg"></p>
+    <div id="brResults"></div>
     <details class="br-how"><summary>How to read this</summary>
       <ul class="small">
         <li><b>The number</b> is how many points a weekend gains, on average, when the game is there. As a yardstick: <b>2 points</b> = one person playing a game they really wanted (a 2) for a whole long round.</li>
@@ -184,7 +203,7 @@ function render(msg = '') {
         <li><b>Who's there:</b> as in the schedule, with surprises: 5% of people come or go unexpectedly, blanks are 50/50.</li>
         <li><b>Games:</b> each weekend, every game is there or not at random (50/50). Each game is played at most once per weekend.</li>
         <li><b>Each round:</b> the best seating for whoever is there, with your settings (player counts, ratings, explainer, owner present, ⊘).</li>
-        <li><b>Points:</b> each seat is worth its rating × (hours / 3)<sup>α</sup>, now α = ${opts.alpha}: a 2 in a 3-hour game is 2 points, in a 1-hour game ${(2 * Math.pow(1 / 3, opts.alpha)).toFixed(1)}. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
+        <li><b>Points:</b> each seat is worth its rating × (hours / 3)<sup>α</sup>, now α = <span id="brAlpha">${opts.alpha}</span>: a 2 in a 3-hour game is 2 points, in a 1-hour game <span id="brAlpha1">${(2 * Math.pow(1 / 3, opts.alpha)).toFixed(1)}</span>. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
         <li><b>Score:</b> least-squares regression of weekend points on which games were there (plus number of seats and short rounds). Standard errors hold because games are assigned at random.</li>
       </ul>
     </details>
@@ -195,19 +214,31 @@ function render(msg = '') {
       <label class="field small">Compared with short games, long games are worth
         <div class="seg seg-wrap">${ALPHAS.map(([v, l]) => `<button type="button" data-alpha="${v}" aria-pressed="${opts.alpha === v}">${l}</button>`).join('')}</div>
       </label>
-      <p class="muted small">Changing a knob starts a new simulation.</p>
+      <p class="muted small">Changes apply to the next run.</p>
     </details>`;
+  update(true);
 }
 
 export function onBringClick(e) {
   const b = e.target.closest('button');
   if (!b || !b.closest('#bringView')) return false;
-  if (b.id === 'brRun') { if (running) { stopRun(); render(); } else start(); return true; }
-  if (b.dataset.size) { opts.size = +b.dataset.size; saveOpts(); start(); return true; }
-  if (b.dataset.alpha) { opts.alpha = +b.dataset.alpha; saveOpts(); start(); return true; }
+  if (b.id === 'brRun') { if (running) { stopRun(); update(true); } else start(); return true; }
+  const knob = () => { if (snap) stale = true; update(); };
+  if (b.dataset.size) {
+    opts.size = +b.dataset.size; saveOpts();
+    b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    knob(); return true;
+  }
+  if (b.dataset.alpha) {
+    opts.alpha = +b.dataset.alpha; saveOpts();
+    b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    $('#brAlpha').textContent = opts.alpha; $('#brAlpha1').textContent = (2 * Math.pow(1 / 3, opts.alpha)).toFixed(1);
+    knob(); return true;
+  }
   if (b.dataset.bt) {
     tables = Math.max(1, Math.min(8, tables + +b.dataset.bt));
-    start(); return true;
+    $('#brTables').textContent = tables;
+    knob(); return true;
   }
   return false;
 }
