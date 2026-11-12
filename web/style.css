@@ -351,3 +351,6 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 .br-knobs .seg { margin-top: 6px; }
 .seg-wrap { flex-wrap: wrap; }
 .seg-wrap button { flex: 1 1 30%; }
+.br-tag { font-size: .7rem; font-weight: 500; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; margin-right: 6px; vertical-align: 1px; }
+.br-open .br-ci, .br-border .br-ci { background: color-mix(in srgb, var(--r1) 40%, transparent); }
+.br-open .br-pt, .br-border .br-pt { background: var(--r1); }

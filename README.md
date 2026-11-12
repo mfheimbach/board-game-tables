@@ -35,9 +35,9 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 ## What to bring (organizers)
 🧳 in the header. How often each game would actually get played (`web/bring.js`, `web/simworker.js`):
 - Thousands of simulated weekends, each with 5–7 rounds from the schedule tab (`data/schedule.json`, read daily by the action): per day two long slots (morning dropped most often), a short round in between ~60% of the time, 2-hour slots are short rounds. Attendance: a 1 stays with 95%, a 0 turns up with 5%, blank 50/50.
-- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top K combinations (knob 5 / 10 / 30, default 10); one is drawn with weight 1/rank^s (knob: always #1 … any of them; default s = 1).
+- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top K combinations (knob 5 / 10 / 30, default 10); one is drawn with weight 1/rank^s (knob: always #1 … any of them; default s = ½, “loosely”).
 - Ranking value of a seat: rating × (hours/3)^α (knob, default ½); short rounds count up to 1½ h and fit games up to 2 h, day slots up to 5 h (fit 6 h), evenings unbounded.
-- Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends; "?" while the interval still crosses it.
+- Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends. Verdicts: bring (interval above 10%), leave (below), borderline (interval inside 7–13%: either side is fine), not sure yet (otherwise). Stops by itself once nothing is "not sure yet".
 
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.

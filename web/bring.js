@@ -6,13 +6,16 @@ let snapModel = null;
 let ctx, workers = [], parts = [], running = false, stale = false, lastDraw = 0, snap = null, schedule, input = null, tables = 3;
 
 const CUT = 0.1;   // worth bringing: played at least once every 10 weekends
+const ZONE = [0.07, 0.13];   // close enough to the line that the side doesn't matter: "borderline"
+// verdict per game from its 95% interval [lo, hi]
+const verdict = ([lo, hi]) => lo >= CUT ? 'bring' : hi < CUT ? 'leave' : lo >= ZONE[0] && hi <= ZONE[1] ? 'border' : 'open';
 // knobs for the curious, folded away: how many weekends, how strictly the group follows the ranking,
 // how much long games are worth
 const SIZES = [[4000, '4,000'], [20000, '20,000'], [Infinity, 'until I stop']];
 const ALPHAS = [[0, 'same as short'], [0.25, 'a bit more'], [0.5, 'more (default)'], [0.75, 'a lot more'], [1, 'in proportion to time']];
-const STRICT = [[Infinity, 'always #1'], [2, 'strictly'], [1, 'mostly (default)'], [0.5, 'loosely'], [0, 'any of them']];
+const STRICT = [[Infinity, 'always #1'], [2, 'strictly'], [1, 'mostly'], [0.5, 'loosely (default)'], [0, 'any of them']];
 const TOPK = [[5, 'top 5'], [10, 'top 10 (default)'], [30, 'top 30 (slow)']];
-let opts = { size: 4000, alpha: 0.5, strict: 1, topK: 10 };
+let opts = { size: 4000, alpha: 0.5, strict: 0.5, topK: 10 };
 try { opts = { ...opts, ...JSON.parse(localStorage.getItem('bgt:bringOpts')) }; if (opts.size === null) opts.size = Infinity; if (opts.strict === null) opts.strict = Infinity; } catch {}
 const saveOpts = () => { try { localStorage.setItem('bgt:bringOpts', JSON.stringify(opts)); } catch {} };   // Infinity → null
 
@@ -117,16 +120,17 @@ function resultsHtml() {
     .filter(r => !r.out).map(r => ({ ...r, p: r.k / snap.n, ci: wilson(r.k, snap.n) }))
     .sort((a, b) => b.p - a.p || gName(a.g).localeCompare(gName(b.g)));
   const nKeep = rows.filter(r => r.p >= CUT).length;
-  const unsure = rows.filter(r => r.ci[0] < CUT && r.ci[1] >= CUT).length;
+  rows.forEach(r => { r.v = verdict(r.ci); });
+  const open = rows.filter(r => r.v === 'open').length, border = rows.filter(r => r.v === 'border').length;
   const out = G.filter((g, i) => input?.games[i]?.out);
   const pct = x => `${(x * 100).toFixed(1)}%`;
-  return `<p class="br-sum"><b>${nKeep}</b> of ${rows.length} games get played at least once every 10 weekends.${unsure ? ` <span class="muted">${unsure} still too close to call, more weekends will tell.</span>` : ''}</p>
+  const status = open ? `${open} not decided yet. More weekends will tell.` : `All decided${border ? `, ${border} borderline (right at the line, either way is fine)` : ''}.`;
+  return `<p class="br-sum"><b>${nKeep}</b> of ${rows.length} games get played at least once every 10 weekends. <span class="muted">${status}</span></p>
     <ol class="br-list">${rows.map((r, i) => {
       const owner = r.g.bringers.map(p => P[p]).join(', ');
-      const close = r.ci[0] < CUT && r.ci[1] >= CUT;
       return `${i === nKeep ? '<li class="br-cut"><span>Below here: played less than once every 10 weekends</span></li>' : ''}
-      <li class="${i >= nKeep ? 'br-low' : ''}">
-        <div class="br-top"><span class="br-name">${esc(gName(r.g))}</span><span class="br-val">${Math.round(r.p * 100)}%${close ? ' <span class="muted" title="Too close to the line to call yet">?</span>' : ''}</span></div>
+      <li class="br-${r.v}${i >= nKeep ? ' br-low' : ''}">
+        <div class="br-top"><span class="br-name">${esc(gName(r.g))}</span><span class="br-val">${r.v === 'open' ? '<span class="br-tag">not sure yet</span>' : r.v === 'border' ? '<span class="br-tag">borderline</span>' : ''}${Math.round(r.p * 100)}%</span></div>
         <div class="br-bar" title="95% interval ${Math.round(r.ci[0] * 100)}–${Math.round(r.ci[1] * 100)}%">
           <i class="br-line" style="left:${pct(CUT)}"></i>
           <i class="br-ci" style="left:${pct(r.ci[0])};width:${pct(r.ci[1] - r.ci[0])}"></i><i class="br-pt" style="left:${pct(r.p)}"></i></div>
@@ -134,12 +138,16 @@ function resultsHtml() {
       </li>`;
     }).join('')}</ol>${out.length ? `<p class="muted small">Left out (⊘): ${out.map(g => esc(gName(g))).join(', ')}</p>` : ''}`;
 }
+function allDecided() {
+  return ctx.model.games.every((g, i) => input?.games[i]?.out || verdict(wilson(snap.cnt[i], snap.n)) !== 'open');
+}
 function progText(msg = '') {
   if (!snap) return msg || 'Press Start to simulate. It takes about a minute.';
   return `${snap.n.toLocaleString('en')} weekends${running ? '…' : ''} · ${snap.rounds ? Math.round(snap.fails / snap.rounds * 100) : 0}% of rounds without a fitting seating${stale ? ' · settings changed since this run' : ''}${msg ? ` · ${msg}` : ''}`;
 }
 function update(force = false, msg = '') {
   const now = Date.now();
+  if (running && snap?.n >= 200 && now - lastDraw >= 900 && allDecided()) { stopRun(); force = true; msg = msg || 'every game decided'; }
   $('#brRun').textContent = running ? 'Stop' : snap ? 'Start again' : 'Start';
   $('#brRun').classList.toggle('primary', !running);
   $('#brProg').textContent = progText(msg);
@@ -164,7 +172,7 @@ function renderShell() {
       <ul class="small">
         <li><b>The percentage</b> is the share of simulated weekends in which the game got played. 20% = about one weekend in five.</li>
         <li><b>The bar:</b> the dot is that share. The band around it shows how sure we are: the true value is very likely (95 %) inside it. The more weekends are simulated, the narrower it gets.</li>
-        <li><b>The thin line</b> on each bar is the cutoff: once every 10 weekends. A <b>?</b> means the band still crosses the line, so it's too close to call yet. Keep simulating.</li>
+        <li><b>The thin line</b> on each bar is the cutoff: once every 10 weekends. <b>Not sure yet</b> means the band still crosses the line. <b>Borderline</b> means it sits right at the line (between 7 and 13%): either way is fine, so we stop asking. The simulation stops by itself once every game is decided.</li>
         <li><b>Below the dashed line:</b> games that hardly ever make it to the table, even though they were there every time. Something else was always a better fit.</li>
         <li><b>Similar games share their plays:</b> two near-twins at 25% each means one of the two gets played about half the time.</li>
       </ul>
