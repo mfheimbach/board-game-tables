@@ -35,7 +35,7 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 ## What to bring (organizers)
 🧳 in the header. How often each game would actually get played (`web/bring.js`, `web/simworker.js`):
 - Thousands of simulated weekends, each with 5–7 rounds from the schedule tab (`data/schedule.json`, read daily by the action): per day two long slots (morning dropped most often), a short round in between ~60% of the time, 2-hour slots are short rounds. Attendance: a 1 stays with 95%, a 0 turns up with 5%, blank 50/50.
-- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top 30 combinations; one is drawn with weight 1/rank^s (knob: always #1 … any of the 30; default s = 1).
+- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top K combinations (knob 5 / 10 / 30, default 10); one is drawn with weight 1/rank^s (knob: always #1 … any of them; default s = 1).
 - Ranking value of a seat: rating × (hours/3)^α (knob, default ½); short rounds count up to 1½ h and fit games up to 2 h, day slots up to 5 h (fit 6 h), evenings unbounded.
 - Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends; "?" while the interval still crosses it.
 

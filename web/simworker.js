@@ -6,7 +6,7 @@
 //  - rounds from the schedule: per day 2 long slots (morning dropped most often), a short
 //    party/filler round between them ~60% of the time; a 2-hour slot is a short round; 5-7 rounds
 //  - attendance: a 1 stays with 95%, a 0 turns up with 5%, blank is 50/50
-//  - each round: the core's top 30 game combinations for whoever is there; the group picks one at
+//  - each round: the core's top-K (default 10) game combinations for whoever is there; the group picks one at
 //    random, weighted by rank: weight 1/rank^strict (strict = Infinity: always #1, 0: any of them).
 //    Games played earlier this weekend are gone.
 //  - a seat is worth rating × (hours / 3)^alpha; short rounds count at most 1½ h, long day slots
@@ -63,7 +63,7 @@ function run(M, I) {
         G.forEach((g, gi) => {
           if (G[gi].out || played[gi] || (I.ownerRule && g.owners.length && !g.owners.some(p => attSet.has(p)))) excl.push(gi);
         });
-        const head = [nP, nG, I.maxTables, I.minRating, I.blankAsZero, I.needExplainer, I.minPerTable, I.strict === Infinity ? 1 : 30, 1, 0, 20, 0, 250, 0, MAXDUR[r.type], att.length, ...att];
+        const head = [nP, nG, I.maxTables, I.minRating, I.blankAsZero, I.needExplainer, I.minPerTable, I.strict === Infinity ? 1 : I.topK, 1, 0, 20, 0, 250, 0, MAXDUR[r.type], att.length, ...att];
         const block = BLOCK[r.type], len = head.length + nP + block.length + 2 + excl.length;
         const buf = new Int32Array(len);
         buf.set(head, 0); buf.set(block, head.length + nP);

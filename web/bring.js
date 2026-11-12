@@ -10,8 +10,9 @@ const CUT = 0.1;   // worth bringing: played at least once every 10 weekends
 // how much long games are worth
 const SIZES = [[4000, '4,000'], [20000, '20,000'], [Infinity, 'until I stop']];
 const ALPHAS = [[0, 'same as short'], [0.25, 'a bit more'], [0.5, 'more (default)'], [0.75, 'a lot more'], [1, 'in proportion to time']];
-const STRICT = [[Infinity, 'always #1'], [2, 'strictly'], [1, 'mostly (default)'], [0.5, 'loosely'], [0, 'any of the top 30']];
-let opts = { size: 4000, alpha: 0.5, strict: 1 };
+const STRICT = [[Infinity, 'always #1'], [2, 'strictly'], [1, 'mostly (default)'], [0.5, 'loosely'], [0, 'any of them']];
+const TOPK = [[5, 'top 5'], [10, 'top 10 (default)'], [30, 'top 30 (slow)']];
+let opts = { size: 4000, alpha: 0.5, strict: 1, topK: 10 };
 try { opts = { ...opts, ...JSON.parse(localStorage.getItem('bgt:bringOpts')) }; if (opts.size === null) opts.size = Infinity; if (opts.strict === null) opts.strict = Infinity; } catch {}
 const saveOpts = () => { try { localStorage.setItem('bgt:bringOpts', JSON.stringify(opts)); } catch {} };   // Infinity → null
 
@@ -53,7 +54,7 @@ function buildInput() {
     nPlayers: P.length, players: P.map((_, i) => i), days: days(),
     maxTables: tables, minRating: +s.minRating, blankAsZero: s.blanks === 'zero' ? 1 : 0,
     needExplainer: s.explainer && hasExplainers() ? 1 : 0, minPerTable: +s.minPerTable, ownerRule: !!s.owner,
-    alpha: opts.alpha, strict: opts.strict, maxWeekends: opts.size,
+    alpha: opts.alpha, strict: opts.strict, topK: opts.topK, maxWeekends: opts.size,
     games: model.games.map(g => {
       const counts = status(g, new Set(P.map((_, i) => i))).counts;
       const d = timeData(g);
@@ -173,7 +174,7 @@ function renderShell() {
         <li><b>Schedule:</b> ${sch}. Each simulated weekend has 5–7 rounds: per day two long slots, with a short party/filler round in between most of the time.</li>
         <li><b>Who's there:</b> as in the schedule, with surprises: 5% of people come or go unexpectedly, blanks are 50/50.</li>
         <li><b>Games:</b> all of them are there (except ⊘). Each game is played at most once per weekend.</li>
-        <li><b>Each round:</b> the 30 best seatings for whoever is there, with your settings (player counts, ratings, explainer, owner present). The group doesn't always take #1: one is picked at random, the higher the more likely (#1 twice as likely as #2, three times as likely as #3, … with the default knob).</li>
+        <li><b>Each round:</b> the 10 best seatings (knob: 5 / 10 / 30) for whoever is there, with your settings (player counts, ratings, explainer, owner present). The group doesn't always take #1: one is picked at random, the higher the more likely (#1 twice as likely as #2, three times as likely as #3, … with the default knob).</li>
         <li><b>Ranking:</b> each seat is worth its rating × (hours / 3)<sup>α</sup>, now α = <span id="brAlpha">${opts.alpha}</span>: a 2 in a 3-hour game is 2 points, in a 1-hour game <span id="brAlpha1">${(2 * Math.pow(1 / 3, opts.alpha)).toFixed(1)}</span>. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
         <li><b>Intervals:</b> Wilson 95% intervals for each share.</li>
       </ul>
@@ -181,6 +182,9 @@ function renderShell() {
     <details class="br-how br-knobs"><summary>Knobs</summary>
       <label class="field small">Weekends to simulate
         <div class="seg">${SIZES.map(([v, l]) => `<button type="button" data-size="${v}" aria-pressed="${opts.size === v}">${l}</button>`).join('')}</div>
+      </label>
+      <label class="field small">The group picks from the
+        <div class="seg">${TOPK.map(([v, l]) => `<button type="button" data-topk="${v}" aria-pressed="${opts.topK === v}">${l}</button>`).join('')}</div>
       </label>
       <label class="field small">The group follows the ranking
         <div class="seg seg-wrap">${STRICT.map(([v, l]) => `<button type="button" data-strict="${v}" aria-pressed="${opts.strict === v}">${l}</button>`).join('')}</div>
@@ -200,6 +204,11 @@ export function onBringClick(e) {
   const knob = () => { if (snap) stale = true; update(); };
   if (b.dataset.size) {
     opts.size = +b.dataset.size; saveOpts();
+    b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    knob(); return true;
+  }
+  if (b.dataset.topk) {
+    opts.topK = +b.dataset.topk; saveOpts();
     b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     knob(); return true;
   }
