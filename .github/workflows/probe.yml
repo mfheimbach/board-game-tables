@@ -1,0 +1,8 @@
+name: Probe schedule tab (temporary)
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -sSL "https://docs.google.com/spreadsheets/d/1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA/gviz/tq?tqx=out:csv&gid=1866250012&headers=0" | head -40
