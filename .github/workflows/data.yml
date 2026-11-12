@@ -6,9 +6,14 @@ on:
     branches: [main]
     paths: ['scripts/**', 'web/config.json', 'web/sheet.js', 'web/bgg.js']
   schedule:
-    - cron: '23 4 * * *'   # daily, so newly added games get player counts
+    - cron: '23 4 * * *'    # daily full refresh
+    - cron: '*/20 * * * *'  # every 20 min: only games whose BGG id is new (cheap, usually a no-op)
+concurrency:
+  group: data
+  cancel-in-progress: false
 permissions:
   contents: write
+  actions: write   # to start the deploy, only when something was committed
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -19,9 +24,12 @@ jobs:
       - run: node scripts/fetch_data.mjs
         env:
           BGG_TOKEN: ${{ secrets.BGG_TOKEN }}
+          QUICK: ${{ github.event.schedule == '*/20 * * * *' && '1' || '0' }}
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add web/data
-          git diff --cached --quiet || { git commit -m "Update game data"; git push; }
+          git diff --cached --quiet || { git commit -m "Update game data"; git push; gh workflow run pages.yml --ref main; }
+        env:
+          GH_TOKEN: ${{ github.token }}

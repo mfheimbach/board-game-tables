@@ -2,10 +2,7 @@ name: Deploy
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["Update game data"]
-    types: [completed]
+  workflow_dispatch:   # also started by "Update game data" when it committed new data
 permissions:
   contents: read
   pages: write

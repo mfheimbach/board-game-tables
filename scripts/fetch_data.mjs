@@ -7,6 +7,13 @@ import { loadTab, parseCSV, parseSchedule } from '../web/sheet.js';
 import { fetchThings } from '../web/bgg.js';
 
 const root = new URL('../web/', import.meta.url);
+// QUICK=1 (frequent runs): only look for BGG ids that aren't in bgg.json yet; if there are none,
+// change nothing (no commit, no deploy). The daily full run refreshes everything.
+const QUICK = process.env.QUICK === '1';
+const pending = [];   // file writes/deletes, applied at the end
+const put = (url, data) => pending.push(() => writeFile(url, data));
+const del = url => pending.push(() => unlink(url));
+const flush = async () => { for (const p of pending) await p(); };
 const cfg = JSON.parse(await readFile(new URL('config.json', root), 'utf8'));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fetchText = async url => {
@@ -47,7 +54,7 @@ for (const sheetId of sheetIds) {
       const { model, headerRow, csv } = await loadTab(fetchText, sheetId, tab, cfg);
       const key = tab.gid ?? tab.name.replace(/\W+/g, '_');
       if (kept.some(k => k.name === tab.name)) continue;
-      await writeFile(new URL(`data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, root), csv);
+      await put(new URL(`data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, root), csv);
       kept.push({ gid: tab.gid ?? null, name: tab.name ?? `Tab ${tab.gid}`, headerRow, snapshot: `data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, games: model.games.length, players: model.players.length });
       model.games.forEach(g => { if (g.id > 0) allIds.add(g.id); });
       if (sheetId === cfg.sheetId) lastPlayers.push(...model.players);
@@ -65,7 +72,7 @@ for (const sheetId of sheetIds) {
         const names = [...new Set(lastPlayers)];
         const sch = parseSchedule(parseCSV(csv), names);
         if (sch) {
-          await writeFile(new URL('data/schedule.json', root), JSON.stringify({ updated: new Date().toISOString(), tab: tab.name, ...sch }, null, 1));
+          await put(new URL('data/schedule.json', root), JSON.stringify({ updated: new Date().toISOString(), tab: tab.name, ...sch }, null, 1));
           console.log(`  ✓ schedule in ${tab.name}: ${sch.slots.length} slots`);
           break;
         }
@@ -76,18 +83,24 @@ for (const sheetId of sheetIds) {
 if (!tabsOut[0]?.tabs.length) throw new Error('No usable tab found in the main sheet');
 // drop snapshots of tabs that no longer exist
 const keep = new Set(tabsOut.flatMap(s => s.tabs.map(t => t.snapshot.replace('data/', ''))));
-for (const f of await readdir(new URL('data/', root))) if (/^sheet-.*\.csv$/.test(f) && !keep.has(f)) await unlink(new URL('data/' + f, root));
-await writeFile(new URL('data/tabs.json', root), JSON.stringify({ updated: new Date().toISOString(), sheets: tabsOut }, null, 1));
+for (const f of await readdir(new URL('data/', root))) if (/^sheet-.*\.csv$/.test(f) && !keep.has(f)) del(new URL('data/' + f, root));
+await put(new URL('data/tabs.json', root), JSON.stringify({ updated: new Date().toISOString(), sheets: tabsOut }, null, 1));
 
 // 2) BoardGameGeek
 const token = process.env.BGG_TOKEN;
-if (!token) { console.log('BGG_TOKEN not set: kept existing bgg.json'); process.exit(0); }
+if (!token) { console.log('BGG_TOKEN not set: kept existing bgg.json'); if (!QUICK) await flush(); process.exit(0); }
 
 let old = {};
 try { old = JSON.parse(await readFile(new URL('data/bgg.json', root), 'utf8')).games ?? {}; } catch {}
 
 const games = {};
-const ids = [...allIds];
+const all = [...allIds];
+const ids = QUICK ? all.filter(id => !old[id]) : all;
+if (QUICK) {
+  if (!ids.length) { console.log('quick: no new BGG ids, nothing to do'); process.exit(0); }
+  console.log(`quick: ${ids.length} new BGG id(s): ${ids.join(', ')}`);
+  for (const id of all) if (old[id]) games[id] = old[id];
+}
 for (let i = 0; i < ids.length; i += 20) {
   Object.assign(games, await fetchThings(ids.slice(i, i + 20), token, { log: console.log }));
   await sleep(2000);
@@ -96,6 +109,7 @@ for (const id of ids) if (!games[id]) {
   console.log(`  no BGG data for ${id}${old[id] ? ' (kept previous)' : ''}`);
   if (old[id]) games[id] = old[id];
 }
+await flush();
 await writeFile(new URL('data/bgg.json', root), JSON.stringify({
   source: 'BoardGameGeek XML API2', updated: new Date().toISOString(), games,
 }, null, 1));

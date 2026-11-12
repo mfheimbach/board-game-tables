@@ -293,7 +293,7 @@ const HORST_TIPS = [
   'Only want games people really love? Settings → “2 only”. Maximum happiness! 💖',
   'Seven people and only four-player games? Let me use “any” player count in the settings, I’ll make it work 💪',
   'Someone needs a break? Untap their name and I’ll replan in a blink ✨',
-  'Did ratings change in the sheet? Settings → Reload ratings, and I’ll catch up 📝',
+  'Ratings changed in the sheet? Just reopen me, I always load the latest ones 📝',
   'Have your own game group? Settings → Data → Use another sheet. I’d love to help them too 🥰',
   'Want exact minutes instead of ~2 h? Settings → Show minutes ⏱️',
   'Game still at home? Turn on “Only games whose owner is here” and I won’t suggest it 🏠',
@@ -768,7 +768,6 @@ function wire() {
       return;
     } else if (b.id === 'deepSearch') { budgetOnce = 10000; b.disabled = true; b.textContent = 'Searching…'; run(); return; }
     else if (b.id === 'openSettings') { $('#settings').showModal(); renderGameList(); return; }
-    else if (b.id === 'reload') { reload(); return; }
     else if (b.id === 'resetAll') { if (confirm('Reset players, locks and settings?')) state = structuredClone(DEFAULTS); }
     else return;
     if (!['more'].includes(b.id)) shown = 10;
@@ -868,13 +867,6 @@ function renderTabs() {
   const el = $('#tabSwitch');
   el.hidden = cur.tabs.length < 2;
   el.innerHTML = cur.tabs.map((t, i) => `<button type="button" data-tab="${i}" aria-pressed="${i === cur.i}">${esc(t.name)}</button>`).join('');
-}
-async function reload() {
-  $('#reload').disabled = true;
-  await loadSheet();
-  $('#reload').disabled = false;
-  renderBanner();
-  update();
 }
 
 const getJSON = url => fetch(url, { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null);
