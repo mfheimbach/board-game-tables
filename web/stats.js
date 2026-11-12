@@ -158,56 +158,6 @@ function tile(emoji, value, label) {
 
 const RC = ['var(--div-neg)', 'var(--div-mid)', 'var(--div-pos)'];
 
-function heatmap(S) {
-  const order = S.coords ? S.P.map((p, i) => ({ p, x: S.coords[i][0] })).sort((a, z) => a.x - z.x).map(o => o.p) : S.P;
-  const px = order.map(p => S.P.indexOf(p));
-  const games = S.gs.map(o => {
-    const xs = [], ys = [];
-    order.forEach((p, k) => { const v = o.g.ratings[p]; if (v >= 0) { xs.push(k); ys.push(v); } });
-    return { o, load: corr(xs, ys) || 0 };
-  }).sort((a, z) => (z.load - a.load) || (z.o.mean - a.o.mean));
-  const lw = 118, cw = Math.max(12, Math.min(20, Math.floor((330 - lw) / order.length))), ch = 14, top = 70, W = lw + order.length * cw + 40, H = top + games.length * ch + 4;
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" class="chart heat" role="img" aria-label="Ratings heatmap">`;
-  order.forEach((p, k) => {
-    s += `<text x="${lw + k * cw + cw / 2}" y="${top - 6}" transform="rotate(-55 ${lw + k * cw + cw / 2} ${top - 6})" class="ax">${esc(S.name(p))}</text>`;
-  });
-  games.forEach(({ o }, i) => {
-    const y = top + i * ch;
-    s += `<text x="${lw - 6}" y="${y + ch - 3}" text-anchor="end" class="ax">${esc(trunc(gname(S, o.g), 19))}</text>`;
-    order.forEach((p, k) => {
-      const v = o.g.ratings[p], x = lw + k * cw;
-      const tip = `${S.name(p)} · ${gname(S, o.g)}: ${v < 0 ? 'no rating' : ['no', 'maybe', 'yes'][v]}`;
-      s += v < 0
-        ? `<g data-tip="${esc(tip)}"><rect x="${x + 1}" y="${y + 1}" width="${cw - 2}" height="${ch - 2}" rx="2" class="cell-blank"/><circle cx="${x + cw / 2}" cy="${y + ch / 2}" r="1.5" class="dot-blank"/></g>`
-        : `<rect data-tip="${esc(tip)}" x="${x + 1}" y="${y + 1}" width="${cw - 2}" height="${ch - 2}" rx="2" fill="${RC[v]}"/>`;
-    });
-  });
-  void px;
-  return s + '</svg>';
-}
-
-function twinMatrix(S) {
-  const idx = S.coords ? S.P.map((p, i) => ({ i, x: S.coords[i][0] })).sort((a, z) => a.x - z.x).map(o => o.i) : S.P.map((_, i) => i);
-  const n = idx.length, lw = 96, c = Math.max(12, Math.min(26, Math.floor((330 - lw) / n))), top = 74, W = lw + n * c + 40, H = top + n * c + 4;
-  const vals = S.agreeM.flat().filter(Number.isFinite), lo = Math.min(...vals), hi = Math.max(...vals);
-  const ramp = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95', '#0d366b'];
-  const col = v => ramp[Math.min(ramp.length - 1, Math.floor((v - lo) / ((hi - lo) || 1) * ramp.length))];
-  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" class="chart twin" role="img" aria-label="Taste agreement between players">`;
-  idx.forEach((i, k) => {
-    const nm = esc(S.name(S.P[i]));
-    s += `<text x="${lw + k * c + c / 2}" y="${top - 6}" transform="rotate(-55 ${lw + k * c + c / 2} ${top - 6})" class="ax">${nm}</text>`;
-    s += `<text x="${lw - 6}" y="${top + k * c + c / 2 + 4}" text-anchor="end" class="ax">${esc(trunc(S.name(S.P[i]), 14))}</text>`;
-    idx.forEach((j, l) => {
-      const v = S.agreeM[i][j], x = lw + l * c, y = top + k * c;
-      if (i === j) return;
-      s += Number.isFinite(v)
-        ? `<rect data-tip="${esc(`${S.name(S.P[i])} & ${S.name(S.P[j])}: ${pct(v)} agreement`)}" x="${x + 1}" y="${y + 1}" width="${c - 2}" height="${c - 2}" rx="2" fill="${col(v)}"/>`
-        : `<rect data-tip="too few shared ratings" x="${x + 1}" y="${y + 1}" width="${c - 2}" height="${c - 2}" rx="2" class="cell-blank"/>`;
-    });
-  });
-  return s + `</svg><div class="legend"><span>${pct(lo)}</span><span class="ramp">${ramp.map(c => `<i style="background:${c}"></i>`).join('')}</span><span>${pct(hi)} agreement</span></div>`;
-}
-
 function tasteMap(S) {
   const pts = S.coords;
   const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
@@ -217,12 +167,31 @@ function tasteMap(S) {
   let s = `<svg viewBox="0 0 ${W} ${H}" class="chart map" role="img" aria-label="Taste map of players">`;
   s += `<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="10" class="frame"/>`;
   if (pts.heavyAxis) s += `<text x="10" y="${H - 10}" class="ax">← lighter games</text><text x="${W - 10}" y="${H - 10}" text-anchor="end" class="ax">heavier games →</text>`;
-  pts.forEach((p, i) => {
-    const x = sx(p[0]), y = sy(p[1]), nm = S.name(S.P[i]);
-    s += `<g data-tip="${esc(nm)}"><circle cx="${x}" cy="${y}" r="12" fill="transparent"/><circle cx="${x}" cy="${y}" r="5" class="pt"/></g>`;
-    s += `<text x="${x}" y="${y - 9}" text-anchor="middle" class="lbl">${esc(nm.split(' ')[0])}</text>`;
-  });
-  return s + '</svg>';
+  // labels: try above, below, right, left, then diagonals; take the first spot that hits no other
+  // label or dot (else the least overlapping one), kept inside the frame
+  const P = pts.map((p, i) => ({ x: sx(p[0]), y: sy(p[1]), nm: S.name(S.P[i]), short: S.name(S.P[i]).split(' ')[0] }));
+  const boxes = [], dots = P.map(d => ({ x0: d.x - 6, x1: d.x + 6, y0: d.y - 6, y1: d.y + 6 }));
+  const hit = (a, b) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+  const order = P.map((_, i) => i).sort((a, b) => P[a].y - P[b].y);
+  const labels = [];
+  for (const i of order) {
+    const d = P[i], w = d.short.length * 6.4 + 4, h = 13;
+    const spots = [[0, -9, 'middle'], [0, 18, 'middle'], [9, 4, 'start'], [-9, 4, 'end'], [8, -8, 'start'], [-8, -8, 'end'], [8, 15, 'start'], [-8, 15, 'end']];
+    let best = null;
+    for (const [dx, dy, anchor] of spots) {
+      const x0 = anchor === 'middle' ? d.x + dx - w / 2 : anchor === 'start' ? d.x + dx : d.x + dx - w;
+      const box = { x0, x1: x0 + w, y0: d.y + dy - h + 3, y1: d.y + dy + 3 };
+      if (box.x0 < 4 || box.x1 > W - 4 || box.y0 < 4 || box.y1 > H - 22) continue;
+      const cost = boxes.reduce((t, b) => t + hit(box, b), 0) + dots.reduce((t, b, k) => t + (k === i ? 0 : hit(box, b)), 0);
+      if (!best || cost < best.cost) best = { cost, dx, dy, anchor, box };
+      if (cost === 0) break;
+    }
+    best ??= { dx: 0, dy: -9, anchor: 'middle', box: { x0: d.x - w / 2, x1: d.x + w / 2, y0: d.y - 19, y1: d.y - 6 } };
+    boxes.push(best.box);
+    labels.push(`<text x="${d.x + best.dx}" y="${d.y + best.dy}" text-anchor="${best.anchor}" class="lbl">${esc(d.short)}</text>`);
+  }
+  P.forEach(d => { s += `<g data-tip="${esc(d.nm)}"><circle cx="${d.x}" cy="${d.y}" r="12" fill="transparent"/><circle cx="${d.x}" cy="${d.y}" r="5" class="pt"/></g>`; });
+  return s + labels.join('') + '</svg>';
 }
 
 function gamesScatter(S) {
@@ -267,6 +236,22 @@ function facetBars(list, title) {
 }
 
 // collapsible section; `open` = set of open section keys
+// Soulmates, opposites, and everyone's taste twin, in words instead of a matrix
+function agreeHtml(S, nm) {
+  const ps = [...S.pairs].sort((a, b) => b.agree - a.agree);
+  const row = (x, neg) => `<div class="pair${neg ? ' neg' : ''}"><span><b>${nm(x.p)}</b> ${neg ? '⚔️' : '💞'} <b>${nm(x.q)}</b></span><span class="pv">${pct(x.agree)}</span><span class="pbar"><i style="width:${(x.agree * 100).toFixed(0)}%"></i></span></div>`;
+  const top = ps.slice(0, 3), bottom = ps.slice(-3).reverse().filter(x => !top.includes(x));
+  const twin = (p, best) => {
+    const mine = S.pairs.filter(x => x.p === p || x.q === p).sort((a, b) => best ? b.agree - a.agree : a.agree - b.agree)[0];
+    return mine ? `${nm(mine.p === p ? mine.q : mine.p)} ${pct(mine.agree)}` : '–';
+  };
+  return `<p class="muted small">How often two people rate a game the same way. 100% = always the same rating.</p>
+    <h3>💞 Soulmates</h3><div class="pairs">${top.map(x => row(x)).join('')}</div>
+    ${bottom.length ? `<h3>⚔️ Opposites</h3><div class="pairs">${bottom.map(x => row(x, true)).join('')}</div>` : ''}
+    <h3>👯 Everyone's taste twin</h3>
+    <ul class="twins-list">${S.P.map(p => `<li><span class="who">${nm(p)}</span><span>💞 ${twin(p, true)}</span><span class="muted">🙃 ${twin(p, false)}</span></li>`).join('')}</ul>`;
+}
+
 const sec = (open, key, title, teaser, body) =>
   `<details class="st-sec" data-sec="${key}"${open.has(key) ? ' open' : ''}><summary><h2>${title}</h2>${teaser ? `<span class="teaser">${teaser}</span>` : ''}</summary>${body}</details>`;
 
@@ -333,11 +318,7 @@ export function renderStats(S, open = new Set(['numbers'])) {
     sec(open, 'players', '🏆 Player awards', winner(twins, x => `👯 ${nm(x.p)} & ${nm(x.q)} …`), `<div class="awards">${P}</div>`),
     sec(open, 'games', '🎖️ Game awards', winner(crowd, o => `👑 ${gn(o)} …`), `<div class="awards">${Gm}</div>`),
     S.coords ? sec(open, 'map', '🗺️ Taste map', 'who sits where, taste-wise', `<p class="muted small">Close together = similar ratings. Distances are approximate.</p><div class="chart-box">${tasteMap(S)}</div>`) : '',
-    S.pairs.length ? sec(open, 'twins', '💞 Who agrees with whom', '', `<div class="chart-box scroll">${twinMatrix(S)}</div>`) : '',
-    sec(open, 'heat', '🌡️ Every rating', `${S.G.length} games × ${S.P.length} players`, `
-      <div class="legend"><span><i style="background:var(--div-pos)"></i> yes</span><span><i style="background:var(--div-mid)"></i> maybe</span><span><i style="background:var(--div-neg)"></i> no</span><span><i class="blank-sw"></i> blank</span></div>
-      <p class="muted small">Players sorted along the taste map, games by who likes them.</p>
-      <div class="chart-box scroll">${heatmap(S)}</div>`),
+    S.pairs.length ? sec(open, 'twins', '💞 Who agrees with whom', winner(pick(S.pairs, x => x.agree), x => `${nm(x.p)} & ${nm(x.q)} …`), agreeHtml(S, nm)) : '',
     scatter ? sec(open, 'heavy', '🏋️ Heavy vs wanted', '', `<p class="muted small">Each dot is a game: how heavy it is and how many say “yes”.</p><div class="chart-box">${scatter}</div>`) : '',
     hasBggTags ? [
       mechB ? sec(open, 'mech', '⚙️ Favorite mechanics', '', `<p class="muted small">Average rating, mechanics with 3+ games.</p><div class="chart-box">${mechB}</div>`) : '',

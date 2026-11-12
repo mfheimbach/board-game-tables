@@ -362,15 +362,31 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 
 .card-head .why { flex-basis: 100%; margin-top: -4px; }
 .help-link { display: inline-block; margin-top: 2px; }
-.games-fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.games-fold > summary::-webkit-details-marker { display: none; }
-.games-fold > summary::after { content: '▾'; color: var(--muted); font-size: .8rem; }
-.games-fold[open] > summary::after { content: '▴'; }
-.games-fold > summary h3 { margin: 0; }
 .games-fold { margin-top: 18px; }
 #gameSearch.full { width: 100%; margin: 8px 0 4px; }
-.br-leave { margin: 6px 0 10px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; font-size: .9rem; }
-.br-leave b { display: block; margin-bottom: 2px; }
 .knob { display: block; margin: 12px 0; }
 .knob input[type=range] { width: 100%; margin: 8px 0 0; accent-color: var(--accent); }
 .knob .ticks { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); }
+
+/* every fold looks tappable: a card-like row with a chevron (stats sections have their own) */
+details:not(.st-sec) > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; margin: 8px 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); font-weight: 600; font-size: .92rem; }
+details:not(.st-sec) > summary::-webkit-details-marker { display: none; }
+details:not(.st-sec) > summary::after { content: '▾'; color: var(--muted); margin-left: auto; transition: transform .15s; }
+details:not(.st-sec)[open] > summary::after { transform: rotate(180deg); }
+details:not(.st-sec) > summary h3 { margin: 0; font-size: inherit; }
+/* agreement: soulmates and opposites */
+.pairs { display: grid; gap: 6px; margin: 4px 0 12px; }
+.pair { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; background: var(--bg); border-radius: 12px; padding: 8px 12px; }
+.pair b { font-weight: 650; }
+.pair .pv { font-variant-numeric: tabular-nums; font-weight: 650; }
+.pair .pbar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--line) 50%, transparent); overflow: hidden; }
+.pair .pbar i { display: block; height: 100%; border-radius: 3px; background: var(--r2); }
+.pair.neg .pbar i { background: var(--r0); }
+.twins-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.twins-list li { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 8px; font-size: .85rem; padding: 6px 2px; border-top: 1px solid var(--line); }
+.twins-list li > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.twins-list li:first-child { border-top: 0; }
+.twins-list .who { font-weight: 650; }
+.br-tag { white-space: nowrap; }
+.br-top .br-name { min-width: 0; }
+.br-val { white-space: nowrap; flex: none; }

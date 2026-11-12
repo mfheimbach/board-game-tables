@@ -125,11 +125,7 @@ function resultsHtml() {
   const out = G.filter((g, i) => input?.games[i]?.out);
   const pct = x => `${(x * 100).toFixed(1)}%`;
   const status = open ? `${open} not decided yet. More weekends will tell.` : `All decided${border ? `, ${border} borderline (right at the line, either way is fine)` : ''}.`;
-  const leave = rows.filter(r => r.v === 'leave'), bord = rows.filter(r => r.v === 'border');
-  const names = rs => rs.map(r => esc(gName(r.g))).join(', ');
   return `<p class="br-sum"><b>${nKeep}</b> of ${rows.length} games get played at least once every 10 weekends. <span class="muted">${status}</span></p>
-    ${leave.length ? `<div class="br-leave"><b>🏠 Can stay at home (${leave.length})</b>${names(leave)}</div>` : ''}
-    ${bord.length ? `<div class="br-leave"><b>🤷 Borderline, your call (${bord.length})</b>${names(bord)}</div>` : ''}
     <ol class="br-list">${rows.map((r, i) => {
       const owner = r.g.bringers.map(p => P[p]).join(', ');
       return `${i === nKeep ? '<li class="br-cut"><span>Below here: played less than once every 10 weekends</span></li>' : ''}
