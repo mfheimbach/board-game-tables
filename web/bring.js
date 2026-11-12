@@ -4,8 +4,13 @@
 const $ = s => document.querySelector(s);
 let ctx, workers = [], parts = [], running = false, snap = null, schedule, input = null, tables = 3;
 
-const MAX_WEEKENDS = 4000;
-const P_BRING = 0.5, ALPHA = 0.5;
+const P_BRING = 0.5;
+// knobs for the curious, folded away: how many weekends, how much long games are worth
+const SIZES = [[4000, '4,000'], [20000, '20,000'], [Infinity, 'until I stop']];
+const ALPHAS = [[0, 'same as short'], [0.25, 'a bit more'], [0.5, 'more (default)'], [0.75, 'a lot more'], [1, 'in proportion to time']];
+let opts = { size: 4000, alpha: 0.5 };
+try { opts = { ...opts, ...JSON.parse(localStorage.getItem('bgt:bringOpts')) }; if (opts.size === null) opts.size = Infinity; } catch {}
+const saveOpts = () => { try { localStorage.setItem('bgt:bringOpts', JSON.stringify(opts)); } catch {} };   // Infinity → null
 
 export async function openBring(c) {
   ctx = c;
@@ -45,7 +50,7 @@ function buildInput() {
     nPlayers: P.length, players: P.map((_, i) => i), days: days(),
     maxTables: tables, minRating: +s.minRating, blankAsZero: s.blanks === 'zero' ? 1 : 0,
     needExplainer: s.explainer && hasExplainers() ? 1 : 0, minPerTable: +s.minPerTable, ownerRule: !!s.owner,
-    pBring: P_BRING, alpha: ALPHA, maxWeekends: MAX_WEEKENDS,
+    pBring: P_BRING, alpha: opts.alpha, maxWeekends: opts.size,
     games: model.games.map(g => {
       const counts = status(g, new Set(P.map((_, i) => i))).counts;
       const d = timeData(g);
@@ -77,7 +82,7 @@ function start() {
       if (data.type === 'done' && ++done === NW) { running = false; render(); }
     };
     w.onerror = e => { running = false; render(`The simulation stopped: ${e.message ?? 'unknown error'}`); };
-    w.postMessage({ type: 'run', input: { ...input, seed: input.seed + 7919 * k, maxWeekends: Math.ceil(MAX_WEEKENDS / NW) } });
+    w.postMessage({ type: 'run', input: { ...input, seed: input.seed + 7919 * k, maxWeekends: Math.ceil(opts.size / NW) } });
     workers.push(w);
   }
   render();
@@ -164,16 +169,33 @@ function render(msg = '') {
     <p class="muted small">${prog}${msg ? ` · ${esc(msg)}` : ''}</p>
     ${head}
     ${list}
-    <details class="br-how"><summary>How this works</summary>
+    <details class="br-how"><summary>How to read this</summary>
+      <ul class="small">
+        <li><b>The number</b> is how many points a weekend gains, on average, when the game is there. As a yardstick: <b>2 points</b> = one person playing a game they really wanted (a 2) for a whole long round.</li>
+        <li><b>The bar:</b> the dot is the best guess. The band around it shows how sure we are: the true value is very likely (95 %) somewhere inside it. The more weekends are simulated, the narrower the bands get.</li>
+        <li><b>The line:</b> below it, a game's band reaches 0. We can't tell bringing it apart from leaving it at home. It may still help a little, the simulation just can't see it.</li>
+        <li><b>“Played in …%”</b> is how often it actually hit the table when it was there. A game can be played a lot and still score low, if another game would have done just as well.</li>
+        <li><b>Why it's fair:</b> it works like an experiment with random assignment. In each simulated weekend every game is randomly there or not, so the difference a game makes isn't mixed up with which other games came along.</li>
+      </ul>
+    </details>
+    <details class="br-how"><summary>How the simulation works</summary>
       <ul class="small">
         <li><b>Schedule:</b> ${sch}. Each simulated weekend has 5–7 rounds: per day two long slots, with a short party/filler round in between most of the time.</li>
         <li><b>Who's there:</b> as in the schedule, with surprises: 5% of people come or go unexpectedly, blanks are 50/50.</li>
         <li><b>Games:</b> each weekend, every game is there or not at random (50/50). Each game is played at most once per weekend.</li>
         <li><b>Each round:</b> the best seating for whoever is there, with your settings (player counts, ratings, explainer, owner present, ⊘).</li>
-        <li><b>Points:</b> each seat is worth its rating × (hours / 3)<sup>½</sup>: a 2 in a 3-hour game is 2 points, in a 1-hour game 1.2. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
-        <li><b>Score:</b> a regression of weekend points on which games were there. A game's number is the points it adds on average, whatever else is there. The bar is the 95% interval: the dot is the estimate, the band how sure it is. More weekends make it narrower.</li>
-        <li><b>Cutoff:</b> once the band touches 0, bringing the game makes no measurable difference.</li>
+        <li><b>Points:</b> each seat is worth its rating × (hours / 3)<sup>α</sup>, now α = ${opts.alpha}: a 2 in a 3-hour game is 2 points, in a 1-hour game ${(2 * Math.pow(1 / 3, opts.alpha)).toFixed(1)}. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
+        <li><b>Score:</b> least-squares regression of weekend points on which games were there (plus number of seats and short rounds). Standard errors hold because games are assigned at random.</li>
       </ul>
+    </details>
+    <details class="br-how br-knobs"><summary>Knobs</summary>
+      <label class="field small">Weekends to simulate
+        <div class="seg">${SIZES.map(([v, l]) => `<button type="button" data-size="${v}" aria-pressed="${opts.size === v}">${l}</button>`).join('')}</div>
+      </label>
+      <label class="field small">Compared with short games, long games are worth
+        <div class="seg seg-wrap">${ALPHAS.map(([v, l]) => `<button type="button" data-alpha="${v}" aria-pressed="${opts.alpha === v}">${l}</button>`).join('')}</div>
+      </label>
+      <p class="muted small">Changing a knob starts a new simulation.</p>
     </details>`;
 }
 
@@ -181,6 +203,8 @@ export function onBringClick(e) {
   const b = e.target.closest('button');
   if (!b || !b.closest('#bringView')) return false;
   if (b.id === 'brRun') { if (running) { stopRun(); render(); } else start(); return true; }
+  if (b.dataset.size) { opts.size = +b.dataset.size; saveOpts(); start(); return true; }
+  if (b.dataset.alpha) { opts.alpha = +b.dataset.alpha; saveOpts(); start(); return true; }
   if (b.dataset.bt) {
     tables = Math.max(1, Math.min(8, tables + +b.dataset.bt));
     start(); return true;
