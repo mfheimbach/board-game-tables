@@ -326,37 +326,24 @@ details.st-sec .chart-box, details.st-sec .award, details.st-sec .tile, details.
 /* the reduced-motion still of Horst Chan is portrait: keep it from growing tall */
 @media (prefers-reduced-motion: reduce) { .horst-art, .horst-pop img { width: auto; max-width: 100%; max-height: 200px; margin-inline: auto; } }
 
-/* weekend planner */
-.plan-open { display: block; width: 100%; text-align: left; margin: 4px 0 10px; }
-.plan-view h2 { font-size: 1.05rem; margin: 0; }
-.plan-view h3 { margin: 20px 0 8px; font-size: 1rem; }
-.pl-controls { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 10px 0; }
-.pl-controls label { display: flex; align-items: center; gap: 8px; }
-.pl-controls .stepper button { width: 38px; height: 36px; }
-.pl-grid-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
-.pl-grid { border-collapse: separate; border-spacing: 3px; font-size: .85rem; }
-.pl-grid th { font-weight: 600; text-align: left; white-space: nowrap; }
-.pl-grid th button { border: 0; background: none; padding: 2px 4px; font: inherit; color: inherit; max-width: 96px; overflow: hidden; text-overflow: ellipsis; }
-.pl-grid thead th button { color: var(--muted); }
-.pl-cell { width: 32px; height: 30px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); color: var(--accent-ink); font-weight: 700; padding: 0; }
-.pl-cell[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); }
-.pl-count td, .pl-count th { color: var(--muted); font-size: .78rem; text-align: center; }
-.pl-msg { font-weight: 600; }
-.pl-sum { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; padding: 10px 4px; margin-top: 14px; }
-.pl-sum b { display: block; font-size: 1.3rem; }
-.pl-sum span { font-size: .75rem; color: var(--muted); }
-.pl-bring { list-style: none; padding: 0; margin: 0; }
-.pl-bring li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); }
-.pl-bring li:first-child { border-top: 0; }
-.pl-round { padding: 8px 12px; margin: 8px 0; }
-.pl-rh { font-weight: 650; margin-bottom: 4px; }
-.pl-t { display: flex; flex-wrap: wrap; gap: 2px 10px; padding: 4px 0; border-top: 1px solid var(--line); }
-.pl-t b { min-width: 40%; }
-.pl-p { white-space: nowrap; font-size: .9rem; }
-.pl-p.s1 { color: var(--r1); }
-.pl-p.s0 { color: var(--r0); }
-.pl-people, .pl-imp { border-collapse: collapse; width: 100%; font-size: .9rem; }
-.pl-people th, .pl-people td, .pl-imp th, .pl-imp td { padding: 5px 6px; border-top: 1px solid var(--line); text-align: left; }
-.pl-people td { text-align: center; width: 13%; }
-.pl-imp { margin-top: 10px; }
-.pl-imp th { font-weight: 600; }
+/* what to bring */
+.bring-view h2 { font-size: 1.05rem; margin: 0; }
+.br-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0 4px; }
+.br-ctl .stepper button { width: 38px; height: 36px; }
+.br-ctl #brRun { margin-left: auto; }
+.br-sum { margin: 10px 0 6px; }
+.br-list { list-style: none; padding: 0; margin: 0; }
+.br-list li { padding: 8px 0; border-top: 1px solid var(--line); }
+.br-top { display: flex; justify-content: space-between; gap: 10px; }
+.br-name { font-weight: 600; }
+.br-val { font-variant-numeric: tabular-nums; font-weight: 600; }
+.br-bar { position: relative; height: 10px; margin: 5px 0 3px; background: color-mix(in srgb, var(--line) 45%, transparent); border-radius: 5px; }
+.br-ci { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 5px; }
+.br-pt { position: absolute; top: -2px; width: 4px; height: 14px; margin-left: -2px; background: var(--accent); border-radius: 2px; }
+.br-sub { font-size: .78rem; }
+.br-low { opacity: .55; }
+.br-cut { border-top: 2px dashed var(--muted) !important; text-align: center; padding: 6px 0 !important; }
+.br-cut span { font-size: .8rem; color: var(--muted); }
+.br-how { margin-top: 18px; }
+.br-how ul { padding-left: 1.1em; }
+.br-how li { margin: 5px 0; }

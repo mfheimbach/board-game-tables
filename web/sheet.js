@@ -229,3 +229,27 @@ export function allowedCounts(game, b, source) {
   if (!r) return null;
   return source === 'any' ? r.range : source === 'best' ? r.best : r.rec;
 }
+
+// Schedule tab ("Terminplanung"): a header row with player names, then one row per time slot,
+// e.g. "Samstag, 28.11." | "10:00 - 14:00 Uhr" | 1 | 0 | ... The day is carried down from above.
+// Returns { slots: [{ day, from, to, present: { name: 1 | 0 | null } }] } or null.
+export function parseSchedule(rows, players) {
+  const norm = s => String(s ?? '').trim().toLowerCase();
+  const names = new Map(players.map(p => [norm(p), p]));
+  const hi = rows.findIndex(r => r.filter(c => names.has(norm(c))).length >= Math.min(3, players.length));
+  if (hi < 0) return null;
+  const cols = rows[hi].map((c, i) => [names.get(norm(c)), i]).filter(([n]) => n);
+  const time = /(\d{1,2})[:.](\d{2})\s*[-–]\s*(\d{1,2})[:.](\d{2})/;
+  const slots = [];
+  let day = '';
+  for (const r of rows.slice(hi + 1)) {
+    const ti = r.findIndex(c => time.test(c ?? ''));
+    if (ti < 0) { if (slots.length) break; continue; }
+    if (ti > 0 && String(r[0] ?? '').trim()) day = String(r[0]).trim();
+    const [, h1, m1, h2, m2] = r[ti].match(time);
+    const present = {};
+    for (const [n, i] of cols) { const v = String(r[i] ?? '').trim(); present[n] = v === '1' ? 1 : v === '0' ? 0 : null; }
+    slots.push({ day, from: +h1 * 60 + +m1, to: +h2 * 60 + +m2, present });
+  }
+  return slots.length ? { slots } : null;
+}

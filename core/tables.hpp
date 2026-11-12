@@ -3,8 +3,8 @@
 // Problem: seat EXACTLY the attendees at <= maxTables tables, each table one game,
 // no game twice, maximizing the sum of ratings (ties: fewer guessed/blank ratings).
 // Method: exact cover by depth-first search. Branch on the lowest unseated player,
-// so every seating is generated exactly once; bound with "every remaining seat
-// scores 2" against the worst result we would still keep.
+// so every seating is generated exactly once; bound with "every remaining person gets
+// their best possible seat" against the worst result we would still keep.
 // Memory: candidate tables + one search path + the kept results.
 #pragma once
 #include <algorithm>
@@ -113,8 +113,17 @@ class Solver {
     for (int t : free) byLow[__builtin_ctzll(res.cands[t].mask)].push_back(t);
     for (auto& v : byLow) sortByKey(v);
     chosen.assign(o.maxTables, 0);
-    vmax = 128;
-    for (auto& gm : G) for (int16_t v : gm.value) vmax = std::max<long long>(vmax, v);
+    // bound: each unseated person gets at most their best seat among the free tables
+    best.assign(64, 0);
+    for (int t : free) {
+      const Table& T = res.cands[t];
+      const Game& gm = G[T.game];
+      for (Mask m = T.mask; m; m &= m - 1) {
+        int p = __builtin_ctzll(m), r = p < (int)gm.rating.size() ? gm.rating[p] : -1;
+        int eff = r < 0 ? (o.blankAsZero ? 0 : 1) : r;
+        best[p] = std::max<long long>(best[p], valueOf(gm, p, eff));
+      }
+    }
     for (int w : o.fairW) fmax = std::max<long long>(fmax, w);
   }
 
@@ -142,7 +151,8 @@ class Solver {
   std::vector<std::vector<int>> fcands, byLow;
   std::vector<int> chosen;
   std::chrono::steady_clock::time_point deadline;
-  long long vmax = 128, fmax = 0;   // best possible points / fairness per remaining seat (for the bound)
+  std::vector<long long> best;      // best possible points per person among free tables (for the bound)
+  long long fmax = 0;               // best possible fairness per remaining seat
   std::unordered_map<SetKey, Combo, SetKeyHash> combos;
   std::set<std::pair<long long, SetKey>> order;  // (best key, game-set key)
 
@@ -314,9 +324,10 @@ class Solver {
     if (++res.nodes > o.nodeCap || outOfTime()) { res.truncated = true; return; }
     if (!rem) { leaf(depth, leafKey(key, fair, dmin, dmax)); return; }
     if (depth == o.maxTables) return;
-    // upper bound: every remaining seat scores 2, spread can only grow
-    long long r = __builtin_popcountll(rem);
-    if ((key + 128LL * vmax * r) * G_UNIT + (fair + fmax * r) * 1024 - spreadPen(dmin, dmax) <= threshold()) return;
+    // upper bound: everyone left gets their best possible seat, spread can only grow
+    long long r = __builtin_popcountll(rem), vb = 0;
+    for (Mask m = rem; m; m &= m - 1) vb += best[__builtin_ctzll(m)];
+    if ((key + 128LL * vb) * G_UNIT + (fair + fmax * r) * 1024 - spreadPen(dmin, dmax) <= threshold()) return;
     for (int t : byLow[__builtin_ctzll(rem)]) {
       const Table& T = res.cands[t];
       if (T.mask & ~rem) continue;

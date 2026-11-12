@@ -1,0 +1,158 @@
+{
+ "updated": "2026-11-12T15:07:39.703Z",
+ "tab": "Terminplanung",
+ "slots": [
+  {
+   "day": "Freitag, 27.11.",
+   "from": 960,
+   "to": 1080,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 0,
+    "Christoph": 0,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 1,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 0,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Freitag, 27.11.",
+   "from": 1080,
+   "to": 1320,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 1,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Samstag, 28.11.",
+   "from": 600,
+   "to": 840,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 0,
+    "Knut": 1,
+    "Michael": 0,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Samstag, 28.11.",
+   "from": 840,
+   "to": 1080,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 1,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Samstag, 28.11.",
+   "from": 1080,
+   "to": 1320,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 1,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Sonntag, 29.11.",
+   "from": 600,
+   "to": 840,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 0,
+    "Knut": 1,
+    "Michael": 0,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Sonntag, 29.11.",
+   "from": 840,
+   "to": 1080,
+   "present": {
+    "Axel": 1,
+    "Basti": 1,
+    "Christian Bollig": 1,
+    "Christoph": 1,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 1,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 0,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  },
+  {
+   "day": "Sonntag, 29.11.",
+   "from": 1080,
+   "to": 1320,
+   "present": {
+    "Axel": 1,
+    "Basti": 0,
+    "Christian Bollig": 0,
+    "Christoph": 0,
+    "Daniel": 1,
+    "Johannes": 1,
+    "Knut": 0,
+    "Michael": 1,
+    "Moritz": 1,
+    "Niklas": 1,
+    "Philipp": 1,
+    "Tim": 1
+   }
+  }
+ ]
+}

@@ -3,7 +3,7 @@
 // Runs server-side (GitHub Action) so the BGG token never reaches a browser.
 //   BGG_TOKEN=... node scripts/fetch_data.mjs
 import { readFile, writeFile, readdir, unlink } from 'node:fs/promises';
-import { loadTab } from '../web/sheet.js';
+import { loadTab, parseCSV, parseSchedule } from '../web/sheet.js';
 import { fetchThings } from '../web/bgg.js';
 
 const root = new URL('../web/', import.meta.url);
@@ -33,7 +33,7 @@ async function discoverTabs(sheetId) {
 }
 
 const sheetIds = [cfg.sheetId, ...(cfg.extraSheets ?? [])];
-const tabsOut = [], allIds = new Set();
+const tabsOut = [], allIds = new Set(), lastPlayers = [];
 for (const sheetId of sheetIds) {
   console.log(`sheet ${sheetId}`);
   // The sheet itself decides which tabs exist. If they can't be read, stop here:
@@ -41,7 +41,7 @@ for (const sheetId of sheetIds) {
   const { title, tabs } = await discoverTabs(sheetId);
   if (!tabs.length) throw new Error(`Couldn't list the tabs of sheet ${sheetId} (has Google changed its page?)`);
   if (title) console.log(`  title: ${title}`);
-  const kept = [];
+  const kept = [], other = [];
   for (const tab of tabs) {
     try {
       const { model, headerRow, csv } = await loadTab(fetchText, sheetId, tab, cfg);
@@ -50,11 +50,28 @@ for (const sheetId of sheetIds) {
       await writeFile(new URL(`data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, root), csv);
       kept.push({ gid: tab.gid ?? null, name: tab.name ?? `Tab ${tab.gid}`, headerRow, snapshot: `data/sheet-${sheetId === cfg.sheetId ? '' : sheetId + '-'}${key}.csv`, games: model.games.length, players: model.players.length });
       model.games.forEach(g => { if (g.id > 0) allIds.add(g.id); });
+      if (sheetId === cfg.sheetId) lastPlayers.push(...model.players);
       console.log(`  ✓ ${tab.name ?? tab.gid}: ${model.players.length} players, ${model.games.length} games (header row ${headerRow})`);
       model.warnings.forEach(w => console.log('      warning:', w));
-    } catch (e) { console.log(`  ✗ ${tab.name ?? tab.gid}: ${e.message}`); }
+    } catch (e) { console.log(`  ✗ ${tab.name ?? tab.gid}: ${e.message}`); other.push(tab); }
   }
   tabsOut.push({ sheetId, title, tabs: kept });
+  // a schedule tab (who's there in which time slot), read via the full export: the quick CSV drops its name row
+  if (sheetId === cfg.sheetId) {
+    for (const tab of other) {
+      if (tab.gid == null) continue;
+      try {
+        const csv = await fetchText(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${tab.gid}`);
+        const names = [...new Set(lastPlayers)];
+        const sch = parseSchedule(parseCSV(csv), names);
+        if (sch) {
+          await writeFile(new URL('data/schedule.json', root), JSON.stringify({ updated: new Date().toISOString(), tab: tab.name, ...sch }, null, 1));
+          console.log(`  ✓ schedule in ${tab.name}: ${sch.slots.length} slots`);
+          break;
+        }
+      } catch (e) { console.log(`  schedule ${tab.name}: ${e.message}`); }
+    }
+  }
 }
 if (!tabsOut[0]?.tabs.length) throw new Error('No usable tab found in the main sheet');
 // drop snapshots of tabs that no longer exist

@@ -8,7 +8,7 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 
 - **Ratings** load live from the Google Sheet when the page opens. If Google can't be reached, it uses the copy in `web/data/sheet.csv`.
 - **Player counts, play time and weight** come from BoardGameGeek. A GitHub Action fetches them with your BGG token, so the token never reaches a browser, and saves them to `web/data/bgg.json`.
-- **Search** (`core/tables.hpp`): exact cover by depth-first search over bitmasks. It branches on the lowest unseated player, keeps the 30 best game combinations, and prunes when a branch can't beat the 30th. Typical run: a few milliseconds.
+- **Search** (`core/tables.hpp`): exact cover by depth-first search over bitmasks. It branches on the lowest unseated player, keeps the 30 best game combinations, and prunes when even giving everyone left their best possible seat can't beat the 30th. Typical run: a few milliseconds.
 
 ## Setup (once)
 1. Push this folder to a GitHub repo, then go to **Settings → Pages → Source: GitHub Actions**.
@@ -32,13 +32,13 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 - Time slot (main screen ⏱): only tables whose estimate is at least / at most a given length; a limit includes its whole bin. Pinned games are exempt.
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
-## Weekend planner (organizers)
-Settings → "Plan the whole weekend". Plans all rounds at once as an integer program (`web/plan.js`, solved in the browser by [HiGHS](https://highs.dev) via `web/vendor/highs`, MIT, loaded only on that page):
-- Who's there when: a person × round grid. People not selected on the main screen start as away.
-- Rules: everyone present sits once per round, one copy per game (one table per game per round), nobody plays a game twice, allowed player counts, tables per round, explainer and owner rules per round, left-out games and ✕ picks.
-- Order: 1) the worst-off person's average rating per round they're there (switchable), 2) most points = fewest 1s (seats are fixed), 3) fewest guesses, 4) fewest different games = the bring list.
-- Phase 1 maximizes the worst-off average; phase 2 keeps everyone at that level and optimizes the rest. Identical consecutive rounds are put in a fixed order to remove equivalent plans. Each phase stops after 30 s; the result says if it's proven best.
-- "How essential is each game?": plans again without each game and reports what's lost (worst-off, 1s, extra games).
+## What to bring (organizers)
+Settings → "What to bring". Ranks every game by how many points it adds to a weekend just by being there (`web/bring.js`, `web/simworker.js`):
+- Thousands of simulated weekends, each with 5–7 rounds from the schedule tab (`data/schedule.json`, read daily by the action): per day two long slots (morning dropped most often), a short round in between ~60% of the time, 2-hour slots are short rounds. Attendance: a 1 stays with 95%, a 0 turns up with 5%, blank 50/50.
+- Each game is brought with probability ½ (Banzhaf-style), played at most once per weekend. Each round: best seating by the C++ core with the usual settings.
+- A seat is worth rating × (hours/3)^½; short rounds count up to 1½ h and fit games up to 2 h, day slots count up to 5 h (fit up to 6 h), evenings unbounded.
+- OLS of weekend points on the brought-dummies (+ seats and short rounds as controls); the design is randomized, so plain OLS standard errors hold. List: estimate with 95% CI; cutoff where the CI reaches 0.
+- Runs in parallel workers; ~60 weekends/s per core.
 
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.
