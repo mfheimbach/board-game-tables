@@ -43,6 +43,8 @@ export function computeStats(model, bgg, playerIdx) {
   const r = (g, p) => g.ratings[p];
   const b = g => bgg.games[g.id] ?? {};
 
+  const hasEx = G.some(g => g.explainers.length);
+  const hasKnown = G.some(g => g.knownBy?.length);
   // per player
   const pl = P.map(p => {
     const rated = G.filter(g => r(g, p) >= 0);
@@ -96,6 +98,18 @@ export function computeStats(model, bgg, playerIdx) {
     const diffs = own.map(o => r(o.g, x.p) - looMean(o.gi, x.p)).filter(Number.isFinite);
     x.self = diffs.length ? mean(diffs) : NaN; x.ownN = own.length;
     x.explains = G.filter(g => g.explainers.includes(x.p)).length;
+    // newer vs older games (BGG year), bigger vs smaller tables (BGG max players)
+    const ry = rated.filter(o => b(o.g).year > 1900), rn = rated.filter(o => b(o.g).max > 0);
+    x.cY = ry.length >= 8 ? corr(ry.map(o => r(o.g, x.p)), ry.map(o => b(o.g).year)) : NaN;
+    x.cN = rn.length >= 8 ? corr(rn.map(o => r(o.g, x.p)), rn.map(o => Math.log(Math.min(10, b(o.g).max)))) : NaN;
+    // owners: how much the others like the games this person brought
+    const ownAll = G.filter(g => g.bringers?.includes(x.p));
+    const oRs = ownAll.flatMap(g => P.filter(q => q !== x.p).map(q => r(g, q)).filter(v => v >= 0));
+    x.shelf = ownAll.length >= 3 && oRs.length >= 9 ? oRs.filter(v => v === 2).length / oRs.length : NaN; x.shelfN = ownAll.length;
+    // already played: explainers + the optional "known" column
+    x.known = G.filter(g => g.explainers.includes(x.p) || g.knownBy?.includes(x.p)).length;
+    // wants it, but nobody here can explain it
+    x.debt = hasEx ? G.filter(g => r(g, x.p) === 2 && g.explainers.length && !g.explainers.some(q => P.includes(q))).length : 0;
     x.brought = G.filter(g => g.bringers?.includes(x.p)).length;
   }
 
@@ -137,7 +151,8 @@ export function computeStats(model, bgg, playerIdx) {
     coords.heavyAxis = Math.abs(cw) > 0.5;
   }
 
-  return { P, pl, byP, gs, pairs, agreeM, mech, cats, coords, groupMean, name, G, b, allGames: model.allGames ?? G.length };
+  const stars = designers.map(f => ({ t: f.t, n: f.games.length, mean: mean(f.games.flatMap(gi => gs[gi].rs)) })).filter(f => Number.isFinite(f.mean));
+  return { P, pl, byP, gs, pairs, agreeM, mech, cats, coords, groupMean, name, G, b, stars, hasKnown, allGames: model.allGames ?? G.length };
 }
 
 // ---------- rendering ----------
@@ -265,11 +280,13 @@ export function renderStats(S, open = new Set(['numbers'])) {
   const allR = S.gs.flatMap(o => o.rs);
   const wantW = S.gs.filter(o => S.b(o.g).weight > 0).map(o => ({ w: S.b(o.g).weight, k: o.n2 }));
 
+  const wantedH = S.gs.filter(o => o.n2).reduce((t, o) => t + (S.b(o.g).maxTime || S.b(o.g).minTime || 0), 0) / 60;
   const tiles = `<div class="tiles">
     ${tile('🎲', S.G.length, S.G.length < S.allGames ? `of ${S.allGames} games on the table` : 'games')}${tile('🧑‍🤝‍🧑', S.P.length, 'players')}
     ${tile('✅', pct(allR.filter(x => x === 2).length / (allR.length || 1)), 'of ratings are “yes”')}
     ${tile('🚫', pct(allR.filter(x => x === 0).length / (allR.length || 1)), 'are “no”')}
     ${tile('❓', pct(1 - allR.length / ((S.G.length * S.P.length) || 1)), 'left blank')}
+    ${wantedH > 0 ? tile('⏱️', `${Math.round(wantedH)} h`, 'box time to play every game someone wants once') : ''}
   </div>`;
 
   const P = [
@@ -285,8 +302,18 @@ export function renderStats(S, open = new Set(['numbers'])) {
     award('🧠', 'Heavyweight', pick(pl, x => x.cW).filter(x => x.cW > 0), x => `${nm(x.p)} — the heavier, the better (r = ${f2(x.cW)})`),
     award('🪶', 'Featherweight', pick(pl, x => x.cW, -1).filter(x => x.cW < 0), x => `${nm(x.p)} — the lighter, the better (r = ${f2(x.cW)})`),
     award('🏃', 'Marathon runner', pick(pl, x => x.cT).filter(x => x.cT > 0), x => `${nm(x.p)} — loves long games (r = ${f2(x.cT)})`),
-    award('🪞', 'Self-promoter', pick(pl, x => x.self).filter(x => x.self > 0), x => `${nm(x.p)} — rates own games ${f2(x.self)} above everyone else (${x.ownN} games)`),
+    award('🍪', 'Snack lover', pick(pl, x => x.cT, -1).filter(x => x.cT < 0), x => `${nm(x.p)} — the shorter, the better (r = ${f2(x.cT)})`),
+    award('🚀', 'Trendsetter', pick(pl, x => x.cY).filter(x => x.cY > 0.15), x => `${nm(x.p)} — the newer, the better (r = ${f2(x.cY)})`),
+    award('🏺', 'Classicist', pick(pl, x => x.cY, -1).filter(x => x.cY < -0.15), x => `${nm(x.p)} — the older, the better (r = ${f2(x.cY)})`),
+    award('🎉', 'Party animal', pick(pl, x => x.cN).filter(x => x.cN > 0.15), x => `${nm(x.p)} — the bigger the table, the better (r = ${f2(x.cN)})`),
+    award('🤺', 'Duelist', pick(pl, x => x.cN, -1).filter(x => x.cN < -0.15), x => `${nm(x.p)} — prefers small tables (r = ${f2(x.cN)})`),
+    award('🪞', 'Self-promoter', pick(pl, x => x.self).filter(x => x.self > 0), x => `${nm(x.p)} — rates own games ${f2(x.self)} above everyone else (${x.ownN} game${x.ownN > 1 ? "s" : ""})`),
+    award('🎁', 'Brings it for the others', pick(pl, x => x.self, -1).filter(x => x.self < -0.3), x => `${nm(x.p)} — rates own games ${f2(-x.self)} below everyone else (${x.ownN} game${x.ownN > 1 ? "s" : ""})`),
+    award('✨', 'Golden shelf', pick(pl, x => x.shelf).filter(x => x.shelf > 0), x => `${nm(x.p)} — ${pct(x.shelf)} “yes” from the others on their ${x.shelfN} games`),
     award('📖', 'Explainer of the year', pick(S.pl, x => x.explains).filter(x => x.explains > 0), x => `${nm(x.p)} — can explain ${x.explains} games`),
+    award('📚', 'Teach debt', pick(S.pl, x => x.debt).filter(x => x.debt > 0), x => `${nm(x.p)} — wants ${x.debt} game${x.debt > 1 ? 's' : ''} nobody here can explain`),
+    S.hasKnown ? award('🎓', 'Veteran', pick(S.pl, x => x.known).filter(x => x.known > 0), x => `${nm(x.p)} — has played ${x.known} of these games`) : '',
+    S.hasKnown ? award('🐣', 'Fresh eyes', pick(S.pl, x => x.known, -1).filter((x, i, a) => a.length > 2 && x.known < a[0].known), x => `${nm(x.p)} — new to ${S.G.length - x.known} of these games`) : '',
     award('🐴', 'Pack mule', pick(S.pl, x => x.brought).filter(x => x.brought > 0), x => `${nm(x.p)} — brought ${x.brought} games`),
   ].join('');
 
@@ -302,6 +329,9 @@ export function renderStats(S, open = new Set(['numbers'])) {
     award('🐎', 'Dark horse', pick(S.gs.filter(o => o.blanks >= S.P.length * 0.3 && o.n >= 2), o => o.mean), o => `${gn(o)} — ${o.blanks} blanks, but avg ${f2(o.mean)} from those who rated`),
     award('🧊', 'Most ignored', pick(S.gs, o => o.blanks).filter(o => o.blanks > 0), o => `${gn(o)} — ${o.blanks} of ${S.P.length} left it blank`),
     award('🏋️', 'Heaviest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && S.b(o.g).weight > 0), o => S.b(o.g).weight), o => `${gn(o)} — weight ${S.b(o.g).weight.toFixed(1)}, ${o.n2} of ${o.n} say yes`),
+    award('🆕', 'Fresh off the press', pick(gs.filter(o => o.n2 && S.b(o.g).year > 1900), o => S.b(o.g).year), o => `${gn(o)} — ${S.b(o.g).year}, ${o.n2} of ${o.n} say yes`),
+    award('🦖', 'Vintage', pick(gs.filter(o => o.n2 && S.b(o.g).year > 1900), o => S.b(o.g).year, -1), o => `${gn(o)} — ${S.b(o.g).year}, ${o.n2} of ${o.n} say yes`),
+    award('🎨', 'Star designer', pick(S.stars, f => f.n + f.mean / 10), f => `${esc(f.t)} — ${f.n} games here, avg ${f2(f.mean)}`),
     award('⏳', 'Longest crowd-pleaser', pick(gs.filter(o => o.n2 / o.n >= 0.5 && (S.b(o.g).maxTime || S.b(o.g).minTime) > 0), o => S.b(o.g).maxTime || S.b(o.g).minTime), o => `${gn(o)} — up to ${S.b(o.g).maxTime || S.b(o.g).minTime} min on the box, ${o.n2} of ${o.n} say yes`),
   ].join('');
 
