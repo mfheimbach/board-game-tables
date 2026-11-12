@@ -24,6 +24,7 @@
   .rules td:first-child { font-weight: 600; }
   .rules .always td:first-child::after { content: ' · always'; font-weight: 400; color: var(--muted); font-size: .8rem; }
   .card-note { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  [id] { scroll-margin-top: 72px; }
   .rules tr:target { background: var(--accent-soft); }
   #r-never:target { background: var(--accent-soft); border-radius: 6px; }
   .help a.back { display: inline-block; margin-bottom: 4px; }
@@ -41,31 +42,43 @@
 <main class="help">
   <div class="hero">
     <picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img src="img/horst-chan.webp?v=3" alt="Horst Chan, our mascot" width="280" height="184"></picture>
-    <p>You tap who's here. The app finds ways to split exactly those people into tables, so that as many people as possible play something they want to play. Then it shows you the best options, best first.</p>
+    <p>You tap who's here. The app splits exactly those people into tables so that as many as possible play something they want to play, and shows the best options first.</p>
   </div>
   <nav class="toc">
-    <a href="#ratings">Ratings</a><a href="#screen">Main screen</a><a href="#rules">The rules</a>
-    <a href="#overrides">Overruling them</a><a href="#order">Order</a><a href="#result">Reading a result</a>
-    <a href="#time">Play times</a><a href="#privacy">Your phone only</a><a href="#own">Your own sheet</a>
+    <a href="#start">Quick start</a><a href="#screen">Main screen</a><a href="#rules">Rules</a><a href="#order">Order</a>
+    <a href="#time">Play times</a><a href="#stats">Stats</a><a href="#bring">What to bring</a><a href="#data">Data &amp; privacy</a><a href="#faq">Questions</a>
   </nav>
 
-  <h2 id="ratings">⭐ Where the data comes from</h2>
-  <ul>
-    <li><b>Your ratings</b> come from our Google Sheet: <b>2</b> = want to play, <b>1</b> = would play, <b>0</b> = rather not, empty = didn't say. The app reloads the sheet every time you open it.</li>
-    <li><b>Who can explain</b> a game (📖) and <b>who brought it</b> are also from the sheet.</li>
-    <li><b>Player counts, play time and how heavy a game is</b> come from BoardGameGeek. If the sheet has its own player counts for a game, the sheet wins.</li>
-  </ul>
+  <h2 id="start">🚀 Quick start</h2>
+  <ol>
+    <li>Tap the names of everyone who's here.</li>
+    <li>Look at #1. That's the split where the most people play a game they want.</li>
+    <li>Happy? Send it to the group with the share button. Not happy? Pin a game, lock a table you like, or open “Seatings”.</li>
+  </ol>
 
   <h2 id="screen">📱 The main screen</h2>
+  <h3>Controls</h3>
   <ul>
     <li><b>Who's playing?</b> Tap names on or off. Everyone who's on gets exactly one seat. Nobody is left over.</li>
     <li><b>Up to N tables.</b> The most tables you have room for. Fewer is fine if that works better.</li>
-    <li><b>⏱ any length.</b> Only show tables that take at least or at most a certain time, e.g. "at most 1½ h" before dinner.</li>
+    <li><b>⏱ any length.</b> Only tables that take at least or at most a certain time, e.g. “at most 1½ h” before dinner.</li>
     <li><b>Games.</b> The number on a game is how many people here want it (rated 2). Tap once: 📌 <b>must be played</b>. Tap again: ⊘ <b>leave it out</b>. Tap again: normal. Hold a game to choose who plays it.</li>
-    <li><b><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 20V11M12 20V5M19 20v-6M3 20h18"/></svg></b> opens the stats page, <b><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8M4 13h16"/></svg></b> “What to bring” (for organizers), <b><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></b> the settings and the full game list. Tap Horst Chan, top left, for a tip about the page you’re on.</li>
+    <li><b>Top right:</b> <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M5 20V11M12 20V5M19 20v-6M3 20h18"/></svg> stats, <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8M4 13h16"/></svg> what to bring (for organizers), <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg> settings and the full game list.</li>
+    <li><b>Horst Chan</b> (top left): tap her for a tip about the page you're on.</li>
+  </ul>
+  <h3 id="result">Reading a result</h3>
+  <ul>
+    <li><b>#1 87 %</b>: rank and score. 100 % = everyone plays a game they rated 2.</li>
+    <li><b>“Same score as the one above”</b>: two results are equally good, and the line says what decided the order (see <a href="#order">Order</a>).</li>
+    <li><b>Clock</b>: green = tables end at about the same time, amber = one runs clearly longer, red = one runs much longer.</li>
+    <li><b>~2 h</b> next to a game: the estimated time for that table. <b>Bold</b> = the longest table, amber or red = much longer than the shortest.</li>
+    <li><b>📖</b> after a name: can explain it. <b>🎓</b> after the time: everyone at the table has played it, so no rules explanation. <b>?</b> after a name: they haven't rated it, counted as a 1.</li>
+    <li><b><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-1px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Lock</b> (next to the time): keeps that exact table, same game, same people, while you change other things.</li>
+    <li><b>Seatings</b>: same games, other ways to split the people. Tap “Use” to take one.</li>
+    <li><b>Share</b>: sends the result to the group chat. It asks first whether it's really decided.</li>
   </ul>
 
-  <h2 id="rules">📏 The rules every table has to follow</h2>
+  <h2 id="rules">📏 Rules, and overruling them</h2>
   <p>A table only shows up if it passes all of these. Most can be changed in the settings (<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>, top right).</p>
   <table class="rules">
     <thead><tr><th>Rule</th><th>Normally</th><th>Change it</th></tr></thead>
@@ -84,57 +97,68 @@
       <tr id="r-gap"><td>Tables finish together</td><td data-l="Normally">Off: tables may end at different times.</td><td data-l="Change it">Settings slider: all tables end within ½ h / 1 h / 2 h of each other.</td></tr>
     </tbody>
   </table>
-  <p class="muted small">If BGG has no player-count votes for a game, the app falls back to the next wider range (best → recommended → what the box says). If there's nothing at all, it assumes 2–4.</p>
-
-  <h2 id="overrides">✋ Overruling the rules</h2>
+  <p class="muted small">Player counts: the sheet's own columns win, then BGG's community poll (if at least 10 people voted), then the next wider range (best → recommended → what the box says). With nothing at all, the app assumes 2–4.</p>
+  <h3 id="overrides">Your choices beat the rules</h3>
   <ul>
-    <li><b>📌 Must be played:</b> the game is in every result. It ignores "owner is here" and the time slot. If you pin more games than you have tables, extra tables are added.</li>
+    <li><b>📌 Must be played:</b> the game is in every result. It ignores “owner is here” and the time slot. Pin more games than tables, and tables are added.</li>
     <li><b>✓ This person plays it</b> (hold the game, or tap its name in a result): they sit there even if they rated it 0. If the normal rules leave no way to play it with them, player count and explainer rules are dropped for that game.</li>
     <li id="r-never"><b>✕ Never</b> this person: they're never seated at that game.</li>
-    <li><b>🔒 Lock a table</b> (lock button in a result): that exact table, same game, same people, stays put while you change other things.</li>
+    <li><b><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-1px"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> Locked table:</b> stays exactly as it is.</li>
   </ul>
-  <p class="card-note small">Your own choices always beat the automatic rules. If they contradict each other (say you pinned a game nobody here may play), the app tells you and offers a fix.</p>
+  <p class="card-note small">If your choices contradict each other (say you pinned a game nobody here may play), the app tells you and offers a fix.</p>
 
   <h2 id="order">🏆 How results are ordered</h2>
   <ol>
-    <li><b>Most happiness:</b> every seat earns points: 2 for a game you want, 1 for "would play". The percentage is how close a result gets to "everyone plays a 2".</li>
+    <li><b>Most happiness:</b> every seat earns points: 2 for a game you want, 1 for “would play”.</li>
     <li><b>Fewer guesses:</b> on a tie, results that rely less on empty ratings come first.</li>
     <li><b>Tables ending together:</b> on a tie after that, results whose tables finish closer together come first.</li>
   </ol>
-  <p>You see the best 30 different game combinations. Each game combination appears once, with its best seating.</p>
-  <p><b>Cater to picky players</b> (settings, off by default): a "2" from someone who rarely gives 2s counts a bit more when ordering. The percentages shown stay plain ratings.</p>
-
-  <h2 id="result">🔍 Reading a result</h2>
-  <ul>
-    <li><b>#1 87 %</b>: rank and score.</li>
-    <li><b>Clock</b>: green = tables end at about the same time, amber = one runs clearly longer, red = one runs much longer.</li>
-    <li><b>~2 h</b> next to a game: the estimated time for that table. <b>Bold</b> is the longest table, amber or red means much longer than the shortest.</li>
-    <li><b>📖</b> next to a name: can explain it. <b>🎓</b> next to the time: everyone at the table has played it before, so no rules explanation.</li>
-    <li><b>Seatings</b>: same games, other ways to split the people. Tap "Use" to take one.</li>
-    <li><b>Share</b>: sends the result to the group chat. It asks first whether it's really decided.</li>
-  </ul>
+  <p>You see the 30 best different game combinations, each with its best seating.</p>
+  <p><b>Cater to picky players</b> (settings, off by default): a “2” from someone who rarely gives 2s counts a bit more when ordering. The percentages shown stay plain ratings.</p>
 
   <h2 id="time">⏳ Play times</h2>
   <ul>
     <li>Start from BGG's box time, adjusted for how many sit at the table.</li>
     <li>If anyone at the table is new to the game, add time to explain it (more for heavier games) and a little extra because newcomers play slower.</li>
-    <li>If everyone has played it (🎓), no explaining and only a small buffer.</li>
-    <li>"Played it before" comes from the explainers, the sheet's <i>Kennen</i> column, and what you tick under <b>Already played it</b> in a game.</li>
-    <li>Times are rounded to ¾ h, 1 h, 1½ h, 2 h, 3 h, 4 h, 5 h+. They're estimates, not promises. Exact minutes: settings → "Show minutes".</li>
+    <li>If everyone has played it (🎓): no explaining, only a small buffer.</li>
+    <li>“Played it before” comes from the explainers, the sheet's <i>Kennen</i> column, and what you tick under <b>Already played it</b> in a game.</li>
+    <li>Rounded to ¾ h, 1 h, 1½ h, 2 h, 3 h, 4 h, 5 h+. Estimates, not promises. Exact minutes: settings → “Show minutes”.</li>
   </ul>
 
-  <h2 id="privacy">🔒 Your phone only</h2>
+  <h2 id="stats">📊 Stats</h2>
   <ul>
-    <li>Everything you tap (who's here, pins, picks, settings) is saved <b>only on your phone</b>. Nobody else sees it, and your choices don't change anyone else's app.</li>
-    <li>To show the group, use the share button.</li>
-    <li>Ratings only change in the Google Sheet.</li>
-    <li>Settings → <b>Reset everything</b> starts fresh.</li>
+    <li><b>Everyone / Only who's here:</b> all players and games, or just the people ticked on the main screen and the games that could be on the table.</li>
+    <li><b>The numbers:</b> games, players, share of yes / no / blank, and how many hours of play the wanted games add up to.</li>
+    <li><b>Awards:</b> for people (Biggest hater, Marathon runner, Golden shelf, …) and for games (Crowd favorite, Most divisive, …). Each shows a winner and a runner-up.</li>
+    <li><b>Why some awards are missing:</b> an award only appears when there's something to award. No clear taste for long games? No Marathon runner. Nobody has ticked “played it before”? No Veteran.</li>
+    <li><b>The little r</b> on some awards is a correlation: 0 = no pattern, 1 = perfectly in sync.</li>
+    <li><b>Taste map:</b> people close together rate games alike. The distances are approximate.</li>
+    <li><b>Who agrees with whom:</b> soulmates, opposites, and everyone's taste twin. 100 % = always the same rating.</li>
+    <li><b>Mechanics, themes, designers</b> come from BoardGameGeek. The ratings come from the sheet.</li>
   </ul>
 
-  <h2 id="own">📄 Using your own sheet</h2>
-  <p>Any Google Sheet tab with the same layout works. Settings → Data → <b>Use another sheet</b>, then paste the link to the tab. Only your phone switches. "Back to the retreat sheet" switches back.</p>
+  <h2 id="bring">🧳 What to bring (for organizers)</h2>
+  <p>How often each game would actually get played, if everything were on the shelf. Games that hardly ever make it to the table can stay at home.</p>
   <ul>
-    <li><b>Sharing:</b> the sheet must be shared as "Anyone with the link: Viewer".</li>
+    <li><b>How:</b> the app plays through thousands of imaginary weekends, using who's there when from the <i>Terminplanung</i> tab, with small surprises (people arriving late or leaving early). Each round, the group picks one of the best seatings, not always #1. Each game is played at most once per weekend.</li>
+    <li><b>The percentage</b> is the share of weekends in which a game got played. 20 % = about one weekend in five.</li>
+    <li><b>The bar:</b> the dot is that share, the band around it how sure the simulation is. More weekends, narrower band.</li>
+    <li><b>The line:</b> worth bringing = played at least once every 10 weekends. <b>Not sure yet</b>: keep simulating. <b>Borderline</b>: right at the line, either way is fine. It stops by itself once every game is decided.</li>
+    <li><b>Your settings count:</b> player counts, ratings, explainer, owner, ⊘ and ✕ apply here too. They're shown as chips at the top, and anything unusual is highlighted. Who's ticked on the main screen doesn't matter here: the schedule decides.</li>
+    <li><b>Knobs</b> (at the bottom): how many weekends, how strictly the group follows the ranking, and how much long games are worth compared with short ones.</li>
+  </ul>
+
+  <h2 id="data">🔒 Data &amp; privacy</h2>
+  <ul>
+    <li><b>Ratings</b> come from the Google Sheet: <b>2</b> = want to play, <b>1</b> = would play, <b>0</b> = rather not, empty = didn't say. The app loads the sheet fresh every time you open it. If Google can't be reached, it uses a saved copy and says so.</li>
+    <li><b>Who can explain</b> a game (📖) and <b>who brought it</b> also come from the sheet.</li>
+    <li><b>Player counts, play time, weight, mechanics</b> come from BoardGameGeek. New BGG IDs are picked up within about half an hour, everything else is refreshed daily. The schedule tab is refreshed daily too.</li>
+    <li><b>Everything you tap</b> (who's here, pins, picks, settings) is saved <b>only on your phone</b>. Nobody else sees it, and your choices don't change anyone else's app. To show the group, use the share button. Settings → <b>Reset everything</b> starts fresh.</li>
+  </ul>
+  <h3 id="own">Using your own sheet</h3>
+  <p>Any Google Sheet tab with the same layout works. Settings → Data → <b>Use another sheet</b>, then paste the link to the tab. Only your phone switches. “Back to the retreat sheet” switches back.</p>
+  <ul>
+    <li><b>Sharing:</b> “Anyone with the link: Viewer”.</li>
     <li><b>Which tab:</b> the one in your link (the <code>#gid=…</code> part). Cell <b>A1</b> is used as its name.</li>
     <li><b>Header row:</b> anywhere in the first 8 rows. Rows above it are free for notes.</li>
     <li><b>One column per person:</b> the header is the name, the cells are 0, 1, 2 or empty. People who haven't rated yet still count.</li>
@@ -146,10 +170,23 @@
     <thead><tr><th>Header</th><th>What goes in</th></tr></thead>
     <tbody><tr><td colspan="2" class="muted">Loading…</td></tr></tbody>
   </table>
-  <p class="card-note small"><b>BoardGameGeek data</b> (player counts, play time, weight) is only available for games that are also in the retreat sheet, because it's fetched ahead of time. For other games, fill in the player-count and time columns yourself. Otherwise the app assumes 2–4 players and shows no time.</p>
+  <p class="card-note small"><b>BoardGameGeek data</b> is only available for games that are also in the retreat sheet, because it's fetched ahead of time. For other games, fill in the player-count and time columns yourself. Otherwise the app assumes 2–4 players and shows no time.</p>
 
-  <h2>🤷 No result?</h2>
-  <p>Some groups just don't split under the current rules, e.g. 7 people with only 4-player games. The app then suggests what to loosen: one more table, "would play" games too, any player count, and so on. Tap one to try it.</p>
+  <h2 id="faq">💬 Questions people asked</h2>
+  <h3>Which column does the app use for BoardGameGeek?</h3>
+  <p>Only the <b>BGG ID</b> column. It can hold the number or a BGG link. A link on the game's name doesn't count, the app can't see it.</p>
+  <h3>I added a BGG ID. Why is there no data yet?</h3>
+  <p>BGG data is fetched on a server every 20 minutes, so it can take up to about half an hour. Ratings show up immediately, because the sheet loads fresh every time.</p>
+  <h3>Why do three people play a 30-minute game while the others play for four hours?</h3>
+  <p>Because it was the best split by ratings. The red clock warns you. If you don't want that, settings → “All tables finish within” 1 h or 2 h. A game without any time data can't be compared at all, so it never triggers the warning.</p>
+  <h3>Why is my game never suggested?</h3>
+  <p>Hold its chip in the game list: the game card shows its player count, everyone's rating, and whether the owner or an explainer is missing. The usual reasons: its owner isn't here, nobody here can explain it, the number of people doesn't fit its player count, too many rated it 0 or left it blank, or it's ⊘ left out. 📌 pin it to force it anyway.</p>
+  <h3>Why are the top results all 100 %?</h3>
+  <p>Then everyone gets a game they rated 2 in all of them. The order comes from fewer guesses and tables ending together, and the line under the score says which.</p>
+  <h3>Why is there no result?</h3>
+  <p>Some groups just don't split under the current rules, e.g. 7 people with only 4-player games. The app suggests what to loosen: one more table, “would play” games too, any player count, and so on. Tap one to try it.</p>
+  <h3>Can the others see what I tap?</h3>
+  <p>No. Everything stays on your phone until you use the share button.</p>
 </main>
 
 <footer class="foot">
