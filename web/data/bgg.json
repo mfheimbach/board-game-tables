@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-11T11:58:34.507Z",
+ "updated": "2026-11-12T12:58:41.290Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -353,7 +353,7 @@
    "designers": [
     "Eric M. Lang"
    ],
-   "pollVotes": 1085
+   "pollVotes": 1086
   },
   "234260": {
    "name": "Prey Another Day",
@@ -657,7 +657,7 @@
    "max": 9,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.08,
+   "weight": 1.0794,
    "best": [
     6,
     7
@@ -720,6 +720,44 @@
     "Shem Phillips"
    ],
    "pollVotes": 238
+  },
+  "302596": {
+   "name": "Hide-and-seek game",
+   "year": 2020,
+   "min": 2,
+   "max": 6,
+   "minTime": 10,
+   "maxTime": 40,
+   "weight": 2,
+   "best": [
+    3,
+    4,
+    5
+   ],
+   "rec": [
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "categories": [
+    "Maze",
+    "Party Game",
+    "Real-time"
+   ],
+   "mechanics": [
+    "Deck, Bag, and Pool Building",
+    "Hidden Movement",
+    "Race",
+    "Real-Time",
+    "Semi-Cooperative Game",
+    "Track Movement"
+   ],
+   "designers": [
+    "Patanga Cordeiro da Silva"
+   ],
+   "pollVotes": 1
   },
   "306482": {
    "name": "I C E",
@@ -825,7 +863,7 @@
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
    ],
-   "pollVotes": 500
+   "pollVotes": 501
   },
   "322289": {
    "name": "Darwin's Journey",
@@ -1180,7 +1218,7 @@
    "designers": [
     "Pablo Clark"
    ],
-   "pollVotes": 194
+   "pollVotes": 195
   },
   "358737": {
    "name": "Leviathan Wilds",
@@ -1232,7 +1270,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.458,
+   "weight": 3.4587,
    "best": [
     3,
     4
@@ -1263,7 +1301,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 610
+   "pollVotes": 612
   },
   "364356": {
    "name": "Company of Heroes: 2nd Edition",
@@ -1344,7 +1382,7 @@
    "max": 8,
    "minTime": 15,
    "maxTime": 15,
-   "weight": 1.0775,
+   "weight": 1.0769,
    "best": [
     5
    ],
@@ -1471,7 +1509,7 @@
    "designers": [
     "Adam Kwapiński"
    ],
-   "pollVotes": 118
+   "pollVotes": 119
   },
   "397598": {
    "name": "Dune: Imperium – Uprising",
@@ -1764,7 +1802,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.0909,
+   "weight": 1.0889,
    "best": [
     4,
     5,
@@ -2044,7 +2082,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1074,
+   "weight": 3.1072,
    "best": [
     3
    ],
@@ -2071,7 +2109,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 425
+   "pollVotes": 426
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2212,7 +2250,6 @@
    "maxTime": 60,
    "weight": 2.2,
    "best": [
-    3,
     4
    ],
    "rec": [
@@ -2232,7 +2269,7 @@
     "Brett J. Gilbert",
     "David Thompson (I)"
    ],
-   "pollVotes": 4
+   "pollVotes": 5
   },
   "446930": {
    "name": "Match Me If You Can",
@@ -2393,7 +2430,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1754,
+   "weight": 1.1724,
    "best": [
     5,
     6
@@ -2423,7 +2460,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 240
+   "pollVotes": 242
   },
   "456860": {
    "name": "Yotei",
