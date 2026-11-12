@@ -346,6 +346,7 @@ function renderResults(r, ms) {
   const list = r.combos.slice(0, shown);
   const capped = r.truncated ? `<div class="capped">⏳ Big group: these are the best seatings found in ${budgetUsed / 1000} s, not guaranteed to be the very best.
     ${budgetUsed < 10000 ? '<button id="deepSearch">Search for 10 s</button>' : ''}</div>` : '';
+  requestAnimationFrame(() => keepAnchor(true));
   out.innerHTML = capped + list.map((c, i) => cardHtml(c, i, nAtt, list)).join('') +
     (r.combos.length > shown ? `<div class="btns" style="justify-content:center"><button id="more">Show more</button></div>` : '');
   list.forEach((c, i) => { if (openAlts.has(key(c.seatings[0]))) showAlts(i); });
@@ -493,9 +494,19 @@ function showStats(on) {
 }
 
 let timer;
+// Locking pins the game, which reshapes the game chips above and the results: keep the tapped
+// table at the same spot on screen instead of letting the page jump.
+let anchor = null;
+function keepAnchor(done) {
+  if (!anchor) return;
+  const el = document.querySelector(`#results [data-lock="${anchor.g}"]`);
+  if (el) window.scrollBy(0, el.getBoundingClientRect().top - anchor.top);
+  if (done) anchor = null;
+}
 function update() {
   save();
   renderControls();
+  keepAnchor(false);
   renderGameList();
   renderSheet();
   renderStatsView();
@@ -677,6 +688,7 @@ function wire() {
       cur.has(d.p) ? cur.delete(d.p) : cur.add(d.p);
       state.attend = model.players.filter(p => cur.has(p));
     } else if (d.lock !== undefined) {
+      anchor = { g: d.lock, top: b.getBoundingClientRect().top };   // keep this table where the finger is
       const id = model.games[+d.lock].id;
       if (lockOf(id)) state.locks = state.locks.filter(l => l.id !== id);
       else setLock(+d.lock, d.players.split(',').map(Number));
