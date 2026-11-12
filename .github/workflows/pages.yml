@@ -27,7 +27,8 @@ jobs:
         run: |
           V="${GITHUB_SHA::8}"
           sed -i -E "s#(href|src)=\"(style\.css|app\.js)\"#\1=\"\2?v=$V\"#g" web/index.html web/help.html
-          sed -i -E "s#from '\./([a-z]+\.js)'#from './\1?v=$V'#g" web/app.js
+          sed -i -E "s#from '\./([a-z]+\.js)'#from './\1?v=$V'#g" web/app.js web/planner.js web/planworker.js
+          sed -i -E "s#new URL\('planworker\.js'#new URL('planworker.js?v=$V'#" web/planner.js
           sed -i -E "s#import\('\./([a-z]+\.js)'\)#import('./\1?v=$V')#g" web/app.js
           sed -i -E "s#new Worker\('worker\.js'\)#new Worker('worker.js?v=$V')#g" web/app.js
           sed -i -E "s#importScripts\('tables\.js'\)#importScripts('tables.js?v=$V')#" web/worker.js

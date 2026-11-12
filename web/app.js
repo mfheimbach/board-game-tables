@@ -1,6 +1,8 @@
 import { estimate, bin, boxTime, hm } from './time.js';
 let statsMod = null;
 const loadStats = () => (statsMod ??= import('./stats.js'));
+let planMod = null;
+const loadPlanner = async () => (planMod ??= await import('./planner.js'));
 import { loadTab, fetchTitle, parseCSV, parseSheet, allowedCounts, resolveCounts, sheetIdFromUrl, gidFromUrl } from './sheet.js';
 
 const $ = s => document.querySelector(s);
@@ -447,7 +449,18 @@ async function renderStatsView() {
     : view.games.length < 3 ? '<div class="empty muted">Too few games left to say anything.</div>'
     : renderStats(computeStats(view, bgg, idx), open);
 }
+async function showPlan(on) {
+  $('#planView').hidden = !on;
+  document.querySelector('.layout').hidden = on;
+  if (on) {
+    if (!$('#statsView').hidden) showStats(false), document.querySelector('.layout').hidden = true;
+    const m = await loadPlanner();
+    m.openPlanner({ model, bgg, state, status, bansOf, gName, esc, hasExplainers, attendIdx, key: storeKey });
+    window.scrollTo(0, 0);
+  } else planMod?.closePlanner();
+}
 function showStats(on) {
+  if (on && !$('#planView').hidden) showPlan(false);
   $('#statsView').hidden = !on;
   document.querySelector('.layout').hidden = on;
   $('#openStats').setAttribute('aria-pressed', on);
@@ -616,6 +629,7 @@ function wire() {
   $('#gameSheet').addEventListener('click', e => { if (e.target === $('#gameSheet')) $('#gameSheet').close(); });
   $('#gameSheet').addEventListener('close', () => { sheetGame = null; });
   document.addEventListener('click', e => {
+    if (planMod && e.target.closest('#planView') && planMod.onPlanClick(e)) return;
     const b = e.target.closest('button');
     if (!b) return;
     const d = b.dataset;
@@ -702,7 +716,9 @@ function wire() {
     } else if (b.closest('.seg')) {
       const k = b.closest('.seg').dataset.key;
       state.set[k] = ['minRating', 'minPerTable'].includes(k) ? +b.value : b.value;
-    } else if (b.id === 'openStats') { showStats($('#statsView').hidden); return; }
+    } else if (b.id === 'openPlan') { $('#settings').close(); showPlan(true); return; }
+    else if (b.id === 'closePlan') { showPlan(false); return; }
+    else if (b.id === 'openStats') { showStats($('#statsView').hidden); return; }
     else if (b.id === 'closeStats') { showStats(false); return; }
     else if (d.share !== undefined) {
       $('#shareText').textContent = shareText(+d.share);

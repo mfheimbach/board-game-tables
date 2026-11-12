@@ -32,6 +32,14 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 - Time slot (main screen ⏱): only tables whose estimate is at least / at most a given length; a limit includes its whole bin. Pinned games are exempt.
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
+## Weekend planner (organizers)
+Settings → "Plan the whole weekend". Plans all rounds at once as an integer program (`web/plan.js`, solved in the browser by [HiGHS](https://highs.dev) via `web/vendor/highs`, MIT, loaded only on that page):
+- Who's there when: a person × round grid. People not selected on the main screen start as away.
+- Rules: everyone present sits once per round, one copy per game (one table per game per round), nobody plays a game twice, allowed player counts, tables per round, explainer and owner rules per round, left-out games and ✕ picks.
+- Order: 1) the worst-off person's average rating per round they're there (switchable), 2) most points = fewest 1s (seats are fixed), 3) fewest guesses, 4) fewest different games = the bring list.
+- Phase 1 maximizes the worst-off average; phase 2 keeps everyone at that level and optimizes the rest. Identical consecutive rounds are put in a fixed order to remove equivalent plans. Each phase stops after 30 s; the result says if it's proven best.
+- "How essential is each game?": plans again without each game and reports what's lost (worst-off, 1s, extra games).
+
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.
 
