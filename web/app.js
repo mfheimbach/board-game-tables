@@ -505,7 +505,7 @@ async function showBring(on) {
   if (on) {
     if (!$('#statsView').hidden) { showStats(false); document.querySelector('.layout').hidden = true; }
     const m = await loadBring();
-    m.openBring({ model, bgg, state, status, bansOf, gName, esc, hasExplainers, timeData, estimate, sheetId: cur.sheetId, DEFAULTS, horstSay });
+    m.openBring({ model, bgg, state, status, bansOf, gName, esc, hasExplainers, timeData, estimate, sheetId: cur.sheetId, DEFAULTS, horstSay, attendIdx });
     window.scrollTo(0, 0);
   } else bringMod?.closeBring();
 }

@@ -4,7 +4,8 @@
 // One simulated weekend:
 //  - all games are there (except ⊘)
 //  - rounds from the schedule: per day 2 long slots (morning dropped most often), a short
-//    party/filler round between them ~60% of the time; a 2-hour slot is a short round; 5-7 rounds
+//    party/filler round between them ~60% of the time; a slot of 2½ h or less is a short round;
+//    weekends with 2·days−1 … 2·days+1 rounds (5–7 for three days)
 //  - attendance: a 1 stays with 95%, a 0 turns up with 5%, blank is 50/50
 //  - each round: the core's top-K (default 10) game combinations for whoever is there; the group picks one at
 //    random, weighted by rank: weight 1/rank^strict (strict = Infinity: always #1, 0: any of them).
@@ -107,7 +108,8 @@ function weekend(rand, I) {
         if (i < pick.length - 1 && rand() < 0.6) seq.push({ type: SHORT, present: pres(pick[i + 1]) });
       });
     }
-    if (seq.length >= 5 && seq.length <= 7) return seq;
+    const nd = I.days.length;
+    if (seq.length >= 2 * nd - 1 && seq.length <= 2 * nd + 1) return seq;
     if (tries === 49) return seq;
   }
 }

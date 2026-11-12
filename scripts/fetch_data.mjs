@@ -72,7 +72,7 @@ for (const sheetId of sheetIds) {
         const names = [...new Set(lastPlayers)];
         const sch = parseSchedule(parseCSV(csv), names);
         if (sch) {
-          await put(new URL('data/schedule.json', root), JSON.stringify({ updated: new Date().toISOString(), tab: tab.name, ...sch }, null, 1));
+          await put(new URL('data/schedule.json', root), JSON.stringify({ updated: new Date().toISOString(), sheetId, tab: tab.name, ...sch }, null, 1));
           console.log(`  ✓ schedule in ${tab.name}: ${sch.slots.length} slots`);
           break;
         }

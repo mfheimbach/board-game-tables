@@ -33,11 +33,23 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
 ## What to bring (organizers)
-🧳 in the header. How often each game would actually get played (`web/bring.js`, `web/simworker.js`):
-- Thousands of simulated weekends, each with 5–7 rounds from the schedule tab (`data/schedule.json`, read daily by the action): per day two long slots (morning dropped most often), a short round in between ~60% of the time, 2-hour slots are short rounds. Attendance: a 1 stays with 95%, a 0 turns up with 5%, blank 50/50.
-- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top K combinations (knob 5 / 10 / 30, default 10); one is drawn with weight 1/rank^s (knob: always #1 … any of them; default s = ½, “loosely”).
-- Ranking value of a seat: rating × (hours/3)^α (knob, default ½); short rounds count up to 1½ h and fit games up to 2 h, day slots up to 5 h (fit 6 h), evenings unbounded.
-- Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends. Verdicts: bring (interval above 10%), leave (below), borderline (interval inside 7–13%: either side is fine), not sure yet (otherwise). Stops by itself once nothing is "not sure yet".
+Suitcase icon in the header. How often each game would actually get played (`web/bring.js`, `web/simworker.js`). Players' explanation: How it works → What to bring.
+
+### Inputs
+- **Ratings, player counts, times, explainers, owners:** the same model as the main screen.
+- **Settings:** player counts, minimum rating, blanks, smallest table, explainer, owner, ⊘ left out, ✕ never. Shown as chips on the page (non-defaults highlighted; Horst Chan points them out once per change). Not used: pins, locks, time slot, finish-within, picky.
+- **Tables per round:** stepper on the page (starts at the main screen's value).
+- **Who's there when**, one of:
+  - *Schedule tab* (retreat sheet only): any tab of the sheet that isn't a game list, with a header row containing at least 3 player names and below it rows with a time range `HH:MM - HH:MM` (the day label in the first column may be left out after the first slot of a day). Cells: `1` there, `0` not there, empty unknown. The daily action reads it via the full CSV export (the quick gviz CSV drops the name row) and saves `data/schedule.json` (`{ sheetId, tab, slots: [{ day, from, to, present: { name: 1|0|null } }] }`, minutes since midnight).
+  - *Simple*: everyone in the sheet or who's ticked on the main screen, N full days (slots 10–14, 14–18, 18–22, everyone always there). Used automatically when there's no schedule tab for the current sheet (e.g. a custom sheet).
+- **Knobs** (folded): weekends (4,000 / 20,000 / until stopped), top 5/10/30 combinations, how strictly the group follows the ranking (1/rank^s), worth of long games (α). Saved per device (`bgt:bringOpts`).
+
+### Model
+- Per day: two long slots (if there are three, the morning is dropped 60%, afternoon 20%, evening 20%), a short round between them 60% of the time; slots ≤ 2½ h are short rounds (taken 50% of the time); slots from 17:00 are evenings. Weekends with 2·days−1 … 2·days+1 rounds are kept.
+- Attendance noise: 1 stays 95%, 0 turns up 5%, unknown 50/50.
+- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top K combinations; one is drawn with weight 1/rank^s.
+- Ranking value of a seat: rating × (hours/3)^α; short rounds count up to 1½ h and fit games up to 2 h, day slots count up to 5 h (fit 6 h), evenings unbounded.
+- Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends. Verdicts: bring (interval above 10%), leave (below), borderline (inside 7–13%), not sure yet. Stops by itself once nothing is "not sure yet". Parallel workers, results kept until settings, schedule or tab change.
 
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.

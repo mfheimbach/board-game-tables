@@ -140,11 +140,16 @@
   <h2 id="bring">🧳 What to bring (for organizers)</h2>
   <p>How often each game would actually get played, if everything were on the shelf. Games that hardly ever make it to the table can stay at home.</p>
   <ul>
-    <li><b>How:</b> the app plays through thousands of imaginary weekends, using who's there when from the <i>Terminplanung</i> tab, with small surprises (people arriving late or leaving early). Each round, the group picks one of the best seatings, not always #1. Each game is played at most once per weekend.</li>
+    <li><b>How:</b> the app plays through thousands of imaginary weekends, with small surprises (people arriving late or leaving early). Each round, the group picks one of the best seatings, not always #1. Each game is played at most once per weekend.</li>
+    <li id="schedule"><b>Who's there when</b> (box at the top), two ways:
+      <ul>
+        <li><b>From the schedule tab:</b> if the sheet has a tab like our <i>Terminplanung</i>: a row with the players' names, then one row per time slot, e.g. <code>Samstag, 28.11.</code> | <code>10:00 - 14:00 Uhr</code> | 1 | 0 | … (1 = there, 0 = not there, empty = don't know yet). The day can be left out in later rows of the same day. Slots of 2½ h or less count as short rounds, slots starting from 17:00 as evenings. It's read once a day with the rest of the data.</li>
+        <li><b>Simple:</b> everyone in the sheet, or only who's ticked on the main screen, for a number of full days (morning, afternoon, evening). For your own sheet, or for a quick “what if”.</li>
+      </ul></li>
     <li><b>The percentage</b> is the share of weekends in which a game got played. 20 % = about one weekend in five.</li>
     <li><b>The bar:</b> the dot is that share, the band around it how sure the simulation is. More weekends, narrower band.</li>
     <li><b>The line:</b> worth bringing = played at least once every 10 weekends. <b>Not sure yet</b>: keep simulating. <b>Borderline</b>: right at the line, either way is fine. It stops by itself once every game is decided.</li>
-    <li><b>Your settings count:</b> player counts, ratings, explainer, owner, ⊘ and ✕ apply here too. They're shown as chips at the top, and anything unusual is highlighted. Who's ticked on the main screen doesn't matter here: the schedule decides.</li>
+    <li><b>Your settings count:</b> player counts, ratings, explainer, owner, ⊘ and ✕ apply here too. They're shown as chips at the top, and anything unusual is highlighted. Tap a chip to jump to its explanation.</li>
     <li><b>Knobs</b> (at the bottom): how many weekends, how strictly the group follows the ranking, and how much long games are worth compared with short ones.</li>
   </ul>
 
@@ -170,6 +175,7 @@
     <thead><tr><th>Header</th><th>What goes in</th></tr></thead>
     <tbody><tr><td colspan="2" class="muted">Loading…</td></tr></tbody>
   </table>
+  <p class="card-note small"><b>What to bring</b> with your own sheet uses the simple schedule (people × days). Schedule tabs are only read for the retreat sheet.</p>
   <p class="card-note small"><b>BoardGameGeek data</b> is only available for games that are also in the retreat sheet, because it's fetched ahead of time. For other games, fill in the player-count and time columns yourself. Otherwise the app assumes 2–4 players and shows no time.</p>
 
   <h2 id="faq">💬 Questions people asked</h2>

@@ -394,3 +394,10 @@ details:not(.st-sec) > summary h3 { margin: 0; font-size: inherit; }
 .br-chip { text-decoration: none; font-size: .76rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); }
 .br-chip.ch { background: var(--r1-bg); border-color: var(--r1); color: var(--r1); font-weight: 600; }
 .br-not { flex-basis: 100%; margin-top: 2px; }
+.br-sched { margin: 12px 0 4px; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.br-sched .seg { margin-top: 8px; }
+.br-sched p { margin: 6px 0 0; }
+.br-simple { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.br-simple .seg { margin-top: 8px; }
+.br-days { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; }
+.br-days .stepper button { width: 34px; height: 32px; }

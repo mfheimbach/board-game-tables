@@ -15,7 +15,7 @@ const SIZES = [[4000, '4,000'], [20000, '20,000'], [Infinity, 'until I stop']];
 const ALPHAS = [[0, 'the same as short ones', 'same'], [0.25, 'a bit more', 'a bit'], [0.5, 'more (default)', 'more'], [0.75, 'a lot more', 'a lot'], [1, 'in proportion to their length', '∝ time']];
 const STRICT = [[Infinity, 'always #1', '#1 only'], [2, 'strictly', 'strict'], [1, 'mostly', 'mostly'], [0.5, 'loosely (default)', 'loosely'], [0, 'any of them', 'any']];
 const TOPK = [[5, 'top 5'], [10, 'top 10 (default)'], [30, 'top 30 (slow)']];
-let opts = { size: 4000, alpha: 0.5, strict: 0.5, topK: 10 };
+let opts = { size: 4000, alpha: 0.5, strict: 0.5, topK: 10, sched: 'tab', who: 'all', nDays: 3 };
 try { opts = { ...opts, ...JSON.parse(localStorage.getItem('bgt:bringOpts')) }; if (opts.size === null) opts.size = Infinity; if (opts.strict === null) opts.strict = Infinity; } catch {}
 const saveOpts = () => { try { localStorage.setItem('bgt:bringOpts', JSON.stringify(opts)); } catch {} };   // Infinity → null
 
@@ -31,10 +31,16 @@ export async function openBring(c) {
 }
 export function closeBring() { stopRun(); }
 
+// Who's there when. Two sources:
+//  - "tab": the sheet's schedule tab (data/schedule.json, saved by the daily update; retreat sheet only)
+//  - "simple": everyone in the sheet, or who's ticked on the main screen, for N full days
+//    (morning, afternoon and evening slots, everyone always there)
+const hasTab = () => !!schedule?.slots?.length && (!schedule.sheetId || schedule.sheetId === ctx.sheetId);
+const useTab = () => opts.sched === 'tab' && hasTab();
 function days() {
   const P = ctx.model.players;
-  const idx = new Map(P.map((n, i) => [n.trim().toLowerCase(), i]));
-  if (schedule?.slots?.length) {
+  if (useTab()) {
+    const idx = new Map(P.map((n, i) => [n.trim().toLowerCase(), i]));
     const by = [];
     for (const s of schedule.slots) {
       const present = P.map(() => null);
@@ -44,9 +50,28 @@ function days() {
     }
     return by.map(d => d.slots);
   }
-  // no schedule: everyone, Friday evening + two full days
-  const all = P.map(() => 1), sl = (f, t) => ({ from: f * 60, to: t * 60, present: all });
-  return [[sl(18, 22)], [sl(10, 14), sl(14, 18), sl(18, 22)], [sl(10, 14), sl(14, 18), sl(18, 22)]];
+  const here = new Set(opts.who === 'here' ? ctx.attendIdx() : P.map((_, i) => i));
+  const present = P.map((_, i) => (here.has(i) ? 1 : 0)), sl = (f, t) => ({ from: f * 60, to: t * 60, present });
+  return Array.from({ length: opts.nDays }, () => [sl(10, 14), sl(14, 18), sl(18, 22)]);
+}
+function schedHtml() {
+  const { esc } = ctx, P = ctx.model.players;
+  const seg = hasTab() ? `<div class="seg br-src">
+      <button type="button" data-sched="tab" aria-pressed="${useTab()}">From “${esc(schedule.tab ?? 'schedule')}”</button>
+      <button type="button" data-sched="simple" aria-pressed="${!useTab()}">Simple</button></div>` : '';
+  let body;
+  if (useTab()) {
+    const d = days(), people = new Set(schedule.slots.flatMap(s => Object.entries(s.present).filter(([, v]) => v !== 0).map(([n]) => n)));
+    body = `<p class="muted small">${schedule.slots.length} time slots over ${d.length} day${d.length > 1 ? 's' : ''}, ${people.size} people. Updated with the sheet once a day.</p>`;
+  } else {
+    const n = opts.who === 'here' ? ctx.attendIdx().length : P.length;
+    body = `<div class="br-simple">
+      <div class="seg"><button type="button" data-who="all" aria-pressed="${opts.who === 'all'}">Everyone (${P.length})</button><button type="button" data-who="here" aria-pressed="${opts.who === 'here'}">Who's ticked (${ctx.attendIdx().length})</button></div>
+      <span class="br-days"><span class="stepper"><button type="button" data-days="-1" aria-label="Fewer days">−</button><output>${opts.nDays}</output><button type="button" data-days="1" aria-label="More days">+</button></span> full day${opts.nDays > 1 ? 's' : ''}</span>
+    </div>
+    <p class="muted small">${n} people, always there. Each day has a morning, afternoon and evening slot.${hasTab() ? '' : ' No schedule tab found for this sheet.'}</p>`;
+  }
+  return `<div class="br-sched"><span class="small"><b>🗓 Who's there when</b></span>${seg}${body}</div>`;
 }
 
 function buildInput() {
@@ -198,7 +223,7 @@ function settingsHtml() {
   const { esc } = ctx, { items } = settingsInfo();
   return `<div class="br-set"><span class="muted small">Uses your settings:</span>
     ${items.map(([t, ch, a]) => `<a class="br-chip${ch ? ' ch' : ''}" href="help.html#${a}" target="_blank" rel="noopener" title="What this setting does (opens How it works)">${esc(t)}</a>`).join('')}
-    <span class="muted small br-not">Not used here: who's playing (the schedule decides), pins, time slot, finish-within, picky.</span></div>`;
+    <span class="muted small br-not">Not used here: pins, time slot, finish-within, picky.</span></div>`;
 }
 let remindedSig = '';
 function remind() {
@@ -211,17 +236,16 @@ export function onSettings() {
   const box = $('#brSet');
   if (!box) return;
   box.innerHTML = settingsHtml();
+  $('#brSched').innerHTML = schedHtml();
   if (snap) stale = true;
   update();
   remind();
 }
 function renderShell() {
   const { esc } = ctx;
-  const sch = schedule?.slots?.length
-    ? `${schedule.slots.length} time slots from “${esc(schedule.tab ?? 'schedule')}”`
-    : 'no schedule found: everyone, Friday evening plus two full days';
   $('#bringBody').innerHTML = `
     <p class="small">How often each game would actually get played, over thousands of simulated weekends with everything on the shelf. Games that hardly ever make it to the table can stay at home.</p>
+    <div id="brSched">${schedHtml()}</div>
     <div id="brSet">${settingsHtml()}</div>
     <div class="br-ctl">
       <span>Up to</span><span class="stepper"><button type="button" data-bt="-1" aria-label="Fewer tables">−</button><output id="brTables">${tables}</output><button type="button" data-bt="1" aria-label="More tables">+</button></span><span>tables a round</span>
@@ -240,8 +264,8 @@ function renderShell() {
     </details>
     <details class="br-how"><summary>How the simulation works</summary>
       <ul class="small">
-        <li><b>Schedule:</b> ${sch}. Each simulated weekend has 5–7 rounds: per day two long slots, with a short party/filler round in between most of the time.</li>
-        <li><b>Who's there:</b> as in the schedule, with surprises: 5% of people come or go unexpectedly, blanks are 50/50.</li>
+        <li><b>Rounds:</b> per day two long slots (the morning is skipped most often), with a short party/filler round in between most of the time. Slots of 2½ h or less are short rounds, slots starting from 17:00 are evenings. A weekend has about two rounds per day (5–7 for three days).</li>
+        <li><b>Who's there:</b> from “Who's there when” above, with surprises: 5% of people come or go unexpectedly, blanks in the schedule are 50/50.</li>
         <li><b>Games:</b> all of them are there (except ⊘). Each game is played at most once per weekend.</li>
         <li><b>Each round:</b> the 10 best seatings (knob: 5 / 10 / 30) for whoever is there, with your settings (player counts, ratings, explainer, owner present). The group doesn't always take #1: one is picked at random, the higher the more likely (#1 twice as likely as #2, three times as likely as #3, … with the default knob).</li>
         <li><b>Ranking:</b> each seat is worth its rating × (hours / 3)<sup>α</sup>, now α = <span id="brAlpha">${opts.alpha}</span>: a 2 in a 3-hour game is 2 points, in a 1-hour game <span id="brAlpha1">${(2 * Math.pow(1 / 3, opts.alpha)).toFixed(1)}</span>. Short rounds count up to 1½ h and only fit games up to 2 h; day slots count up to 5 h; evenings have no limit.</li>
@@ -271,6 +295,14 @@ export function onBringClick(e) {
   if (b.dataset.size) {
     opts.size = +b.dataset.size; saveOpts();
     b.parentElement.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    knob(); return true;
+  }
+  if (b.dataset.sched || b.dataset.who || b.dataset.days) {
+    if (b.dataset.sched) opts.sched = b.dataset.sched;
+    if (b.dataset.who) opts.who = b.dataset.who;
+    if (b.dataset.days) opts.nDays = Math.max(1, Math.min(6, opts.nDays + +b.dataset.days));
+    saveOpts();
+    $('#brSched').innerHTML = schedHtml();
     knob(); return true;
   }
   if (b.dataset.topk) {
