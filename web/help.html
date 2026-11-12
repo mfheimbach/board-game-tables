@@ -24,6 +24,8 @@
   .rules td:first-child { font-weight: 600; }
   .rules .always td:first-child::after { content: ' · always'; font-weight: 400; color: var(--muted); font-size: .8rem; }
   .card-note { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  .rules tr:target { background: var(--accent-soft); }
+  #r-never:target { background: var(--accent-soft); border-radius: 6px; }
   .help a.back { display: inline-block; margin-bottom: 4px; }
   @media (max-width: 560px) { .rules thead { display: none; } .rules tr { display: block; border-top: 1px solid var(--line); padding: 8px 10px; }
     .rules tr:first-child { border-top: 0; } .rules td { display: block; border: 0; padding: 2px 0; }
@@ -70,16 +72,16 @@
     <tbody>
       <tr class="always"><td>Everyone here gets one seat</td><td data-l="Normally">No one left out, no one twice.</td><td data-l="Change it">Tap names on the main screen.</td></tr>
       <tr class="always"><td>Each game once</td><td data-l="Normally">A game is never on two tables at once.</td><td data-l="Change it">–</td></tr>
-      <tr><td>Number of tables</td><td data-l="Normally">At most 3.</td><td data-l="Change it">− / + on the main screen (up to 8).</td></tr>
-      <tr><td>Only games you rated</td><td data-l="Normally">You only sit at games you rated 1 or 2.</td><td data-l="Change it">Settings → "Seat people at games they rated": 2 only / 1 or 2 / anything.</td></tr>
-      <tr><td>Empty ratings</td><td data-l="Normally">Count as a 1, but marked as a guess.</td><td data-l="Change it">Settings → Advanced → count as 0.</td></tr>
-      <tr><td>Player count</td><td data-l="Normally">The table size must be one BGG users <b>recommend</b> for that game.</td><td data-l="Change it">Settings → Player counts: Best (stricter) / Recommended / Any (whatever the box allows).</td></tr>
-      <tr><td>Smallest table</td><td data-l="Normally">2 people. No solo games.</td><td data-l="Change it">Settings → Advanced.</td></tr>
-      <tr><td>Someone can explain it</td><td data-l="Normally">At least one 📖 person sits at the table.</td><td data-l="Change it">Settings switch. Only applies if the sheet lists explainers.</td></tr>
-      <tr><td>The owner is here</td><td data-l="Normally">Games whose owner isn't here are skipped (they're greyed out in the game list).</td><td data-l="Change it">Settings switch. Games without an owner in the sheet are always allowed.</td></tr>
-      <tr><td>Left-out games ⊘</td><td data-l="Normally">Never played.</td><td data-l="Change it">Tap the game chip.</td></tr>
-      <tr><td>Time slot ⏱</td><td data-l="Normally">Off.</td><td data-l="Change it">Main screen: at least / at most.</td></tr>
-      <tr><td>Tables finish together</td><td data-l="Normally">Off: tables may end at different times.</td><td data-l="Change it">Settings slider: all tables end within ½ h / 1 h / 2 h of each other.</td></tr>
+      <tr id="r-tables"><td>Number of tables</td><td data-l="Normally">At most 3.</td><td data-l="Change it">− / + on the main screen (up to 8).</td></tr>
+      <tr id="r-rating"><td>Only games you rated</td><td data-l="Normally">You only sit at games you rated 1 or 2.</td><td data-l="Change it">Settings → "Seat people at games they rated": 2 only / 1 or 2 / anything.</td></tr>
+      <tr id="r-blanks"><td>Empty ratings</td><td data-l="Normally">Count as a 1, but marked as a guess.</td><td data-l="Change it">Settings → Advanced → count as 0.</td></tr>
+      <tr id="r-counts"><td>Player count</td><td data-l="Normally">The table size must be one BGG users <b>recommend</b> for that game.</td><td data-l="Change it">Settings → Player counts: Best (stricter) / Recommended / Any (whatever the box allows).</td></tr>
+      <tr id="r-smallest"><td>Smallest table</td><td data-l="Normally">2 people. No solo games.</td><td data-l="Change it">Settings → Advanced.</td></tr>
+      <tr id="r-explainer"><td>Someone can explain it</td><td data-l="Normally">At least one 📖 person sits at the table.</td><td data-l="Change it">Settings switch. Only applies if the sheet lists explainers.</td></tr>
+      <tr id="r-owner"><td>The owner is here</td><td data-l="Normally">Games whose owner isn't here are skipped (they're greyed out in the game list).</td><td data-l="Change it">Settings switch. Games without an owner in the sheet are always allowed.</td></tr>
+      <tr id="r-out"><td>Left-out games ⊘</td><td data-l="Normally">Never played.</td><td data-l="Change it">Tap the game chip.</td></tr>
+      <tr id="r-slot"><td>Time slot ⏱</td><td data-l="Normally">Off.</td><td data-l="Change it">Main screen: at least / at most.</td></tr>
+      <tr id="r-gap"><td>Tables finish together</td><td data-l="Normally">Off: tables may end at different times.</td><td data-l="Change it">Settings slider: all tables end within ½ h / 1 h / 2 h of each other.</td></tr>
     </tbody>
   </table>
   <p class="muted small">If BGG has no player-count votes for a game, the app falls back to the next wider range (best → recommended → what the box says). If there's nothing at all, it assumes 2–4.</p>
@@ -88,7 +90,7 @@
   <ul>
     <li><b>📌 Must be played:</b> the game is in every result. It ignores "owner is here" and the time slot. If you pin more games than you have tables, extra tables are added.</li>
     <li><b>✓ This person plays it</b> (hold the game, or tap its name in a result): they sit there even if they rated it 0. If the normal rules leave no way to play it with them, player count and explainer rules are dropped for that game.</li>
-    <li><b>✕ Never</b> this person: they're never seated at that game.</li>
+    <li id="r-never"><b>✕ Never</b> this person: they're never seated at that game.</li>
     <li><b>🔒 Lock a table</b> (lock button in a result): that exact table, same game, same people, stays put while you change other things.</li>
   </ul>
   <p class="card-note small">Your own choices always beat the automatic rules. If they contradict each other (say you pinned a game nobody here may play), the app tells you and offers a fix.</p>

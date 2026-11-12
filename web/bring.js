@@ -179,24 +179,25 @@ function settingsInfo() {
     minRating: { 2: 'only games rated 2', 1: 'games rated 1 or 2', 0: 'any rating' },
     blanks: { neutral: 'blank = 1 (guess)', zero: 'blank = 0' },
   };
+  // [text, changed from the default, How it works anchor]
   const items = [
-    [L.source[s.source], s.source !== d.source],
-    [L.minRating[s.minRating], +s.minRating !== +d.minRating],
-    [L.blanks[s.blanks], s.blanks !== d.blanks],
-    [`smallest table ${s.minPerTable}`, +s.minPerTable !== +d.minPerTable],
-    [s.explainer ? 'explainer at the table' : 'no explainer needed', s.explainer !== d.explainer],
-    [s.owner ? 'owner must be there' : 'owner may be away', s.owner !== d.owner],
+    [L.source[s.source], s.source !== d.source, 'r-counts'],
+    [L.minRating[s.minRating], +s.minRating !== +d.minRating, 'r-rating'],
+    [L.blanks[s.blanks], s.blanks !== d.blanks, 'r-blanks'],
+    [`smallest table ${s.minPerTable}`, +s.minPerTable !== +d.minPerTable, 'r-smallest'],
+    [s.explainer ? 'explainer at the table' : 'no explainer needed', s.explainer !== d.explainer, 'r-explainer'],
+    [s.owner ? 'owner must be there' : 'owner may be away', s.owner !== d.owner, 'r-owner'],
   ];
   const nOut = state.excluded.length, nBans = Object.values(state.bans ?? {}).reduce((t, a) => t + a.length, 0);
-  if (nOut) items.push([`⊘ ${nOut} game${nOut > 1 ? 's' : ''} left out`, true]);
-  if (nBans) items.push([`✕ ${nBans} “never” pick${nBans > 1 ? 's' : ''}`, true]);
+  if (nOut) items.push([`⊘ ${nOut} game${nOut > 1 ? 's' : ''} left out`, true, 'r-out']);
+  if (nBans) items.push([`✕ ${nBans} “never” pick${nBans > 1 ? 's' : ''}`, true, 'r-never']);
   const changed = items.filter(x => x[1]).map(x => x[0]);
   return { items, changed, sig: changed.join('|') };
 }
 function settingsHtml() {
   const { esc } = ctx, { items } = settingsInfo();
   return `<div class="br-set"><span class="muted small">Uses your settings:</span>
-    ${items.map(([t, ch]) => `<span class="br-chip${ch ? ' ch' : ''}">${esc(t)}</span>`).join('')}
+    ${items.map(([t, ch, a]) => `<a class="br-chip${ch ? ' ch' : ''}" href="help.html#${a}" target="_blank" rel="noopener" title="What this setting does (opens How it works)">${esc(t)}</a>`).join('')}
     <span class="muted small br-not">Not used here: who's playing (the schedule decides), pins, time slot, finish-within, picky.</span></div>`;
 }
 let remindedSig = '';
