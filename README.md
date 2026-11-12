@@ -33,12 +33,11 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 - Ranking: score, then fewer guesses, then smallest log(longest/shortest table) — scale-free, driven by the straggler. Optional filter (slider): all tables finish within ½ h / 1 h / 2 h of each other.
 
 ## What to bring (organizers)
-Settings → "What to bring". Ranks every game by how many points it adds to a weekend just by being there (`web/bring.js`, `web/simworker.js`):
+🧳 in the header. How often each game would actually get played (`web/bring.js`, `web/simworker.js`):
 - Thousands of simulated weekends, each with 5–7 rounds from the schedule tab (`data/schedule.json`, read daily by the action): per day two long slots (morning dropped most often), a short round in between ~60% of the time, 2-hour slots are short rounds. Attendance: a 1 stays with 95%, a 0 turns up with 5%, blank 50/50.
-- Each game is brought with probability ½ (Banzhaf-style), played at most once per weekend. Each round: best seating by the C++ core with the usual settings.
-- A seat is worth rating × (hours/3)^½; short rounds count up to 1½ h and fit games up to 2 h, day slots count up to 5 h (fit up to 6 h), evenings unbounded.
-- OLS of weekend points on the brought-dummies (+ seats and short rounds as controls); the design is randomized, so plain OLS standard errors hold. List: estimate with 95% CI; cutoff where the CI reaches 0.
-- Runs in parallel workers; ~60 weekends/s per core.
+- All games are there (except ⊘), each played at most once per weekend. Each round the core returns the top 30 combinations; one is drawn with weight 1/rank^s (knob: always #1 … any of the 30; default s = 1).
+- Ranking value of a seat: rating × (hours/3)^α (knob, default ½); short rounds count up to 1½ h and fit games up to 2 h, day slots up to 5 h (fit 6 h), evenings unbounded.
+- Output: share of weekends each game gets played, Wilson 95% interval, cutoff at 1 in 10 weekends; "?" while the interval still crosses it.
 
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.

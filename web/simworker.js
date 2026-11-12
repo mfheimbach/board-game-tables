@@ -1,12 +1,14 @@
-// "What to bring": simulates many weekends with the C++ core and accumulates a regression
-// of weekend score on which games were brought. Classic worker (importScripts).
+// "What to bring": simulates many weekends with the C++ core and counts how often each game
+// gets played. Classic worker (importScripts).
 //
 // One simulated weekend:
-//  - every game is brought with probability pBring (left-out games never)
+//  - all games are there (except ⊘)
 //  - rounds from the schedule: per day 2 long slots (morning dropped most often), a short
 //    party/filler round between them ~60% of the time; a 2-hour slot is a short round; 5-7 rounds
 //  - attendance: a 1 stays with 95%, a 0 turns up with 5%, blank is 50/50
-//  - each round: best seating for whoever is there, games played earlier this weekend are gone
+//  - each round: the core's top 30 game combinations for whoever is there; the group picks one at
+//    random, weighted by rank: weight 1/rank^strict (strict = Infinity: always #1, 0: any of them).
+//    Games played earlier this weekend are gone.
 //  - a seat is worth rating × (hours / 3)^alpha; short rounds count at most 1½ h, long day slots
 //    at most 5 h, evenings without limit; short rounds only allow games up to 2 h, day slots up to 6 h
 importScripts('tables.js');
@@ -29,10 +31,16 @@ function rng(seed) { let s = seed >>> 0 || 1; return () => ((s = (s * 1664525 + 
 function run(M, I) {
   const rand = rng(I.seed ?? Date.now());
   const G = I.games, nG = G.length, nP = I.nPlayers;
-  const D = 1 + nG + 2;                       // intercept, games, seats in weekend, short rounds
-  const XtX = new Float64Array(D * D), Xty = new Float64Array(D);
-  let yy = 0, n = 0, fails = 0, rounds = 0, roundsShort = 0, sumY = 0;
-  const used = new Float64Array(nG), bro = new Float64Array(nG);   // how often each game got played / brought
+  let n = 0, fails = 0, rounds = 0;
+  const cnt = new Float64Array(nG);           // weekends in which each game got played
+  const pick = k => {                         // index into the top-k combinations, weighted by rank
+    if (k <= 1 || I.strict === Infinity) return 0;
+    let tot = 0; const w = [];
+    for (let i = 0; i < k; i++) { w.push(Math.pow(i + 1, -I.strict)); tot += w[i]; }
+    let u = rand() * tot;
+    for (let i = 0; i < k; i++) { u -= w[i]; if (u <= 0) return i; }
+    return k - 1;
+  };
   const h = (min, type) => Math.pow(Math.min(min > 0 ? min : 90, CAP[type]) / 180, I.alpha);
   // ranking values per round type (core wants int16 per player and game, 64 = one rating step at 3 h)
   const valueFor = type => G.map(g => g.eff.map(e => Math.round(64 * e * h(g.typDur, type))));
@@ -45,41 +53,32 @@ function run(M, I) {
   const step = () => {
     const until = Date.now() + 150;
     while (Date.now() < until && !stop && n < I.maxWeekends) {
-      const brought = G.map(g => !g.out && rand() < I.pBring);
       const seq = weekend(rand, I);
       const played = new Uint8Array(nG);
-      let y = 0, seats = 0, shorts = 0;
       for (const r of seq) {
         const att = r.present;
-        seats += att.length; if (r.type === SHORT) shorts++;
         if (att.length < 2) continue;
         const attSet = new Set(att);
         const excl = [];
         G.forEach((g, gi) => {
-          if (!brought[gi] || played[gi] || (I.ownerRule && g.owners.length && !g.owners.some(p => attSet.has(p)))) excl.push(gi);
+          if (G[gi].out || played[gi] || (I.ownerRule && g.owners.length && !g.owners.some(p => attSet.has(p)))) excl.push(gi);
         });
-        const head = [nP, nG, I.maxTables, I.minRating, I.blankAsZero, I.needExplainer, I.minPerTable, 1, 1, 0, 20, 0, 250, 0, MAXDUR[r.type], att.length, ...att];
+        const head = [nP, nG, I.maxTables, I.minRating, I.blankAsZero, I.needExplainer, I.minPerTable, I.strict === Infinity ? 1 : 30, 1, 0, 20, 0, 250, 0, MAXDUR[r.type], att.length, ...att];
         const block = BLOCK[r.type], len = head.length + nP + block.length + 2 + excl.length;
         const buf = new Int32Array(len);
         buf.set(head, 0); buf.set(block, head.length + nP);
         let o = head.length + nP + block.length; buf[o++] = excl.length; buf.set(excl, o); o += excl.length; buf[o] = 0;
         const res = JSON.parse(M.ccall('solve_buf', 'string', ['array', 'number'], [new Uint8Array(buf.buffer), len]));
-        rounds++; if (r.type === SHORT) roundsShort++;
-        const st = res.combos?.[0]?.seatings?.[0];
-        if (!st) { fails++; continue; }
-        for (const t of st.tables) {
-          played[t.g] = 1; used[t.g]++;
-          const d = G[t.g].dur[t.p.length] || G[t.g].typDur;
-          for (const p of t.p) y += G[t.g].eff[p] * h(d, r.type);
-        }
+        rounds++;
+        const combos = res.combos ?? [];
+        if (!combos.length) { fails++; continue; }
+        const st = combos[pick(combos.length)].seatings[0];
+        for (const t of st.tables) played[t.g] = 1;
       }
-      // accumulate
-      brought.forEach((b, i) => { if (b) bro[i]++; });
-      const x = [1, ...brought.map(b => b ? 1 : 0), seats, shorts];
-      for (let a = 0; a < D; a++) { if (!x[a]) continue; Xty[a] += x[a] * y; for (let b = 0; b < D; b++) XtX[a * D + b] += x[a] * x[b]; }
-      yy += y * y; sumY += y; n++;
+      played.forEach((v, gi) => { if (v) cnt[gi]++; });
+      n++;
     }
-    postMessage({ type: 'progress', n, D, XtX, Xty, yy, fails, rounds, roundsShort, meanY: sumY / Math.max(1, n), used: Array.from(used), brought: Array.from(bro), ms: Date.now() - t0 });
+    postMessage({ type: 'progress', n, fails, rounds, cnt: Array.from(cnt), ms: Date.now() - t0 });
     if (!stop && n < I.maxWeekends) setTimeout(step, 0);
     else postMessage({ type: 'done', n });
   };
