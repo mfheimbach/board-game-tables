@@ -390,3 +390,7 @@ details:not(.st-sec) > summary h3 { margin: 0; font-size: inherit; }
 .br-tag { white-space: nowrap; }
 .br-top .br-name { min-width: 0; }
 .br-val { white-space: nowrap; flex: none; }
+.br-set { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 10px 0 2px; }
+.br-chip { font-size: .76rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--muted); }
+.br-chip.ch { background: var(--r1-bg); border-color: var(--r1); color: var(--r1); font-weight: 600; }
+.br-not { flex-basis: 100%; margin-top: 2px; }

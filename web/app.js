@@ -268,52 +268,76 @@ function tieHtml(list, i, ctx) {
 }
 
 const HORST = `<picture><source srcset="img/horst-chan-still.webp" media="(prefers-reduced-motion: reduce)"><img class="horst-art" src="img/horst-chan.webp?v=3" alt="" width="280" height="184"></picture>`;
-// Horst Chan: tap her face for a tip; new visitors get a hello once.
-const HORST_TIPS = [
-  'Hold a game chip and pick who plays it. Your ✓ beats every rule, promise! 🤞',
-  'Tap a game once and it’s 📌 a must. Twice and it’s ⊘ out. I won’t judge 💙',
-  'Dinner soon? Tap ⏱ “at most 1 h” and I’ll find something quick for you 🍝',
-  'Found a table you love? 🔒 Lock it and I’ll gently shuffle everyone else.',
-  'Tap “Seatings” for the same games with other people. Maybe someone wants to swap? 🙈',
-  'Played it before? Tick it in the game sheet. No teach, more play time for you 🎓',
-  'Want everyone to finish together? There’s a little slider in the settings for that ⏳',
-  'Got a friend who rarely says yes? Turn on “Cater to picky players”. Their 2s will count a bit more 💅',
-  'Psst… 📊 has awards! I wonder who gets Biggest hater this year 👀',
-  'Sending it to the group? Only if it’s <i>really</i> decided, okay? Plans in the chat tend to stick 😇',
-  'Everything you tap stays on your phone. Nobody else sees it, so play around as much as you like 🌸',
-  'Lost? <a href="help.html">How it works</a> explains everything, and I’m right here too 🫶',
-  'Not sure what to pack? 🧳 shows which games make the weekend better. Your back will thank me!',
-  'In 🧳 the dot is my best guess, and the band shows how sure I am. I try my best 🥺',
-  'Games below the dashed line in 🧳 don’t change much. Still lovely games, just maybe not this time 🫂',
-  'Love numbers as much as I love coffee? 🧳 → Knobs → “until I stop” ☕✨',
-  'A ? after a name means they haven’t rated it yet. I counted it as a 1, just guessing for now 🤔',
-  '📖 next to a name means they can explain it. No rulebook reading tonight 🥳',
-  'Green clock = all tables finish around the same time. Nobody waits alone 🕰️💚',
-  'Amber or red time? That table will run a while longer. Maybe grab snacks for the others 🍪',
-  'Only want games people really love? Settings → “2 only”. Maximum happiness! 💖',
-  'Seven people and only four-player games? Let me use “any” player count in the settings, I’ll make it work 💪',
-  'Someone needs a break? Untap their name and I’ll replan in a blink ✨',
-  'Ratings changed in the sheet? Just reopen me, I always load the latest ones 📝',
-  'Have your own game group? Settings → Data → Use another sheet. I’d love to help them too 🥰',
-  'Want exact minutes instead of ~2 h? Settings → Show minutes ⏱️',
-  'Game still at home? Turn on “Only games whose owner is here” and I won’t suggest it 🏠',
-  'Your ✓ can even seat someone at a game they rated 0. Please be gentle with them 😬💙',
-  'Tap a game’s name in a result to see who plays it and who already knows it 🔍',
-  'Hi again! I’m Horst Chan. I love coffee, meeples and the Kölner Dom ☕🎲🏰',
-];
-let horstT, horstI = -1;
+// Horst Chan: tap her face for a tip about the page you're on; new visitors get a hello once.
+const HORST_TIPS = {
+  main: [
+    'Hold a game chip and pick who plays it. Your ✓ beats every rule, promise! 🤞',
+    'Tap a game once and it’s 📌 a must. Twice and it’s ⊘ out. I won’t judge 💙',
+    'Dinner soon? Tap ⏱ “at most 1 h” and I’ll find something quick for you 🍝',
+    'Found a table you love? 🔒 Lock it and I’ll gently shuffle everyone else.',
+    'Tap “Seatings” for the same games with other people. Maybe someone wants to swap? 🙈',
+    'Played it before? Tick it in the game sheet. No teach, more play time for you 🎓',
+    'Want everyone to finish together? There’s a little slider in the settings for that ⏳',
+    'Got a friend who rarely says yes? Turn on “Cater to picky players”. Their 2s will count a bit more 💅',
+    'Sending it to the group? Only if it’s <i>really</i> decided, okay? Plans in the chat tend to stick 😇',
+    'A ? after a name means they haven’t rated it yet. I counted it as a 1, just guessing for now 🤔',
+    '📖 next to a name means they can explain it. No rulebook reading tonight 🥳',
+    'Green clock = all tables finish around the same time. Nobody waits alone 🕰️💚',
+    'Amber or red time? That table will run a while longer. Maybe grab snacks for the others 🍪',
+    '“Same score as the one above”? Then I ranked by fewer guesses, then by tables ending closer together 🤓',
+    'Only want games people really love? Settings → “2 only”. Maximum happiness! 💖',
+    'Seven people and only four-player games? Let me use “any” player count in the settings, I’ll make it work 💪',
+    'Someone needs a break? Untap their name and I’ll replan in a blink ✨',
+    'Ratings changed in the sheet? Just reopen me, I always load the latest ones 📝',
+    'Game still at home? Turn on “Only games whose owner is here” and I won’t suggest it 🏠',
+    'Your ✓ can even seat someone at a game they rated 0. Please be gentle with them 😬💙',
+    'Tap a game’s name in a result to see who plays it and who already knows it 🔍',
+    'Psst… the chart button up top has awards! I wonder who gets Biggest hater this year 👀',
+    'Not sure what to pack? The suitcase button shows which games actually get played. Your back will thank me!',
+  ],
+  stats: [
+    'Tap “Only who’s here” and I’ll only count the people and games at the retreat right now 👀',
+    'On the taste map, close together means similar ratings. Who’s your neighbour? 🗺️',
+    'Soulmates rate games the same way. Maybe sit together tonight? 💞',
+    'Some awards only show up when there’s something to award. No Teach debt? Lucky you 📚',
+    'Veteran and Fresh eyes need the “Kennen” column in the sheet. Tick what you’ve played! 🎓',
+    'The r next to an award is a correlation: 0 = no pattern, 1 = perfectly in sync. Nerd mode on 🤓',
+    'Mechanics and themes come from BoardGameGeek, the ratings from your sheet 🎲',
+  ],
+  bring: [
+    'I use your settings here too! The highlighted chips are the ones that aren’t the usual 🧐',
+    'Who’s there when comes from the Terminplanung tab, not from who’s ticked on the main screen 🗓️',
+    'The dot is my best guess, the band is how sure I am. More weekends make it narrower 🥺',
+    '“Borderline” means right at the line. Bring it or don’t, both are fine 🤷',
+    'Below the dashed line: games that hardly ever made it to the table, even though they were always there 🫂',
+    'Love numbers as much as I love coffee? Knobs → “until I stop” ☕✨',
+    'Does your group always take #1? Set it in the Knobs, and I’ll simulate that instead 🎯',
+    'I stop by myself once every game is decided. You can go get a coffee ☕',
+  ],
+  all: [
+    'Everything you tap stays on your phone. Nobody else sees it, so play around as much as you like 🌸',
+    'Lost? <a href="help.html">How it works</a> explains everything, and I’m right here too 🫶',
+    'Have your own game group? Settings → Data → Use another sheet. I’d love to help them too 🥰',
+    'Hi again! I’m Horst Chan. I love coffee, meeples and the Kölner Dom ☕🎲🏰',
+  ],
+};
+let horstT;
+const horstView = () => !$('#statsView').hidden ? 'stats' : !$('#bringView').hidden ? 'bring' : 'main';
 function horstHide() { clearTimeout(horstT); const p = $('#horstPop'); p.hidden = true; p.innerHTML = ''; }
 function horstSay(text) {
   if (text === undefined) {
-    try { horstI = +(localStorage.getItem('bgt:horstTip') ?? -1); } catch {}
-    horstI = (horstI + 1) % HORST_TIPS.length;
-    try { localStorage.setItem('bgt:horstTip', horstI); } catch {}
-    text = HORST_TIPS[horstI];
+    // next tip for this page, cycling through its own tips plus the general ones
+    const v = horstView(), list = [...HORST_TIPS[v], ...HORST_TIPS.all], k = 'bgt:horstTip:' + v;
+    let i = -1;
+    try { i = +(localStorage.getItem(k) ?? -1); } catch {}
+    i = (i + 1) % list.length;
+    try { localStorage.setItem(k, i); } catch {}
+    text = list[i];
   }
   const p = $('#horstPop'); clearTimeout(horstT);
   p.innerHTML = HORST.replace('class="horst-art" ', '') + `<p class="horst-say">${text}</p>`;
   p.hidden = false;
-  horstT = setTimeout(horstHide, 4000 + 60 * text.replace(/<[^>]*>/g, "").length);   // longer tips stay longer
+  horstT = setTimeout(horstHide, 4000 + 60 * text.replace(/<[^>]*>/g, '').length);   // longer tips stay longer
 }
 function horstHello() {
   try { if (localStorage.getItem('bgt:horstHi')) return; localStorage.setItem('bgt:horstHi', '1'); } catch { return; }
@@ -481,7 +505,7 @@ async function showBring(on) {
   if (on) {
     if (!$('#statsView').hidden) { showStats(false); document.querySelector('.layout').hidden = true; }
     const m = await loadBring();
-    m.openBring({ model, bgg, state, status, bansOf, gName, esc, hasExplainers, timeData, estimate, sheetId: cur.sheetId });
+    m.openBring({ model, bgg, state, status, bansOf, gName, esc, hasExplainers, timeData, estimate, sheetId: cur.sheetId, DEFAULTS, horstSay });
     window.scrollTo(0, 0);
   } else bringMod?.closeBring();
 }
@@ -507,6 +531,7 @@ function update() {
   save();
   renderControls();
   keepAnchor(false);
+  if (bringMod && !$('#bringView').hidden) bringMod.onSettings();
   renderGameList();
   renderSheet();
   renderStatsView();
