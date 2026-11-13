@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-12T21:47:37.167Z",
+ "updated": "2026-11-13T12:24:58.218Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -198,7 +198,7 @@
    "designers": [
     "Carl Chudyk"
    ],
-   "pollVotes": 613
+   "pollVotes": 614
   },
   "148319": {
    "name": "Tragedy Looper",
@@ -440,7 +440,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 2.6977,
+   "weight": 2.7045,
    "best": [
     4
    ],
@@ -836,7 +836,7 @@
    "max": 4,
    "minTime": 90,
    "maxTime": 180,
-   "weight": 4.2615,
+   "weight": 4.2627,
    "best": [
     4
    ],
@@ -930,7 +930,7 @@
    "designers": [
     "ctr"
    ],
-   "pollVotes": 54
+   "pollVotes": 55
   },
   "327778": {
    "name": "ito",
@@ -1191,7 +1191,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7077,
+   "weight": 3.7088,
    "best": [
     3
    ],
@@ -1218,7 +1218,7 @@
    "designers": [
     "Pablo Clark"
    ],
-   "pollVotes": 195
+   "pollVotes": 196
   },
   "358737": {
    "name": "Leviathan Wilds",
@@ -1270,7 +1270,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4587,
+   "weight": 3.4593,
    "best": [
     3,
     4
@@ -1301,7 +1301,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 612
+   "pollVotes": 613
   },
   "364356": {
    "name": "Company of Heroes: 2nd Edition",
@@ -1476,7 +1476,7 @@
    "max": 5,
    "minTime": 120,
    "maxTime": 180,
-   "weight": 3.7671,
+   "weight": 3.7687,
    "best": [
     4,
     5
@@ -2044,7 +2044,7 @@
    "designers": [
     "Ben Rosset"
    ],
-   "pollVotes": 29
+   "pollVotes": 30
   },
   "432456": {
    "name": "dnup",
@@ -2082,7 +2082,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1072,
+   "weight": 3.107,
    "best": [
     3
    ],
@@ -2109,7 +2109,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 426
+   "pollVotes": 428
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2250,6 +2250,7 @@
    "maxTime": 60,
    "weight": 2.2,
    "best": [
+    3,
     4
    ],
    "rec": [
@@ -2269,7 +2270,7 @@
     "Brett J. Gilbert",
     "David Thompson (I)"
    ],
-   "pollVotes": 5
+   "pollVotes": 6
   },
   "446930": {
    "name": "Match Me If You Can",
@@ -2336,7 +2337,7 @@
    "max": 4,
    "minTime": 40,
    "maxTime": 80,
-   "weight": 2.2,
+   "weight": 2.3333,
    "best": [
     4
    ],
@@ -2430,7 +2431,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1724,
+   "weight": 1.176,
    "best": [
     5,
     6
@@ -2460,7 +2461,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 242
+   "pollVotes": 243
   },
   "456860": {
    "name": "Yotei",
@@ -2664,7 +2665,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.8889,
+   "weight": 2.8929,
    "best": [
     2,
     4
@@ -2687,7 +2688,7 @@
    "designers": [
     "Dan Germain"
    ],
-   "pollVotes": 12
+   "pollVotes": 13
   }
  }
 }
