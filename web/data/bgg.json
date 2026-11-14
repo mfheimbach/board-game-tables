@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-13T12:24:58.218Z",
+ "updated": "2026-11-14T11:38:13.109Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -2461,7 +2461,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 243
+   "pollVotes": 246
   },
   "456860": {
    "name": "Yotei",
