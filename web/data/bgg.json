@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-14T11:38:13.109Z",
+ "updated": "2026-11-15T12:04:24.427Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -275,7 +275,7 @@
    "max": 12,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.5955,
+   "weight": 1.5963,
    "best": [
     6,
     7,
@@ -321,7 +321,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.8816,
+   "weight": 2.8817,
    "best": [
     4
    ],
@@ -353,41 +353,7 @@
    "designers": [
     "Eric M. Lang"
    ],
-   "pollVotes": 1086
-  },
-  "234260": {
-   "name": "Prey Another Day",
-   "year": 2023,
-   "min": 2,
-   "max": 5,
-   "minTime": 15,
-   "maxTime": 20,
-   "weight": 1.0989,
-   "best": [
-    4,
-    5
-   ],
-   "rec": [
-    3,
-    4,
-    5
-   ],
-   "categories": [
-    "Animals",
-    "Bluffing",
-    "Card Game",
-    "Print & Play"
-   ],
-   "mechanics": [
-    "Player Elimination",
-    "Score-and-Reset Game",
-    "Simultaneous Action Selection"
-   ],
-   "designers": [
-    "Matthew Dunstan",
-    "Brett J. Gilbert"
-   ],
-   "pollVotes": 96
+   "pollVotes": 1087
   },
   "237182": {
    "name": "Root",
@@ -440,7 +406,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 2.7045,
+   "weight": 2.6889,
    "best": [
     4
    ],
@@ -475,7 +441,7 @@
    "max": 5,
    "minTime": 45,
    "maxTime": 120,
-   "weight": 3.8394,
+   "weight": 3.8396,
    "best": [
     4
    ],
@@ -513,109 +479,6 @@
     "Cole Wehrle"
    ],
    "pollVotes": 638
-  },
-  "257305": {
-   "name": "SHASN",
-   "year": 2021,
-   "min": 3,
-   "max": 5,
-   "minTime": 90,
-   "maxTime": 120,
-   "weight": 2.9286,
-   "best": [
-    4
-   ],
-   "rec": [
-    2,
-    3,
-    4,
-    5
-   ],
-   "categories": [
-    "Negotiation",
-    "Political",
-    "Territory Building"
-   ],
-   "mechanics": [
-    "Alliances",
-    "Area Majority / Influence",
-    "Set Collection",
-    "Simulation",
-    "Take That",
-    "Trading",
-    "Variable Player Powers"
-   ],
-   "designers": [
-    "Zain Memon"
-   ],
-   "pollVotes": 18
-  },
-  "274566": {
-   "name": "Deranged",
-   "year": 2019,
-   "min": 3,
-   "max": 6,
-   "minTime": 90,
-   "maxTime": 180,
-   "weight": 3.0667,
-   "best": [
-    4
-   ],
-   "rec": [
-    3,
-    4,
-    5
-   ],
-   "categories": [
-    "Adventure",
-    "Horror",
-    "Miniatures"
-   ],
-   "mechanics": [
-    "Area Movement",
-    "Deck, Bag, and Pool Building",
-    "Modular Board",
-    "Traitor Game",
-    "Variable Player Powers"
-   ],
-   "designers": [
-    "German Tikhomirov"
-   ],
-   "pollVotes": 9
-  },
-  "279886": {
-   "name": "Iron Forest",
-   "year": 2024,
-   "min": 1,
-   "max": 4,
-   "minTime": 30,
-   "maxTime": 0,
-   "weight": 1.8571,
-   "best": [
-    2,
-    4
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "Action / Dexterity",
-    "Adventure",
-    "Fantasy",
-    "Fighting"
-   ],
-   "mechanics": [
-    "Flicking",
-    "Team-Based Game",
-    "Variable Player Powers"
-   ],
-   "designers": [
-    "Brian Gomez"
-   ],
-   "pollVotes": 7
   },
   "295192": {
    "name": "Tinderblox",
@@ -657,7 +520,7 @@
    "max": 9,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.0794,
+   "weight": 1.0787,
    "best": [
     6,
     7
@@ -865,45 +728,6 @@
    ],
    "pollVotes": 501
   },
-  "322289": {
-   "name": "Darwin's Journey",
-   "year": 2023,
-   "min": 1,
-   "max": 4,
-   "minTime": 60,
-   "maxTime": 120,
-   "weight": 3.9098,
-   "best": [
-    3
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "Exploration",
-    "Travel"
-   ],
-   "mechanics": [
-    "Contracts",
-    "Ownership",
-    "Pick-up and Deliver",
-    "Point to Point Movement",
-    "Set Collection",
-    "Solo / Solitaire Game",
-    "Turn Order: Claim Action",
-    "Variable Set-up",
-    "Worker Placement",
-    "Worker Placement, Different Worker Types"
-   ],
-   "designers": [
-    "Simone Luciani",
-    "Nestore Mangone"
-   ],
-   "pollVotes": 360
-  },
   "324711": {
    "name": "Schadenfreude",
    "year": 2020,
@@ -911,7 +735,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.7442,
+   "weight": 1.7333,
    "best": [
     4
    ],
@@ -930,7 +754,7 @@
    "designers": [
     "ctr"
    ],
-   "pollVotes": 55
+   "pollVotes": 58
   },
   "327778": {
    "name": "ito",
@@ -968,38 +792,6 @@
    ],
    "pollVotes": 78
   },
-  "329714": {
-   "name": "Dreadful Circus",
-   "year": 2021,
-   "min": 4,
-   "max": 8,
-   "minTime": 45,
-   "maxTime": 45,
-   "weight": 2.2381,
-   "best": [
-    6
-   ],
-   "rec": [
-    4,
-    5,
-    6,
-    7,
-    8
-   ],
-   "categories": [
-    "Card Game"
-   ],
-   "mechanics": [
-    "Auction / Bidding",
-    "Betting and Bluffing",
-    "Set Collection"
-   ],
-   "designers": [
-    "Joanna Kijanka",
-    "Bruno Faidutti"
-   ],
-   "pollVotes": 13
-  },
   "329839": {
    "name": "So Clover!",
    "year": 2021,
@@ -1030,7 +822,7 @@
    "designers": [
     "François Romain"
    ],
-   "pollVotes": 222
+   "pollVotes": 223
   },
   "334379": {
    "name": "Doodle Dash",
@@ -1149,7 +941,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 75,
-   "weight": 1.9486,
+   "weight": 1.9545,
    "best": [
     4
    ],
@@ -1182,7 +974,7 @@
     "Jim Keifer",
     "Brian Neff"
    ],
-   "pollVotes": 173
+   "pollVotes": 174
   },
   "357873": {
    "name": "The Old King's Crown",
@@ -1270,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4593,
+   "weight": 3.4588,
    "best": [
     3,
     4
@@ -1301,7 +1093,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 613
+   "pollVotes": 614
   },
   "364356": {
    "name": "Company of Heroes: 2nd Edition",
@@ -1414,7 +1206,7 @@
    "max": 4,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.9167,
+   "weight": 1.9129,
    "best": [
     3
    ],
@@ -1435,7 +1227,7 @@
    "designers": [
     "Thomas Dupont"
    ],
-   "pollVotes": 172
+   "pollVotes": 173
   },
   "380109": {
    "name": "Gibberers: The Word Game of Language Invention and Civilization Development",
@@ -1554,7 +1346,7 @@
    "designers": [
     "Paul Dennen"
    ],
-   "pollVotes": 549
+   "pollVotes": 550
   },
   "400495": {
    "name": "JinxO",
@@ -1626,39 +1418,6 @@
     "Songsit Phraephet"
    ],
    "pollVotes": 3
-  },
-  "407233": {
-   "name": "Tenby",
-   "year": 2025,
-   "min": 1,
-   "max": 5,
-   "minTime": 30,
-   "maxTime": 60,
-   "weight": 2.0816,
-   "best": [
-    2,
-    3
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "Card Game",
-    "City Building"
-   ],
-   "mechanics": [
-    "Action Drafting",
-    "Open Drafting",
-    "Pattern Building",
-    "Solo / Solitaire Game"
-   ],
-   "designers": [
-    "Benjie Talbott"
-   ],
-   "pollVotes": 52
   },
   "408547": {
    "name": "Things in Rings",
@@ -1756,7 +1515,7 @@
    "designers": [
     "Manny Trembley"
    ],
-   "pollVotes": 75
+   "pollVotes": 76
   },
   "416079": {
    "name": "March of the Ants: Evolved Edition",
@@ -2008,44 +1767,6 @@
    ],
    "pollVotes": 38
   },
-  "430533": {
-   "name": "Formaggio",
-   "year": 2025,
-   "min": 1,
-   "max": 4,
-   "minTime": 30,
-   "maxTime": 45,
-   "weight": 2.3778,
-   "best": [
-    4
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "Economic",
-    "Farming"
-   ],
-   "mechanics": [
-    "Bias",
-    "Chaining",
-    "Closed Drafting",
-    "Contracts",
-    "End Game Bonuses",
-    "Rondel",
-    "Set Collection",
-    "Simultaneous Action Selection",
-    "Variable Set-up",
-    "Worker Placement"
-   ],
-   "designers": [
-    "Ben Rosset"
-   ],
-   "pollVotes": 30
-  },
   "432456": {
    "name": "dnup",
    "year": 2024,
@@ -2082,7 +1803,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.107,
+   "weight": 3.1087,
    "best": [
     3
    ],
@@ -2109,7 +1830,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 428
+   "pollVotes": 430
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2181,7 +1902,7 @@
    "max": 5,
    "minTime": 30,
    "maxTime": 90,
-   "weight": 2.3333,
+   "weight": 2.25,
    "best": [
     4
    ],
@@ -2394,36 +2115,6 @@
    ],
    "pollVotes": 12
   },
-  "452817": {
-   "name": "Emberheart",
-   "year": 2025,
-   "min": 2,
-   "max": 4,
-   "minTime": 60,
-   "maxTime": 90,
-   "weight": 2.7101,
-   "best": [
-    4
-   ],
-   "rec": [
-    3,
-    4
-   ],
-   "categories": [
-    "Fantasy"
-   ],
-   "mechanics": [
-    "Auction / Bidding",
-    "Set Collection",
-    "Turn Order: Claim Action",
-    "Worker Placement"
-   ],
-   "designers": [
-    "Rob Fisher",
-    "Adam Porter"
-   ],
-   "pollVotes": 54
-  },
   "454103": {
    "name": "Magical Athlete",
    "year": 2025,
@@ -2431,7 +2122,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.176,
+   "weight": 1.1772,
    "best": [
     5,
     6
@@ -2462,35 +2153,6 @@
     "Takashi Ishida"
    ],
    "pollVotes": 246
-  },
-  "456860": {
-   "name": "Yotei",
-   "year": 2025,
-   "min": 2,
-   "max": 4,
-   "minTime": 30,
-   "maxTime": 60,
-   "weight": 2.2,
-   "best": [
-    3,
-    4
-   ],
-   "rec": [
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "City Building"
-   ],
-   "mechanics": [
-    "Auction / Bidding",
-    "Worker Placement"
-   ],
-   "designers": [
-    "Huy Pham"
-   ],
-   "pollVotes": 5
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
@@ -2529,44 +2191,6 @@
     "Alyssa Swatek"
    ],
    "pollVotes": 31
-  },
-  "465286": {
-   "name": "Trash Poker",
-   "year": 2026,
-   "min": 1,
-   "max": 4,
-   "minTime": 45,
-   "maxTime": 90,
-   "weight": 2.6667,
-   "best": [
-    4
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4
-   ],
-   "categories": [
-    "Card Game",
-    "Humor",
-    "Video Game Theme"
-   ],
-   "mechanics": [
-    "Deck, Bag, and Pool Building",
-    "End Game Bonuses",
-    "Hand Management",
-    "Multi-Use Cards",
-    "Open Drafting",
-    "Set Collection",
-    "Solo / Solitaire Game",
-    "Turn Order: Stat-Based"
-   ],
-   "designers": [
-    "Rico Besteher",
-    "Frank Noack"
-   ],
-   "pollVotes": 9
   },
   "465849": {
    "name": "Codenames: Critical Role Adventures",
@@ -2657,38 +2281,6 @@
     "Ali Mussell"
    ],
    "pollVotes": 0
-  },
-  "479457": {
-   "name": "Braided Skies",
-   "year": 2026,
-   "min": 1,
-   "max": 5,
-   "minTime": 60,
-   "maxTime": 90,
-   "weight": 2.8929,
-   "best": [
-    2,
-    4
-   ],
-   "rec": [
-    1,
-    2,
-    3,
-    4,
-    5
-   ],
-   "categories": [
-    "Economic",
-    "Fantasy"
-   ],
-   "mechanics": [
-    "Track Movement",
-    "Worker Placement"
-   ],
-   "designers": [
-    "Dan Germain"
-   ],
-   "pollVotes": 13
   }
  }
 }
