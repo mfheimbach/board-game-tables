@@ -1,4 +1,5 @@
 import { estimate, bin, boxTime, hm } from './time.js';
+import { parseThings } from './bgg.js';
 let statsMod = null;
 const loadStats = () => (statsMod ??= import('./stats.js'));
 let bringMod = null;
@@ -871,16 +872,44 @@ async function select(sheetId, tabs, i) {
   try { localStorage.setItem('bgt:sel', JSON.stringify({ sheetId, key: tabKey(tabs[i]) })); } catch {}
   shown = 10; openAlts.clear(); last = null;
   renderTabs(); renderBanner(); update();
+  fillMissingBgg();
   if (cached || firstLoad) refreshInBackground(sheetId, tabs[i], model).then(prefetchTabs);
   else prefetchTabs();
   (window.requestIdleCallback ?? (f => setTimeout(f, 1500)))(() => loadStats());
+}
+
+// Games whose BGG id isn't in the saved data (your own sheet, ids added since the last update):
+// ask the Cloudflare proxy (config.bggProxy), which holds the token. Kept on this device for a day.
+const BGGX = 'bgt:bggx', DAY = 864e5, askedBgg = new Set();
+let bggxLoaded = false;
+function bggxCache() {
+  try { const c = JSON.parse(localStorage.getItem(BGGX)); if (c && Date.now() - c.t < DAY) return c; } catch {}
+  return { t: Date.now(), games: {} };
+}
+async function fillMissingBgg() {
+  if (!cfg?.bggProxy || !model) return;
+  if (!bggxLoaded) { bggxLoaded = true; for (const [id, g] of Object.entries(bggxCache().games)) bgg.games[id] ??= g; }
+  const ids = [...new Set(model.games.map(g => g.id).filter(id => id > 0 && !bgg.games[id] && !askedBgg.has(id)))];
+  if (!ids.length) return;
+  ids.forEach(id => askedBgg.add(id));
+  const got = {};
+  for (let i = 0; i < ids.length; i += 20) {
+    try {
+      const r = await fetch(`${cfg.bggProxy}?ids=${ids.slice(i, i + 20).join(',')}`);
+      if (r.ok) Object.assign(got, parseThings(await r.text()));
+    } catch {}
+  }
+  if (!Object.keys(got).length) return;
+  Object.assign(bgg.games, got);
+  try { const c = bggxCache(); Object.assign(c.games, got); localStorage.setItem(BGGX, JSON.stringify(c)); } catch {}
+  renderBanner(); update();
 }
 
 async function refreshInBackground(sheetId, tab, before = tabCache.get(cacheKey(sheetId, tab))) {
   try {
     const fresh = await fetchModel(sheetId, tab);
     if (cur.sheetId !== sheetId || curTab() !== tab) return;
-    if (fingerprint(fresh) !== fingerprint(before)) { model = fresh; renderBanner(); update(); }
+    if (fingerprint(fresh) !== fingerprint(before)) { model = fresh; renderBanner(); update(); fillMissingBgg(); }
     else if (fresh.source !== model.source) { model.source = fresh.source; renderBanner(); }
   } catch {}
 }
