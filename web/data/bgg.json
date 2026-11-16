@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-15T12:04:24.427Z",
+ "updated": "2026-11-16T12:57:53.431Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8431,
+   "weight": 3.8424,
    "best": [
     4
    ],
@@ -699,7 +699,7 @@
    "max": 4,
    "minTime": 90,
    "maxTime": 180,
-   "weight": 4.2627,
+   "weight": 4.2635,
    "best": [
     4
    ],
@@ -735,7 +735,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.7333,
+   "weight": 1.6957,
    "best": [
     4
    ],
@@ -1010,7 +1010,7 @@
    "designers": [
     "Pablo Clark"
    ],
-   "pollVotes": 196
+   "pollVotes": 197
   },
   "358737": {
    "name": "Leviathan Wilds",
@@ -1062,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4588,
+   "weight": 3.4594,
    "best": [
     3,
     4
@@ -1346,7 +1346,7 @@
    "designers": [
     "Paul Dennen"
    ],
-   "pollVotes": 550
+   "pollVotes": 551
   },
   "400495": {
    "name": "JinxO",
@@ -1803,7 +1803,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1087,
+   "weight": 3.1085,
    "best": [
     3
    ],
@@ -1969,7 +1969,7 @@
    "max": 4,
    "minTime": 30,
    "maxTime": 60,
-   "weight": 2.2,
+   "weight": 2.1667,
    "best": [
     3,
     4
@@ -1991,7 +1991,7 @@
     "Brett J. Gilbert",
     "David Thompson (I)"
    ],
-   "pollVotes": 6
+   "pollVotes": 7
   },
   "446930": {
    "name": "Match Me If You Can",
@@ -2058,7 +2058,7 @@
    "max": 4,
    "minTime": 40,
    "maxTime": 80,
-   "weight": 2.3333,
+   "weight": 2.4286,
    "best": [
     4
    ],
@@ -2122,7 +2122,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1772,
+   "weight": 1.1757,
    "best": [
     5,
     6
@@ -2152,7 +2152,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 246
+   "pollVotes": 249
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
@@ -2161,7 +2161,7 @@
    "max": 28,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.0364,
+   "weight": 1.0357,
    "best": [
     4,
     5,
@@ -2190,7 +2190,7 @@
     "Eric Olsen",
     "Alyssa Swatek"
    ],
-   "pollVotes": 31
+   "pollVotes": 32
   },
   "465849": {
    "name": "Codenames: Critical Role Adventures",
