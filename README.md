@@ -64,6 +64,7 @@ Everything else comes from the sheet itself (via the daily action):
 - tabs: every tab that has the game and BGG id columns (others, like a scheduling tab, are skipped)
 - header row: detected
 - players: every column holding only ratings (0/1/2/blank), including people who haven't rated yet. Columns starting with `*` are ignored.
+- player counts: sheet columns, then BGG (poll only with ≥ 10 votes), then wider ranges. A game with no player count at all allows any table size and is flagged ("players?" on chips and results, a banner, settings → Data) instead of guessed.
 
 After restructuring the sheet, run **Actions → Update game data** to pick up the change right away.
 

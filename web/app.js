@@ -49,8 +49,9 @@ const hasExplainers = () => model.games.some(g => g.explainerText);
 function status(g, att = new Set(attendIdx())) {
   const s = state.set;
   let counts = allowedCounts(g, bgg.games[g.id], s.source);
+  // no player counts anywhere (sheet or BGG): allow any table size and say so everywhere, never guess
   const noCounts = !counts;
-  if (noCounts) counts = [2, 3, 4];
+  if (noCounts) counts = Array.from({ length: 31 }, (_, i) => i + 1);
   return {
     counts, noCounts,
     noExplainer: s.explainer && hasExplainers() && !g.explainers.some(i => att.has(i)),
@@ -154,7 +155,8 @@ function renderControls() {
     const icon = r.lk ? (r.lk.exact ? '🔒 ' : '📌 ') : r.out ? '⊘ ' : '';
     const who = (r.lk?.players.length ? ` · ✓ ${r.lk.players.join(', ')}` : '') + (r.bans.length ? ` · ✕ ${r.bans.join(', ')}` : '');
     const tip = r.off || `${r.want} want, ${r.would} would play`;
-    return `<button class="chip g ${cls}" data-g="${r.g.id}" title="${esc(tip)}">${icon}${esc(gName(r.g))}${esc(who)}<span class="want">${r.want}</span></button>`;
+    const pc = status(r.g, att).noCounts ? '<span class="pc-unknown" title="Player count unknown: any table size is allowed">players?</span>' : '';
+    return `<button class="chip g ${cls}" data-g="${r.g.id}" title="${esc(tip)}">${icon}${esc(gName(r.g))}${esc(who)}${pc}<span class="want">${r.want}</span></button>`;
   }).join('');
   const nSet = rows.filter(r => r.set).length;
   $('#gameCount').textContent = nSet ? `· ${nSet} set` : `· ${rows.length}`;
@@ -202,7 +204,7 @@ function tableHtml(t, ctx = {}) {
   const dur = bn ? ` · <span class="dur ${tone}" title="${allKnow ? 'everyone knows it: no teach' : 'with teach for newcomers'}">${bn.label}${allKnow ? ' 🎓' : ''}</span>` : '';
   const nerd = state.set.minutes && est ? `<div class="nerd">box ${boxText(d)} → ${Math.round(est.box)}′ at ${t.p.length}p · ${est.teach ? `teach ${Math.round(est.teach)} + ` : ''}play ${Math.round(est.play)} = <b>${hm(est.total)}</b> (${hm(est.total * 0.8)}–${hm(est.total * 1.5)})</div>` : '';
   return `<div class="tbl${lk ? ' locked' : ''}">
-    <div class="tline"><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${dur}</span>
+    <div class="tline"><button class="game" data-open="${g.id}" title="Who plays this?">${esc(gName(g))}</button><span class="meta">${t.p.length}p${status(g).noCounts ? ' <span class="pc-unknown" title="No player count in the sheet or on BGG: any table size is allowed">players?</span>' : ''}${dur}</span>
       <button class="act${lk ? ' on' : ''}" data-lock="${t.g}" data-players="${t.p.join(',')}" aria-label="${lk ? 'Unlock' : 'Lock this table'}" title="${lk ? 'Unlock' : 'Keep this table'}">${ICON.lock}</button>${nerd}</div>
     <div class="seats">${t.p.map(p => seatHtml(g, p)).join('')}</div></div>`;
 }
@@ -421,7 +423,7 @@ function renderGameList() {
   $('#gameList').innerHTML = rows.map(({ g, want, would, st }) => {
     const lk = lockOf(g.id), out = state.excluded.includes(g.id);
     const c = st.counts, cnt = c.length ? (c.length > 1 && c[c.length - 1] - c[0] === c.length - 1 ? `${c[0]}–${c[c.length - 1]}p` : `${c.join(',')}p`) : '';
-    const badges = [st.noCounts && 'no player counts', st.noExplainer && 'no explainer here', st.ownerAway && 'owner away']
+    const badges = [st.noCounts && 'player count unknown: any size', st.noExplainer && 'no explainer here', st.ownerAway && 'owner away']
       .filter(Boolean).map(b => `<span class="badge">${b}</span>`).join('');
     const w = bgg.games[g.id]?.weight;
     return `<li class="gl${out ? ' out' : ''}"><div class="gl-main">
@@ -443,14 +445,18 @@ function renderGameList() {
   $('#dataInfo').innerHTML = `
     <p>${custom ? 'Your own sheet' : esc(curTab().name)}: ${{ live: 'live from the sheet', pending: 'saved copy, checking the sheet…' }[model.source] ?? 'saved copy (sheet unreachable)'}, loaded ${model.loadedAt.toLocaleTimeString()} — ${model.players.length} players, ${model.games.length} games.</p>
     <p>BoardGameGeek data: ${nb} games${bgg.updated ? `, updated ${new Date(bgg.updated).toLocaleDateString()}` : ''}${bgg.sample ? ' <span class="badge">sample data</span>' : ''}.</p>
-    ${[...model.warnings, ...model.games.flatMap(g => (resolveCounts(g, bgg.games[g.id])?.notes ?? []).map(n => `${gName(g)}: ${n}`))]
+    ${[...model.warnings,
+       ...model.games.filter(g => !resolveCounts(g, bgg.games[g.id])).map(g => `${gName(g)}: no player count in the sheet or on BGG, any table size allowed`),
+       ...model.games.flatMap(g => (resolveCounts(g, bgg.games[g.id])?.notes ?? []).map(n => `${gName(g)}: ${n}`))]
       .map(w => `<p class="muted">⚠ ${esc(w)}</p>`).join('')}`;
 }
 
 function renderBanner() {
   const msgs = [];
   if (bgg.sample) msgs.push('Player counts are placeholders until the "Update game data" workflow has run.');
-  if (custom) msgs.push('Using your own sheet (settings → Data to switch back). Player counts only for games in our sheets or with min/max columns.');
+  if (custom) msgs.push('Using your own sheet (settings → Data to switch back).');
+  const unknown = model.games.filter(g => !allowedCounts(g, bgg.games[g.id], 'any'));
+  if (unknown.length) msgs.push(`⚠ No player count for ${unknown.length} game${unknown.length > 1 ? 's' : ''} (${unknown.slice(0, 4).map(gName).join(', ')}${unknown.length > 4 ? ', …' : ''}), so any table size is allowed for ${unknown.length > 1 ? 'them' : 'it'}. Add min.players / max.players in the sheet${custom ? '' : ' or a BGG ID'}.`);
   if (model.source === 'snapshot') msgs.push('Couldn\'t reach the sheet — showing the saved copy.');
   $('#banner').hidden = !msgs.length;
   $('#banner').textContent = msgs.join(' ');
