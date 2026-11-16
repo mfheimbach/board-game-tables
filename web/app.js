@@ -906,6 +906,11 @@ function warmSolver() {
   if (!slots.main) slots.main = { w: new Worker('worker.js'), busy: false, id: 0 };
 }
 
+// Header title: the retreat sheet's name, or for your own sheet the tab's cell A1
+let retreatTitle = 'Game Tables';
+function setTitle() {
+  document.title = $('#title').textContent = custom ? (custom.tabs?.[0]?.name || 'Your sheet') : retreatTitle;
+}
 async function init() {
   warmSolver();
   try { gamesFolded = localStorage.getItem('bgt:gamesFold') !== '0'; } catch {}
@@ -913,11 +918,12 @@ async function init() {
   try {
     const [c, bj, tj] = await Promise.all([fetch('config.json', { cache: 'no-cache' }).then(r => r.json()), getJSON('data/bgg.json'), getJSON('data/tabs.json')]);
     cfg = c;
-    document.title = $('#title').textContent = tj?.sheets?.[0]?.title || 'Game Tables';
+    retreatTitle = tj?.sheets?.[0]?.title || 'Game Tables';
     bgg = bj ?? { games: {} };
     sheets = tj?.sheets?.filter(s => s.tabs.length) ?? [];
     if (!sheets.length) throw new Error('No game data yet. Run "Update game data" on GitHub once.');
     try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
+    setTitle();
     let sel = null;
     try { sel = JSON.parse(localStorage.getItem('bgt:sel')); } catch {}
     const pool = custom ? [custom] : sheets;
@@ -948,7 +954,7 @@ async function useCustom() {
     await select(id, tabs, Math.max(0, tabs.findIndex(t => gid && t.gid === gid)));
     custom = known ? null : { sheetId: id, tabs };
     try { custom ? localStorage.setItem('bgt:custom', JSON.stringify(custom)) : localStorage.removeItem('bgt:custom'); } catch {}
-    renderBanner(); renderGameList();
+    setTitle(); renderBanner(); renderGameList();
   } catch (err) { alert(err.message); }
   btn.disabled = false; btn.textContent = 'Use it';
 }
@@ -956,6 +962,7 @@ async function useCustom() {
 async function dropCustom() {
   custom = null;
   try { localStorage.removeItem('bgt:custom'); } catch {}
+  setTitle();
   await select(sheets[0].sheetId, sheets[0].tabs, 0);
 }
 init();
