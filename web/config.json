@@ -1,5 +1,6 @@
 {
   "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
+  "bggProxy": "https://bgg-proxy.stonedsmile.workers.dev/",
   "columns": {
     "game": "Spiel",
     "bgg": "BGG ID",

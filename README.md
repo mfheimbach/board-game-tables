@@ -57,6 +57,7 @@ Settings switch. Each person's ratings are standardized (z-score, rescaled to th
 ## Config
 `web/config.json` holds only what the sheet can't tell us:
 - `sheetId`
+- `bggProxy` (optional): URL of the Cloudflare Worker in `worker/bgg-proxy.js`. The app asks it for games whose BGG id isn't in `bgg.json` (own sheets, ids added since the last update) and keeps the answers on the device for a day. Setup: Cloudflare → Workers & Pages → Create → Worker → Hello World, paste the file, add the secret `BGG_TOKEN`. It only accepts up to 20 numeric ids, caches a day, and answers only `mfheimbach.github.io` in browsers.
 - `columns`: the sheet's header names for game, BGG id/link, explainer, owner (`*Bringbär`), and the optional manual columns (player counts, `*Kennen`, `min.time`, `max.time`, `weight`)
 
 Everything else comes from the sheet itself (via the daily action):
