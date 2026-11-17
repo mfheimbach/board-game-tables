@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-17T06:33:43.148Z",
+ "updated": "2026-11-17T13:39:29.250Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -478,7 +478,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 638
+   "pollVotes": 639
   },
   "295192": {
    "name": "Tinderblox",
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7088,
+   "weight": 3.7133,
    "best": [
     3
    ],
@@ -1019,7 +1019,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 90,
-   "weight": 2.6195,
+   "weight": 2.614,
    "best": [
     2,
     3
@@ -1310,7 +1310,7 @@
    "max": 6,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.5316,
+   "weight": 3.5323,
    "best": [
     4
    ],
@@ -1346,7 +1346,7 @@
    "designers": [
     "Paul Dennen"
    ],
-   "pollVotes": 551
+   "pollVotes": 553
   },
   "400495": {
    "name": "JinxO",
@@ -1583,7 +1583,7 @@
    "designers": [
     "Die 7 Bazis"
    ],
-   "pollVotes": 34
+   "pollVotes": 35
   },
   "421246": {
    "name": "Neon Hope",
@@ -1830,7 +1830,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 430
+   "pollVotes": 431
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -1969,7 +1969,7 @@
    "max": 4,
    "minTime": 30,
    "maxTime": 60,
-   "weight": 2.1667,
+   "weight": 2.2222,
    "best": [
     3,
     4
@@ -2152,7 +2152,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 249
+   "pollVotes": 251
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
