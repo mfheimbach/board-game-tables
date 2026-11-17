@@ -54,6 +54,11 @@ Suitcase icon in the header. How often each game would actually get played (`web
 ## Cater to picky players (optional)
 Settings switch. Each person's ratings are standardized (z-score, rescaled to the group's mean and spread, like a T-score) and blended 50/50 with the raw rating for ranking only, so a "yes" from someone who rarely says yes counts a bit more. Displayed percentages stay plain ratings.
 
+## Settings in the link
+Settings → "Share these settings" builds a link; opening it applies the values on that device, then removes them from the address bar. Only non-defaults are included:
+`sheet` (only for another sheet), `gid` (tab), `counts` best|rec|any, `rating` 0|1|2, `blanks` guess|zero, `smallest` 1–3, `explainer` / `owner` / `picky` / `minutes` 0|1, `finish` 30|60|120|any, `from` / `to` (minutes, time slot), `tables` 1–8, `here` comma-separated names.
+Example: `…/board-game-tables/?rating=2&tables=4&finish=60&here=Axel,Basti,Knut`
+
 ## Config
 `web/config.json` holds only what the sheet can't tell us:
 - `sheetId`

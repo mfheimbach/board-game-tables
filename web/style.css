@@ -402,3 +402,5 @@ details:not(.st-sec) > summary h3 { margin: 0; font-size: inherit; }
 .br-days { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; }
 .br-days .stepper button { width: 34px; height: 32px; }
 .pc-unknown { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 999px; font-size: .68rem; font-weight: 650; line-height: 1.5; color: var(--r1); background: var(--r1-bg); border: 1px solid var(--r1); vertical-align: 1px; }
+.share-set { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 4px 0 6px; }
+.share-set label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }

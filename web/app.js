@@ -787,6 +787,12 @@ function wire() {
       state.set[k] = ['minRating', 'minPerTable'].includes(k) ? +b.value : b.value;
     } else if (b.id === 'openBring') { showBring($('#bringView').hidden); return; }
     else if (b.id === 'closeBring') { showBring(false); return; }
+    else if (b.id === 'shareSettings') {
+      const url = settingsUrl($('#shareWho').checked);
+      if (navigator.share) navigator.share({ url }).catch(() => {});
+      else navigator.clipboard?.writeText(url).then(() => toast('Link copied'), () => toast('Couldn\'t copy'));
+      return;
+    }
     else if (b.id === 'openStats') { showStats($('#statsView').hidden); return; }
     else if (b.id === 'closeStats') { showStats(false); return; }
     else if (d.share !== undefined) {
@@ -935,6 +941,64 @@ function warmSolver() {
   if (!slots.main) slots.main = { w: new Worker('worker.js'), busy: false, id: 0 };
 }
 
+// ---------- settings in the link ----------
+// ?counts=any&rating=2&tables=4&from=60&to=120&finish=60&here=Axel,Basti …  Only non-defaults go in.
+// Opening such a link applies them on this device (and switches sheet/tab if given), then tidies the URL.
+const URLMAP = {
+  counts: ['source', v => v, v => ['best', 'rec', 'any'].includes(v) ? v : null],
+  rating: ['minRating', v => v, v => ['0', '1', '2'].includes(v) ? +v : null],
+  blanks: ['blanks', v => v === 'zero' ? 'zero' : 'guess', v => v === 'zero' ? 'zero' : v === 'guess' ? 'neutral' : null],
+  smallest: ['minPerTable', v => v, v => ['1', '2', '3'].includes(v) ? +v : null],
+  explainer: ['explainer', v => v ? 1 : 0, v => v === '1' ? true : v === '0' ? false : null],
+  owner: ['owner', v => v ? 1 : 0, v => v === '1' ? true : v === '0' ? false : null],
+  picky: ['picky', v => v ? 1 : 0, v => v === '1' ? true : v === '0' ? false : null],
+  minutes: ['minutes', v => v ? 1 : 0, v => v === '1' ? true : v === '0' ? false : null],
+  finish: ['gap', v => GAPS[v]?.[0] || 'any', v => { const i = GAPS.findIndex(g => String(g[0] || 'any') === v); return i >= 0 ? i : null; }],
+  from: ['tmin', v => v, v => /^\d{1,3}$/.test(v) ? +v : null],
+  to: ['tmax', v => v, v => /^\d{1,3}$/.test(v) ? +v : null],
+};
+function settingsUrl(withPeople) {
+  const u = new URL(location.href.split(/[?#]/)[0]), p = u.searchParams;
+  if (custom || cur.sheetId !== sheets[0]?.sheetId) p.set('sheet', cur.sheetId);
+  const t = curTab();
+  if (t.gid != null && (custom || cur.sheetId !== sheets[0]?.sheetId || cur.i !== 0)) p.set('gid', t.gid);
+  for (const [k, [key, out]] of Object.entries(URLMAP)) if (state.set[key] !== DEFAULTS.set[key]) p.set(k, out(state.set[key]));
+  if (state.maxTables !== DEFAULTS.maxTables) p.set('tables', state.maxTables);
+  if (withPeople) p.set('here', attendIdx().map(i => model.players[i]).join(','));
+  return u.toString();
+}
+const linkParams = new URLSearchParams(location.search);
+async function applyLinkSheet() {
+  // switch sheet/tab before the normal start, if the link says so
+  const id = linkParams.get('sheet'), gid = linkParams.get('gid');
+  if (!id && gid == null) return null;
+  const known = sheets.find(s => s.sheetId === (id ?? sheets[0].sheetId));
+  if (known) { custom = null; return { sheetId: known.sheetId, key: gid != null ? String(gid) : null }; }
+  const tab = { gid: gid ?? '0' };
+  tab.name = await fetchTitle(fetchText, id, tab).catch(() => null) ?? 'Shared sheet';
+  custom = { sheetId: id, tabs: [tab] };
+  try { localStorage.setItem('bgt:custom', JSON.stringify(custom)); } catch {}
+  return { sheetId: id, key: tabKey(tab) };
+}
+function applyLinkSettings() {
+  if (![...linkParams.keys()].length) return;
+  let n = 0;
+  for (const [k, [key, , inp]] of Object.entries(URLMAP)) {
+    if (!linkParams.has(k)) continue;
+    const v = inp(linkParams.get(k));
+    if (v !== null) { state.set[key] = v; n++; }
+  }
+  const t = +linkParams.get('tables');
+  if (t >= 1 && t <= MAX_TABLES) { state.maxTables = t; n++; }
+  if (linkParams.has('here')) {
+    const want = new Set(linkParams.get('here').split(',').map(s => s.trim().toLowerCase()).filter(Boolean));
+    state.attend = model.players.filter(p => want.has(p.trim().toLowerCase()));
+    n++;
+  }
+  history.replaceState(null, '', location.pathname + location.hash);
+  if (n) { save(); update(); toast('Opened with the settings from the link'); }
+}
+
 // Header title: the retreat sheet's name, or for your own sheet the tab's cell A1
 let retreatTitle = 'Game Tables';
 function setTitle() {
@@ -952,13 +1016,16 @@ async function init() {
     sheets = tj?.sheets?.filter(s => s.tabs.length) ?? [];
     if (!sheets.length) throw new Error('No game data yet. Run "Update game data" on GitHub once.');
     try { custom = JSON.parse(localStorage.getItem('bgt:custom')); } catch {}
-    setTitle();
     let sel = null;
     try { sel = JSON.parse(localStorage.getItem('bgt:sel')); } catch {}
+    const fromLink = await applyLinkSheet();
+    if (fromLink) sel = { sheetId: fromLink.sheetId, key: fromLink.key ?? sel?.key };
+    setTitle();
     const pool = custom ? [custom] : sheets;
     const sh = pool.find(s => s.sheetId === sel?.sheetId) ?? pool[0];
     const i = Math.max(0, sh.tabs.findIndex(t => tabKey(t) === sel?.key || t.name === sel?.key));
     await select(sh.sheetId, sh.tabs, i);
+    applyLinkSettings();
     horstHello();
   } catch (err) {
     $('#results').innerHTML = `<div class="empty">${HORST}<h2>Couldn't load the data</h2><p class="muted">${esc(err.message)}</p>
