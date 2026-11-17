@@ -16,7 +16,7 @@ For players: the in-app page **How it works** (`web/help.html`, linked in the fo
 2. Register a BGG application at <https://boardgamegeek.com/using_the_xml_api>, then create a token.
 3. Add the token as a repo secret: **Settings → Secrets and variables → Actions → New secret**, name `BGG_TOKEN`.
 4. Run **Actions → Update game data → Run workflow**.
-   - Every 20 minutes it checks for BGG ids that aren't in `bgg.json` yet and fetches only those (usually nothing to do: no commit, no deploy). Once a day it refreshes everything.
+   - It runs once a day: tabs, saved copies of the sheet, the schedule tab and all BGG data. Games whose BGG id is newer than that come from the Cloudflare Worker (`bggProxy`) in the browser.
    - It redeploys the page only when the data changed.
 5. Download a "Powered by BGG" logo from BGG's logo page (linked from their XML API terms). Save it as `web/img/powered-by-bgg.svg`; until then a text badge is shown.
    - BGG's terms require the logo, linked to boardgamegeek.com, and naming BGG as the data source.

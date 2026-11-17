@@ -157,7 +157,7 @@
   <ul>
     <li><b>Ratings</b> come from the Google Sheet: <b>2</b> = want to play, <b>1</b> = would play, <b>0</b> = rather not, empty = didn't say. The app loads the sheet fresh every time you open it. If Google can't be reached, it uses a saved copy and says so.</li>
     <li><b>Who can explain</b> a game (📖) and <b>who brought it</b> also come from the sheet.</li>
-    <li><b>Player counts, play time, weight, mechanics</b> come from BoardGameGeek. New BGG IDs are picked up within about half an hour, everything else is refreshed daily. The schedule tab is refreshed daily too.</li>
+    <li><b>Player counts, play time, weight, mechanics</b> come from BoardGameGeek. New BGG IDs are looked up right away, everything else is refreshed daily. The schedule tab is refreshed daily too.</li>
     <li><b>Everything you tap</b> (who's here, pins, picks, settings) is saved <b>only on your phone</b>. Nobody else sees it, and your choices don't change anyone else's app. To show the group, use the share button. Settings → <b>Reset everything</b> starts fresh.</li>
   </ul>
   <h3 id="own">Using your own sheet</h3>
@@ -182,7 +182,7 @@
   <h3>Which column does the app use for BoardGameGeek?</h3>
   <p>Only the <b>BGG ID</b> column. It can hold the number or a BGG link. A link on the game's name doesn't count, the app can't see it.</p>
   <h3>I added a BGG ID. Why is there no data yet?</h3>
-  <p>BGG data is fetched on a server every 20 minutes, so it can take up to about half an hour. Ratings show up immediately, because the sheet loads fresh every time.</p>
+  <p>It should show up the next time you open the app: games missing from the saved BGG data are looked up right away. If BGG itself is slow, try again a bit later. Ratings always show up immediately, because the sheet loads fresh every time.</p>
   <h3>Why do three people play a 30-minute game while the others play for four hours?</h3>
   <p>Because it was the best split by ratings. The red clock warns you. If you don't want that, settings → “All tables finish within” 1 h or 2 h. A game without any time data can't be compared at all, so it never triggers the warning.</p>
   <h3>Why is my game never suggested?</h3>

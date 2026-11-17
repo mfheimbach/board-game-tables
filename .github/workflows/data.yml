@@ -9,7 +9,6 @@ on:
     paths: ['scripts/**', 'web/config.json', 'web/sheet.js', 'web/bgg.js']
   schedule:
     - cron: '23 4 * * *'    # daily full refresh
-    - cron: '*/20 * * * *'  # every 20 min: only games whose BGG id is new (cheap, usually a no-op)
 concurrency:
   group: data
   cancel-in-progress: false
@@ -26,7 +25,7 @@ jobs:
       - run: node scripts/fetch_data.mjs
         env:
           BGG_TOKEN: ${{ secrets.BGG_TOKEN }}
-          QUICK: ${{ (github.event.schedule == '*/20 * * * *' || inputs.quick) && '1' || '0' }}
+          QUICK: ${{ inputs.quick && '1' || '0' }}
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
