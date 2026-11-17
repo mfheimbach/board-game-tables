@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-16T20:59:21.894Z",
+ "updated": "2026-11-17T06:33:43.148Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -1093,7 +1093,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 614
+   "pollVotes": 615
   },
   "364356": {
    "name": "Company of Heroes: 2nd Edition",
