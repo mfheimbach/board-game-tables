@@ -942,7 +942,8 @@ function warmSolver() {
 }
 
 // ---------- settings in the link ----------
-// ?counts=any&rating=2&tables=4&from=60&to=120&finish=60&here=Axel,Basti …  Only non-defaults go in.
+// ?sheet=…&gid=…&counts=any&rating=2&tables=4&from=60&to=120&finish=60&here=Axel,Basti …
+// Sheet and tab always go in; settings only where they differ from the defaults.
 // Opening such a link applies them on this device (and switches sheet/tab if given), then tidies the URL.
 const URLMAP = {
   counts: ['source', v => v, v => ['best', 'rec', 'any'].includes(v) ? v : null],
@@ -959,9 +960,10 @@ const URLMAP = {
 };
 function settingsUrl(withPeople) {
   const u = new URL(location.href.split(/[?#]/)[0]), p = u.searchParams;
-  if (custom || cur.sheetId !== sheets[0]?.sheetId) p.set('sheet', cur.sheetId);
+  // always name the sheet and tab: the link then works the same for everyone, whatever sheet they're on
+  p.set('sheet', cur.sheetId);
   const t = curTab();
-  if (t.gid != null && (custom || cur.sheetId !== sheets[0]?.sheetId || cur.i !== 0)) p.set('gid', t.gid);
+  if (t.gid != null) p.set('gid', t.gid);
   for (const [k, [key, out]] of Object.entries(URLMAP)) if (state.set[key] !== DEFAULTS.set[key]) p.set(k, out(state.set[key]));
   if (state.maxTables !== DEFAULTS.maxTables) p.set('tables', state.maxTables);
   if (withPeople) p.set('here', attendIdx().map(i => model.players[i]).join(','));
@@ -973,7 +975,11 @@ async function applyLinkSheet() {
   const id = linkParams.get('sheet'), gid = linkParams.get('gid');
   if (!id && gid == null) return null;
   const known = sheets.find(s => s.sheetId === (id ?? sheets[0].sheetId));
-  if (known) { custom = null; return { sheetId: known.sheetId, key: gid != null ? String(gid) : null }; }
+  if (known) {
+    custom = null;
+    try { localStorage.removeItem('bgt:custom'); } catch {}
+    return { sheetId: known.sheetId, key: gid != null ? String(gid) : null };
+  }
   const tab = { gid: gid ?? '0' };
   tab.name = await fetchTitle(fetchText, id, tab).catch(() => null) ?? 'Shared sheet';
   custom = { sheetId: id, tabs: [tab] };
