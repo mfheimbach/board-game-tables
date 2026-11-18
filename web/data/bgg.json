@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-17T13:39:29.250Z",
+ "updated": "2026-11-18T13:14:21.324Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8424,
+   "weight": 3.8429,
    "best": [
     4
    ],
@@ -441,7 +441,7 @@
    "max": 5,
    "minTime": 45,
    "maxTime": 120,
-   "weight": 3.8396,
+   "weight": 3.8386,
    "best": [
     4
    ],
@@ -699,7 +699,7 @@
    "max": 4,
    "minTime": 90,
    "maxTime": 180,
-   "weight": 4.2635,
+   "weight": 4.2632,
    "best": [
     4
    ],
@@ -726,7 +726,7 @@
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
    ],
-   "pollVotes": 501
+   "pollVotes": 502
   },
   "324711": {
    "name": "Schadenfreude",
@@ -754,7 +754,7 @@
    "designers": [
     "ctr"
    ],
-   "pollVotes": 58
+   "pollVotes": 59
   },
   "327778": {
    "name": "ito",
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7133,
+   "weight": 3.7143,
    "best": [
     3
    ],
@@ -1010,7 +1010,7 @@
    "designers": [
     "Pablo Clark"
    ],
-   "pollVotes": 197
+   "pollVotes": 198
   },
   "358737": {
    "name": "Leviathan Wilds",
@@ -1062,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4594,
+   "weight": 3.4601,
    "best": [
     3,
     4
@@ -1102,7 +1102,7 @@
    "max": 2,
    "minTime": 90,
    "maxTime": 150,
-   "weight": 3.5,
+   "weight": 3.5273,
    "best": [
     2
    ],
@@ -1355,7 +1355,7 @@
    "max": 7,
    "minTime": 30,
    "maxTime": 45,
-   "weight": 1.0476,
+   "weight": 1.0455,
    "best": [
     5,
     6
@@ -1765,7 +1765,7 @@
    "designers": [
     "John D. Clair"
    ],
-   "pollVotes": 38
+   "pollVotes": 39
   },
   "432456": {
    "name": "dnup",
@@ -1927,7 +1927,7 @@
     "Tyler Cheves",
     "Brendon Cheves"
    ],
-   "pollVotes": 2
+   "pollVotes": 3
   },
   "441850": {
    "name": "Echoes of Time",
@@ -2122,7 +2122,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1757,
+   "weight": 1.175,
    "best": [
     5,
     6
@@ -2152,7 +2152,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 251
+   "pollVotes": 253
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
