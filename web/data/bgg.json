@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-18T13:14:21.324Z",
+ "updated": "2026-11-19T13:34:28.055Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8429,
+   "weight": 3.8434,
    "best": [
     4
    ],
@@ -397,7 +397,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 1459
+   "pollVotes": 1462
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -726,7 +726,7 @@
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
    ],
-   "pollVotes": 502
+   "pollVotes": 503
   },
   "324711": {
    "name": "Schadenfreude",
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7143,
+   "weight": 3.7118,
    "best": [
     3
    ],
@@ -1062,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4601,
+   "weight": 3.4607,
    "best": [
     3,
     4
@@ -1102,7 +1102,7 @@
    "max": 2,
    "minTime": 90,
    "maxTime": 150,
-   "weight": 3.5273,
+   "weight": 3.5536,
    "best": [
     2
    ],
@@ -1515,7 +1515,7 @@
    "designers": [
     "Manny Trembley"
    ],
-   "pollVotes": 76
+   "pollVotes": 77
   },
   "416079": {
    "name": "March of the Ants: Evolved Edition",
@@ -1803,7 +1803,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1085,
+   "weight": 3.1083,
    "best": [
     3
    ],
@@ -2122,7 +2122,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.175,
+   "weight": 1.1743,
    "best": [
     5,
     6
@@ -2152,7 +2152,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 253
+   "pollVotes": 255
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
