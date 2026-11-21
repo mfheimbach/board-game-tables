@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-20T13:16:14.977Z",
+ "updated": "2026-11-21T12:50:57.552Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -321,7 +321,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.8817,
+   "weight": 2.8818,
    "best": [
     4
    ],
@@ -353,7 +353,7 @@
    "designers": [
     "Eric M. Lang"
    ],
-   "pollVotes": 1087
+   "pollVotes": 1088
   },
   "237182": {
    "name": "Root",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8438,
+   "weight": 3.8435,
    "best": [
     4
    ],
@@ -397,7 +397,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 1462
+   "pollVotes": 1463
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -735,7 +735,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.6957,
+   "weight": 1.7021,
    "best": [
     4
    ],
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7118,
+   "weight": 3.7163,
    "best": [
     3
    ],
@@ -1174,7 +1174,7 @@
    "max": 8,
    "minTime": 15,
    "maxTime": 15,
-   "weight": 1.0769,
+   "weight": 1.0764,
    "best": [
     5
    ],
@@ -1301,7 +1301,7 @@
    "designers": [
     "Adam Kwapiński"
    ],
-   "pollVotes": 119
+   "pollVotes": 120
   },
   "397598": {
    "name": "Dune: Imperium – Uprising",
@@ -1515,7 +1515,7 @@
    "designers": [
     "Manny Trembley"
    ],
-   "pollVotes": 77
+   "pollVotes": 78
   },
   "416079": {
    "name": "March of the Ants: Evolved Edition",
@@ -1774,7 +1774,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.3291,
+   "weight": 1.325,
    "best": [
     4
    ],
@@ -1794,7 +1794,7 @@
    "designers": [
     "Kei Kajino (梶野 桂)"
    ],
-   "pollVotes": 91
+   "pollVotes": 92
   },
   "436217": {
    "name": "The Lord of the Rings: Fate of the Fellowship",
@@ -1830,7 +1830,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 432
+   "pollVotes": 433
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -2122,7 +2122,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1728,
+   "weight": 1.1714,
    "best": [
     5,
     6
@@ -2152,7 +2152,7 @@
     "Richard Garfield",
     "Takashi Ishida"
    ],
-   "pollVotes": 257
+   "pollVotes": 258
   },
   "463441": {
    "name": "Flip 7: With A Vengeance",
