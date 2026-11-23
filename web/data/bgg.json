@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-22T12:43:32.856Z",
+ "updated": "2026-11-23T15:00:04.757Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -9,7 +9,7 @@
    "max": 7,
    "minTime": 240,
    "maxTime": 240,
-   "weight": 2.8577,
+   "weight": 2.858,
    "best": [
     7
    ],
@@ -52,7 +52,7 @@
    "max": 5,
    "minTime": 120,
    "maxTime": 120,
-   "weight": 3.4141,
+   "weight": 3.4123,
    "best": [
     5
    ],
@@ -321,7 +321,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 2.8818,
+   "weight": 2.882,
    "best": [
     4
    ],
@@ -353,7 +353,7 @@
    "designers": [
     "Eric M. Lang"
    ],
-   "pollVotes": 1088
+   "pollVotes": 1089
   },
   "237182": {
    "name": "Root",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8435,
+   "weight": 3.8436,
    "best": [
     4
    ],
@@ -441,7 +441,7 @@
    "max": 5,
    "minTime": 45,
    "maxTime": 120,
-   "weight": 3.8386,
+   "weight": 3.8388,
    "best": [
     4
    ],
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7172,
+   "weight": 3.7148,
    "best": [
     3
    ],
@@ -1062,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4614,
+   "weight": 3.4625,
    "best": [
     3,
     4
@@ -1142,7 +1142,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.0167,
+   "weight": 3.0164,
    "best": [
     3
    ],
@@ -1487,7 +1487,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 60,
-   "weight": 2.3091,
+   "weight": 2.3214,
    "best": [
     4
    ],
@@ -1515,7 +1515,7 @@
    "designers": [
     "Manny Trembley"
    ],
-   "pollVotes": 78
+   "pollVotes": 79
   },
   "416079": {
    "name": "March of the Ants: Evolved Edition",
@@ -1552,7 +1552,7 @@
     "Tim Eisner",
     "Ryan Swisher"
    ],
-   "pollVotes": 49
+   "pollVotes": 50
   },
   "419639": {
    "name": "Mind the Lines",
@@ -1803,7 +1803,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1096,
+   "weight": 3.1094,
    "best": [
     3
    ],
@@ -1830,7 +1830,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 433
+   "pollVotes": 434
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -1927,7 +1927,7 @@
     "Tyler Cheves",
     "Brendon Cheves"
    ],
-   "pollVotes": 3
+   "pollVotes": 4
   },
   "441850": {
    "name": "Echoes of Time",
@@ -2121,7 +2121,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.1707,
+   "weight": 1.17,
    "best": [
     5,
     6
