@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23T14:59:55.923Z",
+ "updated": "2026-11-24T15:00:26.382Z",
  "sheets": [
   {
    "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
@@ -11,7 +11,7 @@
      "headerRow": 3,
      "snapshot": "data/sheet-0.csv",
      "games": 52,
-     "players": 12
+     "players": 13
     },
     {
      "gid": "1214368593",
@@ -19,7 +19,7 @@
      "headerRow": 3,
      "snapshot": "data/sheet-1214368593.csv",
      "games": 13,
-     "players": 12
+     "players": 13
     }
    ]
   }
