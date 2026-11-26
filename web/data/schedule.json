@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25T14:40:19.795Z",
+ "updated": "2026-11-26T14:04:03.445Z",
  "sheetId": "1DdwTKaBi39ZcSPRvqbTcQcuk5veD5093x-u7TvtKpLA",
  "tab": "Terminplanung",
  "slots": [
@@ -14,7 +14,7 @@
     "Christoph": 0,
     "Daniel": 1,
     "Johannes": 1,
-    "Kilian": 0,
+    "Kilian": 1,
     "Knut": 1,
     "Michael": 1,
     "Moritz": 1,
@@ -34,7 +34,7 @@
     "Christoph": 1,
     "Daniel": 1,
     "Johannes": 1,
-    "Kilian": 1,
+    "Kilian": 0,
     "Knut": 1,
     "Michael": 1,
     "Moritz": 1,
