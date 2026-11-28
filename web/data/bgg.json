@@ -1,6 +1,6 @@
 {
  "source": "BoardGameGeek XML API2",
- "updated": "2026-11-27T14:02:12.996Z",
+ "updated": "2026-11-28T13:19:40.196Z",
  "games": {
   "242": {
    "name": "Junta",
@@ -362,7 +362,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 90,
-   "weight": 3.8437,
+   "weight": 3.8441,
    "best": [
     4
    ],
@@ -397,7 +397,7 @@
    "designers": [
     "Cole Wehrle"
    ],
-   "pollVotes": 1463
+   "pollVotes": 1465
   },
   "245659": {
    "name": "Vampire: The Masquerade – Vendetta",
@@ -699,7 +699,7 @@
    "max": 4,
    "minTime": 90,
    "maxTime": 180,
-   "weight": 4.2649,
+   "weight": 4.2658,
    "best": [
     4
    ],
@@ -726,7 +726,7 @@
     "Vangelis Bagiartakis",
     "Varnavas Timotheou"
    ],
-   "pollVotes": 504
+   "pollVotes": 505
   },
   "324711": {
    "name": "Schadenfreude",
@@ -735,7 +735,7 @@
    "max": 5,
    "minTime": 15,
    "maxTime": 20,
-   "weight": 1.7255,
+   "weight": 1.7451,
    "best": [
     4
    ],
@@ -754,7 +754,7 @@
    "designers": [
     "ctr"
    ],
-   "pollVotes": 62
+   "pollVotes": 63
   },
   "327778": {
    "name": "ito",
@@ -941,7 +941,7 @@
    "max": 4,
    "minTime": 45,
    "maxTime": 75,
-   "weight": 1.9545,
+   "weight": 1.9605,
    "best": [
     4
    ],
@@ -983,7 +983,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.7167,
+   "weight": 3.7177,
    "best": [
     3
    ],
@@ -1062,7 +1062,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.4645,
+   "weight": 3.4663,
    "best": [
     3,
     4
@@ -1167,6 +1167,44 @@
    ],
    "pollVotes": 46
   },
+  "372649": {
+   "name": "Defenders of the Wild",
+   "year": 2024,
+   "min": 1,
+   "max": 4,
+   "minTime": 60,
+   "maxTime": 120,
+   "weight": 3.129,
+   "best": [
+    2
+   ],
+   "rec": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "categories": [
+    "Animals",
+    "Fantasy",
+    "Political"
+   ],
+   "mechanics": [
+    "Action Points",
+    "Area Majority / Influence",
+    "Cooperative Game",
+    "Deck Construction",
+    "Hand Management",
+    "Modular Board",
+    "Solo / Solitaire Game",
+    "Variable Player Powers"
+   ],
+   "designers": [
+    "Henry Audubon",
+    "T.L. Simons"
+   ],
+   "pollVotes": 31
+  },
   "375651": {
    "name": "That's Not a Hat",
    "year": 2023,
@@ -1268,7 +1306,7 @@
    "max": 5,
    "minTime": 120,
    "maxTime": 180,
-   "weight": 3.7687,
+   "weight": 3.777,
    "best": [
     4,
     5
@@ -1310,7 +1348,7 @@
    "max": 6,
    "minTime": 60,
    "maxTime": 120,
-   "weight": 3.5351,
+   "weight": 3.5358,
    "best": [
     4
    ],
@@ -1487,7 +1525,7 @@
    "max": 4,
    "minTime": 60,
    "maxTime": 60,
-   "weight": 2.3214,
+   "weight": 2.3333,
    "best": [
     4
    ],
@@ -1803,7 +1841,7 @@
    "max": 5,
    "minTime": 60,
    "maxTime": 150,
-   "weight": 3.1071,
+   "weight": 3.1069,
    "best": [
     3
    ],
@@ -1830,7 +1868,7 @@
    "designers": [
     "Matt Leacock"
    ],
-   "pollVotes": 435
+   "pollVotes": 436
   },
   "436790": {
    "name": "Believe in Me! (Please)",
@@ -1845,8 +1883,7 @@
    ],
    "rec": [
     2,
-    3,
-    4
+    3
    ],
    "categories": [],
    "mechanics": [
@@ -1862,7 +1899,7 @@
     "Henneke Holst",
     "Cornel Krizsan"
    ],
-   "pollVotes": 3
+   "pollVotes": 4
   },
   "436842": {
    "name": "The Wondrous Museum",
@@ -2121,7 +2158,7 @@
    "max": 6,
    "minTime": 30,
    "maxTime": 30,
-   "weight": 1.172,
+   "weight": 1.1713,
    "best": [
     5,
     6
@@ -2160,7 +2197,7 @@
    "max": 28,
    "minTime": 20,
    "maxTime": 20,
-   "weight": 1.0351,
+   "weight": 1.0345,
    "best": [
     4,
     5,
